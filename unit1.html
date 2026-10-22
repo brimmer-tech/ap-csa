@@ -125,6 +125,51 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
   .prog{display:none}
   h1{font-size:1.5rem}
 }
+.frq{border:1px solid var(--rule);border-radius:10px;background:var(--panel);padding:14px 16px;margin:1.1rem 0}
+.frq pre.code,.widget pre.code{margin:.6rem 0;padding:12px 14px;background:var(--code-bg);color:var(--code-ink);border-radius:6px;font-size:.9rem;line-height:1.5;overflow-x:auto}
+.frq textarea{width:100%;min-height:150px;padding:10px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);color:var(--ink);font-family:"JetBrains Mono",Menlo,Consolas,monospace;font-size:.9rem;line-height:1.5;resize:vertical}
+.frq-model{display:none;margin-top:10px}
+.frq-model.show{display:block}
+.frq label.chk{display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer}
+.frq label.chk input{margin-top:5px}
+.sline{display:block;padding:0 4px}
+.sline.on{background:rgba(255,224,138,.28);border-radius:3px}
+button:disabled{opacity:.5;cursor:default}
+.tut{border-color:var(--accent)}
+.tut>summary{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;cursor:pointer;list-style:none;font-weight:700;font-size:1.05rem}
+.tut>summary::-webkit-details-marker{display:none}
+.tut>summary::before{content:"\25B8";color:var(--accent);font-size:1.1rem}
+.tut[open]>summary::before{content:"\25BE"}
+.tut[open]>summary{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--rule)}
+.tut>summary .sub{font-weight:400;font-size:.9rem}
+.tut>summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.tstep{display:none}
+.tstep.on{display:block}
+.tstep h4{margin:.2rem 0 .5rem;font-size:1.1rem}
+.tpips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.pip{padding:3px 10px;border:1px solid var(--rule);border-radius:999px;font-size:.85rem;color:var(--ink-2);background:var(--paper)}
+.pip.on{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:700}
+.tdots{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
+.tdots button{min-width:36px;padding:4px 8px}
+.tdots button.cur{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.tcode{margin:.6rem 0;padding:12px 14px;background:var(--code-bg);color:var(--code-ink);border-radius:6px;font-family:"JetBrains Mono",Menlo,Consolas,monospace;font-size:.92rem;line-height:2;overflow-x:auto;white-space:pre}
+input.blank{width:8em;padding:1px 6px;font:inherit;color:var(--code-ink);background:rgba(255,255,255,.1);border:1px dashed var(--code-kw);border-radius:4px}
+input.blank.short{width:3.4em}
+input.blank.ok{border-style:solid;border-color:#7BE0A6}
+input.blank.bad{border-style:solid;border-color:#FF9A92}
+.tcall{border-left:4px solid var(--accent);background:var(--accent-soft);padding:8px 12px;border-radius:0 6px 6px 0;margin:.7rem 0}
+.tcall.warn{border-left-color:var(--bad);background:var(--bad-soft)}
+.trow{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.tfb{display:none;margin-top:8px;padding:8px 12px;border-radius:6px;font-weight:600}
+.tfb.show{display:block}
+.tfb.ok{background:var(--ok-soft);color:var(--ok)}
+.tfb.bad{background:var(--bad-soft);color:var(--bad)}
+.tfb.info{background:var(--accent-soft);color:var(--ink);font-weight:400}
+.tchoices button{display:block;width:100%;text-align:left;margin:6px 0;font-family:"JetBrains Mono",Menlo,Consolas,monospace;font-size:.9rem}
+.tchoices.prose button{font-family:inherit;font-size:1rem}
+.tchoices button.ok{border-color:var(--ok);background:var(--ok-soft)}
+.tchoices button.bad{border-color:var(--bad);background:var(--bad-soft)}
+.tnav{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:14px;padding-top:10px;border-top:1px solid var(--rule)}
 @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
 </style>
 </head>
@@ -139,6 +184,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
   <a href="#objects">Objects & methods</a>
   <a href="#strings">Strings</a>
   <a href="#math">Math class</a>
+  <a href="#frq">FRQ practice</a>
   <a href="#traps">Common traps</a>
   <a href="#vocab">Flashcards</a>
   <a href="#quiz">Quiz</a>
@@ -399,6 +445,313 @@ System.out.<span class="kw">println</span>(w.substring(<span class="num">0</span
   </div>
 </section>
 
+<section id="frq">
+  <h2>FRQ practice: the Account class</h2>
+  <p class="lead">Write your own answer first, on paper or in the boxes below, then reveal the model solution and score yourself. Your typed answers and self-scores save in this browser. Not sure where to start? Open the guided walkthrough dropdown right below the scenario.</p>
+
+  <div class="frq">
+    <h3 style="margin-top:0">Scenario</h3>
+    <p>You are tasked with implementing an <code>Account</code> class to represent an individual’s bank account. Each <code>Account</code> object stores the name of the account holder and the balance of the account. A partial declaration of the <code>Account</code> class is shown below. An additional class, <code>AccountRunner</code>, simulates account creations. Assume the two classes exist in their own files of the same name.</p>
+<pre class="code"><span class="kw">public class</span> Account
+{
+    <span class="kw">private</span> String name;
+    <span class="kw">private double</span> balance;
+
+    <span class="cm">/** Creates an account with a user's name and starting balance. */</span>
+    <span class="kw">public</span> Account(String userName, <span class="kw">double</span> accountBalance)
+    {
+        <span class="cm">/* to be implemented in part (a) */</span>
+    }
+
+    <span class="cm">/** Creates an account with just the user's name
+     *  and sets the account balance to a default value of 0.0 */</span>
+    <span class="kw">public</span> Account(String userName)
+    {
+        <span class="cm">/* to be implemented in part (a) */</span>
+    }
+
+    <span class="cm">/** Adds the specified amount to the account balance. */</span>
+    <span class="kw">public void</span> deposit(<span class="kw">double</span> amount)
+    {
+        <span class="cm">/* to be implemented in part (b) */</span>
+    }
+
+    <span class="cm">/** Removes the specified amount from the account balance. */</span>
+    <span class="kw">public void</span> withdraw(<span class="kw">double</span> amount)
+    {
+        <span class="cm">/* to be implemented in part (b) */</span>
+    }
+}
+
+<span class="kw">public class</span> AccountRunner
+{
+    <span class="kw">public static void</span> main(String[] args)
+    {
+        <span class="cm">/* to be implemented in part (c) */</span>
+    }
+}</pre>
+  </div>
+
+  <details class='frq tut' id='tut'>
+    <summary><span>Guided walkthrough: how to earn all 6 points</span><span class='sub' id='tsum'>Stuck? Open this</span></summary>
+    <p class='sub' style='margin-top:0'>Not sure where to begin? Start here. Each step turns one sentence of the problem into code, and each is worth one rubric point (except step 1). Do the small task, read the feedback, and move on. At the end you will redo the whole question from memory.</p>
+    <div class='tpips' aria-label='Rubric points built so far'>
+      <span class='pip' data-pt='a1'>(a) first constructor</span>
+      <span class='pip' data-pt='a2'>(a) second constructor</span>
+      <span class='pip' data-pt='b1'>(b) deposit</span>
+      <span class='pip' data-pt='b2'>(b) withdraw</span>
+      <span class='pip' data-pt='c1'>(c) create objects</span>
+      <span class='pip' data-pt='c2'>(c) call methods</span>
+      <b id='tptxt'></b>
+    </div>
+    <div class='tdots' id='tdots' role='group' aria-label='Walkthrough steps'></div>
+
+    <div class='tstep' data-step='0'>
+      <h4>Step 1 · Read the problem as a to-do list</h4>
+      <p>Before writing any code, turn each sentence of the problem into one job. The class already declares <code>name</code> and <code>balance</code> and gives you every method header. <b>You only fill in the empty bodies</b>, plus the <code>main</code> method in <code>AccountRunner</code>.</p>
+      <div class='scroll'><table>
+        <tr><th>The problem says…</th><th>Your job</th><th>Points</th></tr>
+        <tr><td>“initializes the two instance variables with the two parameters”</td><td>First constructor: two assignments</td><td>1</td></tr>
+        <tr><td>“initializes just the <code>name</code> … sets the <code>balance</code> to <code>0.0</code>”</td><td>Second constructor: two assignments</td><td>1</td></tr>
+        <tr><td>“increase … the account’s balance by the specified <code>amount</code>”</td><td><code>deposit</code>: one statement</td><td>1</td></tr>
+        <tr><td>“decrease … the account’s balance by the specified <code>amount</code>”</td><td><code>withdraw</code>: one statement</td><td>1</td></tr>
+        <tr><td>“create two new account objects, using each of the two overloaded constructors”</td><td><code>main</code>: two statements using <code>new</code></td><td>1</td></tr>
+        <tr><td>“call the <code>deposit</code> and <code>withdraw</code> methods on each of the two accounts”</td><td><code>main</code>: four method calls</td><td>1</td></tr>
+      </table></div>
+      <p><b>Four habits for any class-writing FRQ</b></p>
+      <ol>
+        <li>Read all the parts before writing anything.</li>
+        <li>Match each sentence of the problem to a method header that already exists.</li>
+        <li>Say what the code should do in one plain-English sentence.</li>
+        <li>Translate that sentence with a pattern you already know. The next steps hand you the patterns.</li>
+      </ol>
+      <p><b>Quick check.</b> Should you change any of the method headers (the first line of each constructor or method)?</p>
+      <div class='tchoices prose'>
+        <button data-ok='0' data-why='Not quite. The headers are given to you, and other code depends on them. Changing a header can break everything that calls it.'>Yes, rewrite them so they match my answer</button>
+        <button data-ok='1' data-why='Right. Leave every header exactly as given and write only inside the braces.'>No, leave them alone and fill in the bodies</button>
+      </div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='1' data-pt='a1' data-hint='Look at the private variables at the top of the class. One holds the account holder’s name and the other holds the balance. Those two names go on the left of the equals signs.' data-win='Correct. Each instance variable gets its starting value from the matching parameter. That is 1 point.'>
+      <h4>Step 2 · Part (a), the first constructor · 1 point</h4>
+      <p><b>Say it in English first:</b> “Copy the incoming name into the account’s name, and the incoming balance into the account’s balance.”</p>
+      <div class='tcall'><b>Pattern:</b> inside a constructor, give each instance variable its starting value with <code>instanceVariable = parameter;</code></div>
+      <p>The instance variables at the top of the class are <code>name</code> and <code>balance</code>. The parameters in this constructor’s header are <code>userName</code> and <code>accountBalance</code>. Fill in the blanks:</p>
+<pre class='tcode'><span class='kw'>public</span> Account(String userName, <span class='kw'>double</span> accountBalance)
+{
+    <input class='blank' data-ans='name|this.name' aria-label='Variable that receives userName'> = userName;
+    <input class='blank' data-ans='balance|this.balance' aria-label='Variable that receives accountBalance'> = accountBalance;
+}</pre>
+      <div class='tcall warn'><b>Common trap:</b> do not write a type in front, as in <code>String name = userName;</code>. That declares a brand-new local variable that disappears when the constructor ends, and the instance variable stays <code>null</code>.</div>
+      <div class='trow'><button class='tcheck pri'>Check</button><button class='thint'>Hint</button><button class='tshow'>Show me</button></div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='2' data-pt='a2' data-hint='This constructor has only one parameter, userName. The balance has no parameter, so use the value the problem tells you to use.' data-win='Correct. The name comes from the parameter, and the balance gets the literal 0.0. Part (a) is done: 2 points.'>
+      <h4>Step 3 · Part (a), the second constructor · 1 point</h4>
+      <p><b>Say it in English first:</b> “Copy the incoming name into the account’s name, and start the balance at 0.0.”</p>
+      <div class='tcall'><b>Why two constructors with the same name is allowed:</b> they have different parameter lists. This is called <b>overloading</b>. When you write <code>new Account(...)</code>, Java picks the constructor whose parameters match your arguments.</div>
+      <p>This constructor has no parameter for the balance, so the problem gives you the value to use. Fill in the blanks:</p>
+<pre class='tcode'><span class='kw'>public</span> Account(String userName)
+{
+    name = <input class='blank' data-ans='userName' aria-label='Value assigned to name'>;
+    balance = <input class='blank' data-ans='0.0|0|0.00' aria-label='Value assigned to balance'>;
+}</pre>
+      <div class='trow'><button class='tcheck pri'>Check</button><button class='thint'>Hint</button><button class='tshow'>Show me</button></div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='3' data-pt='b1'>
+      <h4>Step 4 · Part (b), deposit · 1 point</h4>
+      <p><b>Say it in English first:</b> “The new balance is the old balance plus the amount.” The statement has to change the <code>balance</code> instance variable, because that is what the account remembers.</p>
+<pre class='tcode'><span class='kw'>public void</span> deposit(<span class='kw'>double</span> amount)
+{
+    <span class='cm'>// which one line goes here?</span>
+}</pre>
+      <p><b>Pick the line that works.</b> Click each one to see why it is right or wrong.</p>
+      <div class='tchoices'>
+        <button data-ok='0' data-why='No. = replaces the balance with amount, so everything already in the account is lost. Depositing 40.0 into 100.0 would leave 40.0.'>balance = amount;</button>
+        <button data-ok='1' data-why='Yes. += adds amount to the current balance. It is shorthand for balance = balance + amount; and both earn the point.'>balance += amount;</button>
+        <button data-ok='0' data-why='No. This changes the parameter amount, which is a temporary copy. The account’s balance is not touched.'>amount += balance;</button>
+        <button data-ok='0' data-why='No. deposit is void, so it should change the object rather than hand back a value, and nothing here changes balance.'>return balance + amount;</button>
+      </div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='4' data-pt='b2' data-hint='Withdrawing is the opposite of depositing. Which operator subtracts a value and stores the result back in the same variable?' data-win='Correct. balance -= amount; is shorthand for balance = balance - amount; and both earn the point. Part (b) is done: 2 points. Do not add checks the problem did not ask for, such as blocking overdrafts.'>
+      <h4>Step 5 · Part (b), withdraw · 1 point</h4>
+      <p><b>Say it in English first:</b> “The new balance is the old balance minus the amount.” This is the same pattern as <code>deposit</code> with the opposite operation. Fill in the operator:</p>
+<pre class='tcode'><span class='kw'>public void</span> withdraw(<span class='kw'>double</span> amount)
+{
+    balance <input class='blank short' data-ans='-=' aria-label='Operator'> amount;
+}</pre>
+      <p class='sub'>The long form <code>balance = balance - amount;</code> is also correct on the exam. This blank takes the short form.</p>
+      <div class='trow'><button class='tcheck pri'>Check</button><button class='thint'>Hint</button><button class='tshow'>Show me</button></div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='5' data-pt='c1' data-hint='To make an object you need the keyword that calls a constructor. The second constructor takes just one argument: a String, which is text inside double quotes.' data-win='Correct. new calls a constructor, and Java picks which one by the arguments: (String, double) runs the first, and (String) runs the second. Any name in quotes works.'>
+      <h4>Step 6 · Part (c), create the objects · 1 point</h4>
+      <p>Part (c) goes inside <code>main</code> in <code>AccountRunner</code>. A class is only a blueprint until you build an object from it.</p>
+      <div class='tcall'><b>Pattern:</b> <code>ClassName variable = new ClassName(arguments);</code> The arguments decide which constructor runs.</div>
+      <p>Make one account with each constructor:</p>
+<pre class='tcode'>Account acct1 = <input class='blank short' data-ans='new' aria-label='Keyword that creates an object'> Account(<span class='str'>"Maya"</span>, <span class='num'>250.0</span>);   <span class='cm'>// two arguments: first constructor</span>
+Account acct2 = <span class='kw'>new</span> Account(<input class='blank' data-ans='@str' aria-label='One String argument' placeholder='a name in quotes'>);   <span class='cm'>// one argument: second constructor</span></pre>
+      <div class='trow'><button class='tcheck pri'>Check</button><button class='thint'>Hint</button><button class='tshow'>Show me</button></div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='6' data-pt='c2' data-hint='deposit and withdraw are instance methods, so every call looks like objectName.methodName(argument). Check which object is on the left of each dot.' data-win='Correct. Each call needs an object before the dot because the method acts on that object’s data. Calling acct1.deposit changes only acct1. Part (c) is done: 2 more points, 6 in all.'>
+      <h4>Step 7 · Part (c), call the methods · 1 point</h4>
+      <div class='tcall'><b>Pattern:</b> <code>objectName.methodName(argument);</code> You need to call <code>deposit</code> and <code>withdraw</code> on <b>each</b> of the two accounts. Any numbers are fine for the arguments.</div>
+      <p>Assume <code>acct1</code> and <code>acct2</code> exist from the last step. Fill in the blanks:</p>
+<pre class='tcode'>acct1.<input class='blank' data-ans='deposit' aria-label='Method that adds 50.0 to acct1'>(<span class='num'>50.0</span>);
+acct1.<input class='blank' data-ans='withdraw' aria-label='Method that subtracts 75.0 from acct1'>(<span class='num'>75.0</span>);
+<input class='blank' data-ans='acct2' aria-label='Object that receives the deposit of 100.0'>.deposit(<span class='num'>100.0</span>);
+acct2.<input class='blank' data-ans='withdraw' aria-label='Method that subtracts 25.0 from acct2'>(<span class='num'>25.0</span>);</pre>
+      <div class='trow'><button class='tcheck pri'>Check</button><button class='thint'>Hint</button><button class='tshow'>Show me</button></div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='7'>
+      <h4>Step 8 · Put it all together</h4>
+      <p>You have all 6 points when your answer has every piece below. Read this list against your own code:</p>
+      <ul>
+        <li>Every header is unchanged, and each body is inside its braces.</li>
+        <li>The constructors assign to <code>name</code> and <code>balance</code> with <b>no type</b> in front, and the second one sets <code>balance</code> to <code>0.0</code>.</li>
+        <li><code>deposit</code> adds and <code>withdraw</code> subtracts, and both change <code>balance</code> instead of replacing it.</li>
+        <li>Both objects are made with <code>new</code>: one with a <code>String</code> and a number, one with a <code>String</code> only.</li>
+        <li>Every call is <code>objectName.method(number);</code> and it happens on both accounts.</li>
+        <li>Every statement ends with a semicolon, and you added nothing extra (no printing, no overdraft checks).</li>
+      </ul>
+      <div class='tcall'><b>Now do it again from memory.</b> Go to the Part (a) box, and write all three parts without looking at the steps. Then reveal each model solution and score yourself. If one part trips you up, come back to the step for that part.</div>
+      <p><button class='pri' id='tstart'>Go to the Part (a) box</button></p>
+    </div>
+
+    <div class='tnav'><button id='tback'>Back</button><span class='sub' id='tpos'></span><button class='pri' id='tnext'>Next</button></div>
+    <p style='margin:.6rem 0 0'><button id='treset'>Reset walkthrough</button></p>
+  </details>
+
+  <div class="frq">
+    <h3 style="margin-top:0">Part (a): the constructors</h3>
+    <p>Write the two overloaded constructors. The first initializes the two instance variables with the two parameters, <code>userName</code> and <code>accountBalance</code>. The second initializes just the <code>name</code> value with its parameter, then sets <code>balance</code> to <code>0.0</code>.</p>
+    <textarea id="txt_a" aria-label="Your answer for part (a)" spellcheck="false" placeholder="public Account(String userName, double accountBalance)&#10;{&#10;    ...&#10;}"></textarea>
+    <p><button class="frq-show" data-target="model_a">Show model solution</button></p>
+    <div class="frq-model" id="model_a">
+<pre class="code"><span class="kw">public</span> Account(String userName, <span class="kw">double</span> accountBalance)
+{
+    name = userName;
+    balance = accountBalance;
+}
+
+<span class="kw">public</span> Account(String userName)
+{
+    name = userName;
+    balance = <span class="num">0.0</span>;
+}</pre>
+      <p class="sub"><code>this.name = userName;</code> is also correct. Score yourself:</p>
+      <label class="chk"><input type="checkbox" class="frq-check" id="fa1"><span><b>1 pt</b> The first constructor assigns <code>userName</code> to <code>name</code> and <code>accountBalance</code> to <code>balance</code>.</span></label>
+      <label class="chk"><input type="checkbox" class="frq-check" id="fa2"><span><b>1 pt</b> The second constructor assigns <code>userName</code> to <code>name</code> and sets <code>balance</code> to <code>0.0</code>.</span></label>
+    </div>
+  </div>
+
+  <div class="frq">
+    <h3 style="margin-top:0">Part (b): deposit and withdraw</h3>
+    <p>Write the <code>deposit</code> and <code>withdraw</code> methods. They should increase and decrease the account’s balance by the specified <code>amount</code> parameter.</p>
+    <textarea id="txt_b" aria-label="Your answer for part (b)" spellcheck="false" placeholder="public void deposit(double amount)&#10;{&#10;    ...&#10;}"></textarea>
+    <p><button class="frq-show" data-target="model_b">Show model solution</button></p>
+    <div class="frq-model" id="model_b">
+<pre class="code"><span class="kw">public void</span> deposit(<span class="kw">double</span> amount)
+{
+    balance += amount;      <span class="cm">// or balance = balance + amount;</span>
+}
+
+<span class="kw">public void</span> withdraw(<span class="kw">double</span> amount)
+{
+    balance -= amount;      <span class="cm">// or balance = balance - amount;</span>
+}</pre>
+      <p class="sub">Both methods are <code>void</code>, so neither needs a <code>return</code>. Score yourself:</p>
+      <label class="chk"><input type="checkbox" class="frq-check" id="fb1"><span><b>1 pt</b> <code>deposit</code> increases <code>balance</code> by <code>amount</code> (adds to the old value rather than replacing it).</span></label>
+      <label class="chk"><input type="checkbox" class="frq-check" id="fb2"><span><b>1 pt</b> <code>withdraw</code> decreases <code>balance</code> by <code>amount</code>.</span></label>
+    </div>
+  </div>
+
+  <div class="frq">
+    <h3 style="margin-top:0">Part (c): the AccountRunner</h3>
+    <p>In <code>main</code>, create two new <code>Account</code> objects, one with each overloaded constructor. Any appropriate argument values are fine. Then call <code>deposit</code> and <code>withdraw</code> on each of the two accounts, again with any appropriate arguments.</p>
+    <textarea id="txt_c" aria-label="Your answer for part (c)" spellcheck="false" placeholder="Account acct1 = new Account(...);&#10;..."></textarea>
+    <p><button class="frq-show" data-target="model_c">Show model solution</button></p>
+    <div class="frq-model" id="model_c">
+<pre class="code">Account acct1 = <span class="kw">new</span> Account(<span class="str">"Maya"</span>, <span class="num">250.0</span>);
+Account acct2 = <span class="kw">new</span> Account(<span class="str">"Jordan"</span>);
+acct1.deposit(<span class="num">50.0</span>);
+acct1.withdraw(<span class="num">75.0</span>);
+acct2.deposit(<span class="num">100.0</span>);
+acct2.withdraw(<span class="num">25.0</span>);</pre>
+      <p class="sub">Your names and numbers can differ. Score yourself:</p>
+      <label class="chk"><input type="checkbox" class="frq-check" id="fc1"><span><b>1 pt</b> Creates two <code>Account</code> objects with <code>new</code>, one using the two-parameter constructor (a <code>String</code> then a number) and one using the one-parameter constructor (a <code>String</code>).</span></label>
+      <label class="chk"><input type="checkbox" class="frq-check" id="fc2"><span><b>1 pt</b> Calls both <code>deposit</code> and <code>withdraw</code> on each of the two objects, using the dot operator and a numeric argument.</span></label>
+    </div>
+  </div>
+
+  <div class="score">
+    <b>Self-score: <span id="frqscore">0 / 6</span></b>
+    <div class="bar"><i id="frqbar"></i></div>
+    <p class="sub" style="margin:.3rem 0 0">This is a practice rubric written for this study guide, not the official College Board scoring guide.</p>
+  </div>
+
+  <div class="widget" id="otrack">
+    <h3 style="margin-top:0">Object tracker</h3>
+    <p class="sub" style="margin-top:0">Step through the model answer for part (c) and watch each object’s state change. Notice that each call changes only the object it is called on.</p>
+    <pre class="code" id="ocode"></pre>
+    <div class="row"><button class="pri" id="ostep">Step</button><button id="oreset">Reset</button></div>
+    <div class="scroll"><table>
+      <tr><th>Variable</th><th><code>name</code></th><th><code>balance</code></th></tr>
+      <tr><td><code>acct1</code></td><td id="oa1n">—</td><td id="oa1b">—</td></tr>
+      <tr><td><code>acct2</code></td><td id="oa2n">—</td><td id="oa2b">—</td></tr>
+    </table></div>
+    <p id="onote" class="sub" style="margin:.3rem 0 0"></p>
+  </div>
+
+  <div class="tracer" data-id="t14" data-answer="225.0" data-topic="FRQ">
+    <div class="q">After the model runner finishes, what is <code>acct1</code>’s balance? (include the decimal)</div>
+    <div class="ans"><input type="text" aria-label="Your answer"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+    <div class="out"><div class="verdict"></div><p>250.0 + 50.0 = 300.0, then 300.0 − 75.0 = 225.0. The calls on <code>acct2</code> do not touch it.</p></div>
+  </div>
+  <div class="tracer" data-id="t15" data-answer="null" data-topic="FRQ">
+    <div class="q">A student writes this first constructor, and it compiles. After <code>Account a = new Account("Ava", 50.0);</code>, what does <code>a</code>’s <code>name</code> instance variable hold?</div>
+<pre><span class="kw">public</span> Account(String userName, <span class="kw">double</span> accountBalance)
+{
+    String name = userName;
+    balance = accountBalance;
+}</pre>
+    <div class="ans"><input type="text" aria-label="Your answer"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+    <div class="out"><div class="verdict"></div><p>Writing the type <code>String</code> declares a brand-new local variable that disappears when the constructor ends. The instance variable was never assigned, and an unassigned object reference starts as <code>null</code>.</p></div>
+  </div>
+  <div class="tracer" data-id="t16" data-answer="40.0" data-topic="FRQ">
+    <div class="q">An account has a balance of 100.0. What is the balance after <code>deposit(40.0)</code> with this buggy method? (include the decimal)</div>
+<pre><span class="kw">public void</span> deposit(<span class="kw">double</span> amount)
+{
+    balance = amount;
+}</pre>
+    <div class="ans"><input type="text" aria-label="Your answer"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+    <div class="out"><div class="verdict"></div><p><code>=</code> replaces the balance with 40.0. The fix is <code>balance += amount;</code>, which would give 140.0.</p></div>
+  </div>
+
+  <h3>Common FRQ mistakes</h3>
+  <div class="scroll"><table>
+    <tr><th>Students write</th><th>What really happens</th></tr>
+    <tr><td><code>String name = userName;</code> in a constructor</td><td>Declares a local variable. Leave off the type to assign the instance variable: <code>name = userName;</code></td></tr>
+    <tr><td><code>balance = amount;</code> in <code>deposit</code></td><td>Replaces the balance. Use <code>+=</code> to add to it.</td></tr>
+    <tr><td><code>Account acct = Account("Jordan");</code></td><td>Missing <code>new</code>; constructors are called with <code>new</code>.</td></tr>
+    <tr><td><code>new Account(250.0, "Maya")</code></td><td>Arguments must match the parameter order: the <code>String</code> first, then the <code>double</code>.</td></tr>
+    <tr><td><code>Account.deposit(50.0);</code></td><td><code>deposit</code> is an instance method. Call it on an object: <code>acct1.deposit(50.0);</code></td></tr>
+    <tr><td><code>double x = acct1.deposit(50.0);</code></td><td><code>deposit</code> is <code>void</code>, so there is no value to store.</td></tr>
+    <tr><td>Adding an overdraft <code>if</code> to <code>withdraw</code></td><td>The problem only asks you to decrease the balance. Extra behavior that was not requested can change your results.</td></tr>
+  </table></div>
+</section>
+
 <section id="traps">
   <h2>Common traps</h2>
   <div class="scroll"><table>
@@ -545,7 +898,9 @@ System.out.<span class="kw">println</span>(w.substring(<span class="num">0</span
     ['immutable','Cannot change after creation; every String method returns a new String.'],
     ['concatenation','Joining strings with +. "x" + 5 is "x5".'],
     ['lexicographic order','Dictionary order by character code, used by compareTo. Uppercase comes first.'],
-    ['Math.random()','A double from 0.0 up to but never including 1.0.']
+    ['Math.random()','A double from 0.0 up to but never including 1.0.'],
+    ['instance variable','Data stored inside each object, declared in the class outside any method (name and balance in Account).'],
+    ['overloaded constructors','Constructors in one class that share the class name but have different parameter lists.']
   ];
   var deck=document.getElementById('deck');
   function buildDeck(list){
@@ -616,6 +971,129 @@ System.out.<span class="kw">println</span>(w.substring(<span class="num">0</span
   });
   document.getElementById('requiz').addEventListener('click',buildQuiz);
   document.getElementById('pq').textContent=state.best==null?'—':state.best+'/'+Q.length;
+
+  // ---------- FRQ practice ----------
+  state.frq=state.frq||{}; state.frqText=state.frqText||{};
+  var frqBoxes=document.querySelectorAll('.frq-check');
+  function frqScore(){
+    var n=0; frqBoxes.forEach(function(b){ if(b.checked) n++; });
+    document.getElementById('frqscore').textContent=n+' / '+frqBoxes.length;
+    document.getElementById('frqbar').style.width=(100*n/frqBoxes.length)+'%';
+  }
+  frqBoxes.forEach(function(b){
+    b.checked=!!state.frq[b.id];
+    b.addEventListener('change',function(){ state.frq[b.id]=b.checked; save(state); frqScore(); });
+  });
+  frqScore();
+  document.querySelectorAll('.frq-show').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var open=document.getElementById(btn.dataset.target).classList.toggle('show');
+      btn.textContent=open?'Hide model solution':'Show model solution';
+    });
+  });
+  document.querySelectorAll('.frq textarea').forEach(function(t){
+    if(state.frqText[t.id]) t.value=state.frqText[t.id];
+    t.addEventListener('input',function(){ state.frqText[t.id]=t.value; save(state); });
+  });
+
+  // ---------- guided walkthrough ----------
+  state.tut=state.tut||{cur:0,done:{}}; state.tut.done=state.tut.done||{};
+  var tut=document.getElementById('tut'), tsteps=tut.querySelectorAll('.tstep'), tpips=tut.querySelectorAll('.pip'), tdots=document.getElementById('tdots');
+  function tDrawPips(){
+    var n=0;
+    tpips.forEach(function(p){ var on=!!state.tut.done[p.dataset.pt]; p.classList.toggle('on',on); if(on) n++; });
+    document.getElementById('tptxt').textContent=n+' of 6 points built';
+    var sm=document.getElementById('tsum'); if(sm) sm.textContent=n?(n+' of 6 points built'):'Stuck? Open this';
+  }
+  function tShow(i){
+    i=Math.max(0,Math.min(tsteps.length-1,i)); state.tut.cur=i; save(state);
+    tsteps.forEach(function(s,k){ s.classList.toggle('on',k===i); });
+    tdots.querySelectorAll('button').forEach(function(b,k){ b.classList.toggle('cur',k===i); b.setAttribute('aria-current',k===i?'step':'false'); });
+    document.getElementById('tpos').textContent='Step '+(i+1)+' of '+tsteps.length;
+    document.getElementById('tback').disabled=(i===0);
+    document.getElementById('tnext').disabled=(i===tsteps.length-1);
+  }
+  tsteps.forEach(function(s,k){
+    var b=document.createElement('button'); b.textContent=String(k+1); b.setAttribute('aria-label','Go to step '+(k+1));
+    b.addEventListener('click',function(){ tShow(k); }); tdots.appendChild(b);
+  });
+  function tSay(fb,msg,kind){ fb.textContent=msg; fb.className='tfb show '+kind; }
+  function tNorm(s){ return s.replace(/\s+/g,''); }
+  function tBlankOK(inp){
+    var v=inp.value.trim(), ans=inp.dataset.ans;
+    if(ans==='@str') return /^"[^"]+"$/.test(v);
+    return ans.split('|').some(function(a){ return tNorm(a)===tNorm(v); });
+  }
+  function tPoint(step){ if(step.dataset.pt){ state.tut.done[step.dataset.pt]=true; save(state); tDrawPips(); } }
+  tsteps.forEach(function(step){
+    var fb=step.querySelector('.tfb'), blanks=step.querySelectorAll('input.blank');
+    var chk=step.querySelector('.tcheck'), hint=step.querySelector('.thint'), show=step.querySelector('.tshow');
+    if(!chk) return;
+    chk.addEventListener('click',function(){
+      var good=0;
+      blanks.forEach(function(b){ var ok=tBlankOK(b); b.classList.toggle('ok',ok); b.classList.toggle('bad',!ok); if(ok) good++; });
+      if(good===blanks.length){ tSay(fb,step.dataset.win,'ok'); tPoint(step); }
+      else tSay(fb,good+' of '+blanks.length+' blanks are right. Fix the red ones, or press Hint.','bad');
+    });
+    hint.addEventListener('click',function(){ tSay(fb,step.dataset.hint,'info'); });
+    show.addEventListener('click',function(){
+      blanks.forEach(function(b){ var a=b.dataset.ans; b.value=(a==='@str')?'"Jordan"':a.split('|')[0]; b.classList.remove('bad'); b.classList.add('ok'); });
+      tSay(fb,'Here is the answer. '+step.dataset.win,'info');
+    });
+    blanks.forEach(function(b){ b.addEventListener('keydown',function(e){ if(e.key==='Enter') chk.click(); }); });
+  });
+  tut.querySelectorAll('.tchoices').forEach(function(box){
+    var step=box.closest('.tstep'), fb=step.querySelector('.tfb');
+    box.querySelectorAll('button').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var ok=btn.dataset.ok==='1';
+        box.querySelectorAll('button').forEach(function(x){ x.classList.remove('ok','bad'); });
+        btn.classList.add(ok?'ok':'bad');
+        tSay(fb,btn.dataset.why,ok?'ok':'bad');
+        if(ok) tPoint(step);
+      });
+    });
+  });
+  document.getElementById('tback').addEventListener('click',function(){ tShow(state.tut.cur-1); });
+  document.getElementById('tnext').addEventListener('click',function(){ tShow(state.tut.cur+1); });
+  document.getElementById('tstart').addEventListener('click',function(){ var t=document.getElementById('txt_a'); t.scrollIntoView({block:'center'}); t.focus(); });
+  document.getElementById('treset').addEventListener('click',function(){
+    state.tut={cur:0,done:{},open:true}; save(state);
+    tut.querySelectorAll('input.blank').forEach(function(b){ b.value=''; b.classList.remove('ok','bad'); });
+    tut.querySelectorAll('.tfb').forEach(function(f){ f.textContent=''; f.className='tfb'; });
+    tut.querySelectorAll('.tchoices button').forEach(function(x){ x.classList.remove('ok','bad'); });
+    tDrawPips(); tShow(0);
+  });
+  if(state.tut.open) tut.open=true;
+  tut.addEventListener('toggle',function(){ state.tut.open=tut.open; save(state); });
+  tDrawPips(); tShow(state.tut.cur||0);
+
+  // ---------- object tracker ----------
+  var oLines=['Account acct1 = new Account("Maya", 250.0);','Account acct2 = new Account("Jordan");','acct1.deposit(50.0);','acct1.withdraw(75.0);','acct2.deposit(100.0);','acct2.withdraw(25.0);'];
+  var oSteps=[
+    {l:-1,a:null,b:null,n:'Nothing has run yet. Press Step.'},
+    {l:0,a:['"Maya"','250.0'],b:null,n:'First constructor: both instance variables come from the arguments.'},
+    {l:1,a:['"Maya"','250.0'],b:['"Jordan"','0.0'],n:'Second constructor: name comes from the argument and balance is set to 0.0.'},
+    {l:2,a:['"Maya"','300.0'],b:['"Jordan"','0.0'],n:'deposit adds 50.0 to acct1’s balance.'},
+    {l:3,a:['"Maya"','225.0'],b:['"Jordan"','0.0'],n:'withdraw subtracts 75.0 from acct1’s balance.'},
+    {l:4,a:['"Maya"','225.0'],b:['"Jordan"','100.0'],n:'The same method called on acct2 changes only acct2.'},
+    {l:5,a:['"Maya"','225.0'],b:['"Jordan"','75.0'],n:'Done: acct1 is 225.0 and acct2 is 75.0.'}
+  ];
+  var oi=0, ocode=document.getElementById('ocode');
+  oLines.forEach(function(t){ var s=document.createElement('span'); s.className='sline'; s.textContent=t; ocode.appendChild(s); });
+  function oDraw(){
+    var st=oSteps[oi];
+    ocode.querySelectorAll('.sline').forEach(function(s,i){ s.classList.toggle('on',i===st.l); });
+    document.getElementById('oa1n').textContent=st.a?st.a[0]:'—';
+    document.getElementById('oa1b').textContent=st.a?st.a[1]:'—';
+    document.getElementById('oa2n').textContent=st.b?st.b[0]:'—';
+    document.getElementById('oa2b').textContent=st.b?st.b[1]:'—';
+    document.getElementById('onote').textContent=st.n;
+    document.getElementById('ostep').disabled=(oi>=oSteps.length-1);
+  }
+  document.getElementById('ostep').addEventListener('click',function(){ if(oi<oSteps.length-1){ oi++; oDraw(); } });
+  document.getElementById('oreset').addEventListener('click',function(){ oi=0; oDraw(); });
+  oDraw();
 
   // ---------- nav highlight ----------
   var links=document.querySelectorAll('#nav a'), secs=document.querySelectorAll('main>section');
