@@ -275,11 +275,11 @@ System.out.<span class="kw">println</span>(a + <span class="str">" "</span> + b)
     <li>Integer division by zero throws <code>ArithmeticException</code>; double division by zero does not.</li>
     <li>Shortcuts: <code>x += 3</code>, <code>x -= 3</code>, <code>x *= 3</code>, <code>x /= 3</code>, <code>x %= 3</code>, <code>x++</code>, <code>x--</code>. The exam only uses <code>++</code>/<code>--</code> as standalone statements.</li>
   </ul>
-  <div class="tracer" data-id="t3" data-answer="6" data-topic="Expressions">
+  <div class="tracer" data-id="t3" data-answer="5" data-topic="Expressions">
     <div class="q">What is <code>x</code>?</div>
 <pre><span class="kw">int</span> x = <span class="num">17</span> / <span class="num">5</span> + <span class="num">17</span> % <span class="num">5</span>;</pre>
     <div class="ans"><input type="text" aria-label="Your answer"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
-    <div class="out"><div class="verdict"></div><p><code>17 / 5</code> is 3 (remainder dropped). <code>17 % 5</code> is 2. 3 + 2 = 6.</p></div>
+    <div class="out"><div class="verdict"></div><p><code>17 / 5</code> is 3 (remainder dropped). <code>17 % 5</code> is 2. 3 + 2 = 5.</p></div>
   </div>
   <div class="tracer" data-id="t4" data-answer="Total: 23" data-topic="Expressions">
     <div class="q">What prints?</div>
@@ -336,7 +336,7 @@ System.out.<span class="kw">println</span>(a + <span class="str">" "</span> + b)
 Account a = <span class="kw">new</span> Account(<span class="str">"Lee"</span>, <span class="num">100</span>);   <span class="cm">// 100 widens to 100.0</span>
 a.deposit(<span class="num">50</span>);                             <span class="cm">// instance method on a</span>
 <span class="kw">double</span> b = a.getBalance();                 <span class="cm">// 150.0</span>
-<span class="kw">int</span> big = Math.max(<span class="num">3</span>, <span class="num">9</span>);                  <span class="cm">// class (static) method</span></pre></div>
+<span class="kw">double</span> root = Math.sqrt(<span class="num">81</span>);                  <span class="cm">// class (static) method</span></pre></div>
   <ul>
     <li><b>Signature</b> = name + parameter list. <b>Parameters</b> are in the header; <b>arguments</b> are the values you pass. Count, order, and types must match.</li>
     <li><b>void</b> methods return nothing: <code>double x = a.deposit(5);</code> will not compile.</li>
@@ -786,7 +786,7 @@ acct2.withdraw(<span class="num">25.0</span>);</pre>
 
 <section id="quiz">
   <h2>Unit quiz</h2>
-  <p class="sub">Twelve questions. Pick an answer to see why; your best score saves.</p>
+  <p class="sub" id="qintro">Thirteen questions. Pick an answer to see why; your best score saves.</p>
   <div id="quizbox"></div>
   <div class="score" id="scorebox" style="display:none"></div>
   <p><button class="pri" id="grade">Show my score</button> <button id="requiz">Start over</button></p>
@@ -824,7 +824,7 @@ acct2.withdraw(<span class="num">25.0</span>);</pre>
     var n=Object.keys(state.solved).length;
     document.getElementById('pt').textContent=n;
     document.getElementById('pbar').style.width=(100*n/tracers.length)+'%';
-    document.getElementById('pq').textContent=state.best==null?'—':state.best+'/12';
+    document.getElementById('pq').textContent=state.best==null?'—':state.best+'/'+(Q?Q.length:13);
   }
   updateProg();
   document.getElementById('reset').addEventListener('click',function(){
@@ -921,7 +921,7 @@ acct2.withdraw(<span class="num">25.0</span>);</pre>
   // ---------- quiz ----------
   var Q=[
     {t:'Output',s:'What is the output?',c:'System.out.print("A");\nSystem.out.println("B");\nSystem.out.print("C");',o:['ABC on one line','AB, then C on the next line','A, B, C on three lines','A, then BC on the next line'],a:1,w:'print leaves the cursor after A; println prints B and moves down; C lands on the new line.'},
-    {t:'Expressions',s:'What is x?',c:'int x = 17 / 5 + 17 % 5;',o:['3','3.4','5','6'],a:3,w:'17 / 5 is 3 and 17 % 5 is 2.'},
+    {t:'Expressions',s:'What is x?',c:'int x = 17 / 5 + 17 % 5;',o:['3','3.4','5','6'],a:2,w:'17 / 5 is 3 (the remainder is dropped) and 17 % 5 is 2, so the sum is 5.'},
     {t:'Casting',s:'Which expression evaluates to 3.5?',o:['7 / 2','(double) (7 / 2)','(double) 7 / 2','(int) 7.0 / 2'],a:2,w:'The cast applies to 7 only, so it is 7.0 / 2. Option B divides first and gets 3.0.'},
     {t:'Casting',s:'What is n?',c:'double d = 8.75;\nint n = (int) (d + 0.5);',o:['8','9','9.25','compile error'],a:1,w:'8.75 + 0.5 = 9.25, truncated to 9.'},
     {t:'Strings',s:'What prints?',c:'String s = "computer";\nSystem.out.println(s.substring(3, 6) + s.length());',o:['pute8','put8','pute7','mpu8'],a:1,w:'Indexes 3, 4, 5 are p, u, t; length is 8.'},
@@ -936,6 +936,7 @@ acct2.withdraw(<span class="num">25.0</span>);</pre>
   ];
 
   var box=document.getElementById('quizbox'), picks={};
+  document.getElementById('qintro').textContent=Q.length+' questions. Pick an answer to see why; your best score saves.';
   function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function buildQuiz(){
     box.innerHTML=''; picks={};
