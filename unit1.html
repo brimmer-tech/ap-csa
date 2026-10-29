@@ -926,10 +926,10 @@ acct2.withdraw(<span class="num">25.0</span>);</pre>
     {t:'Casting',s:'What is n?',c:'double d = 8.75;\nint n = (int) (d + 0.5);',o:['8','9','9.25','compile error'],a:1,w:'8.75 + 0.5 = 9.25, truncated to 9.'},
     {t:'Strings',s:'What prints?',c:'String s = "computer";\nSystem.out.println(s.substring(3, 6) + s.length());',o:['pute8','put8','pute7','mpu8'],a:1,w:'Indexes 3, 4, 5 are p, u, t; length is 8.'},
     {t:'Math',s:'Which produces a random integer from 5 to 15, inclusive?',o:['(int) (Math.random() * 10) + 5','(int) (Math.random() * 11) + 5','(int) (Math.random() * 15) + 5','(int) (Math.random() * 11) + 4'],a:1,w:'15 - 5 + 1 = 11 possible values, lowest 5.'},
-    {t:'Objects',s:'Given Account(String owner, double balance), void deposit(double amount), double getBalance(): which compiles?',o:['Account a = new Account(100.0, "Lee");','double b = a.deposit(50.0);','Account a = new Account("Lee", 100);','a.getBalance(25.0);'],a:2,w:'The int 100 widens to a double. A reverses the arguments, B assigns a void, D passes an argument to a no-parameter method.'},
+    {t:'Objects',s:'Given Account(String owner, double balance), void deposit(double amount), double getBalance(): which compiles?',o:['Account a = new Account(100.0, "Lee");','double b = a.deposit(50.0);','Account a = new Account("Lee", 100);','a.getBalance(25.0);'],a:2,w:'The int 100 widens to a double. Option A reverses the arguments, B assigns a void, and D passes an argument to a no-parameter method.'},
     {t:'Strings',s:'What is t at the end?',c:'String t = "hello";\nt.substring(0, 1);\nt = t + "!";',o:['"h!"','"hello!"','"hello"','"h"'],a:1,w:'The substring result was discarded. Strings are immutable.'},
     {t:'Variables',s:'What prints?',c:'int a = 5;\nint b = a;\nb += 3;\nSystem.out.println(a + " " + b);',o:['5 8','8 8','5 5','8 5'],a:0,w:'Primitives copy values; b += 3 does not touch a.'},
-    {t:'Strings',s:'Which is true?',o:['"apple".compareTo("Apple") < 0','"apple".equals("Apple")','"apple".indexOf("p") == 2','"apple".compareTo("apricot") < 0'],a:3,w:'They share "ap"; p comes before r, so negative. Uppercase A sorts before lowercase a, so A is positive. The first p is at index 1.'},
+    {t:'Strings',s:'Which is true?',o:['"apple".compareTo("Apple") < 0','"apple".equals("Apple")','"apple".indexOf("p") == 2','"apple".compareTo("apricot") < 0'],a:3,w:'They share "ap"; p comes before r, so option D is negative, which makes it true. Option A is false: uppercase A sorts before lowercase a, so compareTo gives a positive number. Option C is false: the first p is at index 1.'},
     {t:'Objects',s:'What prints?',c:'Account a = new Account("Lee", 100);\nAccount c = a;\nc.deposit(50);\nSystem.out.println(a.getBalance());',o:['100.0','150.0','50.0','compile error'],a:1,w:'c and a reference the same object, so the deposit shows through a.'},
     {t:'Math',s:'Which statement compiles?',o:['int r = Math.pow(2, 3);','int r = Math.sqrt(16);','int r = (int) Math.pow(2, 3);','int r = Math.random() * 6;'],a:2,w:'pow, sqrt and random all return doubles; storing one in an int needs a cast. Only C has one.'},
     {t:'Expressions',s:'What prints?',c:'System.out.println("Total: " + 2 + 3);',o:['Total: 5','Total: 23','Total: 2 3','compile error'],a:1,w:'Once a String is on the left, + concatenates left to right.'}
@@ -944,7 +944,7 @@ acct2.withdraw(<span class="num">25.0</span>);</pre>
       var d=document.createElement('div'); d.className='qz';
       var h='<div class="stem">'+(i+1)+'. '+esc(q.s)+'</div>';
       if(q.c) h+='<pre>'+esc(q.c)+'</pre>';
-      q.o.forEach(function(o,j){ h+='<label class="opt"><input type="radio" name="q'+i+'" value="'+j+'"><span>'+esc(o)+'</span></label>'; });
+      q.o.forEach(function(o,j){ h+='<label class="opt"><input type="radio" name="q'+i+'" value="'+j+'"><span><b>'+'ABCD'.charAt(j)+'.</b> '+esc(o)+'</span></label>'; });
       h+='<div class="why">'+esc(q.w)+'</div>';
       d.innerHTML=h;
       d.querySelectorAll('input').forEach(function(r){
