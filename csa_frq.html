@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AP CSA FRQ Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F7FB; --surface:#FFFFFF; --ink:#18233A; --muted:#56637D; --line:#D3DCEA;
+  --accent:#2B55CC; --accent-ink:#FFFFFF; --hint:#8A5A00; --hint-bg:#FFF4DC; --hint-line:#EBCB86;
+  --ok:#1C7A44; --code-bg:#EEF2F8;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F151E; --surface:#17202D; --ink:#E5EAF3; --muted:#9BA7BD; --line:#2B3748;
+    --accent:#8EAEFF; --accent-ink:#0F151E; --hint:#F1C56E; --hint-bg:#2E2512; --hint-line:#5C4719;
+    --ok:#74D79F; --code-bg:#1E2938; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F151E; --surface:#17202D; --ink:#E5EAF3; --muted:#9BA7BD; --line:#2B3748;
+  --accent:#8EAEFF; --accent-ink:#0F151E; --hint:#F1C56E; --hint-bg:#2E2512; --hint-line:#5C4719;
+  --ok:#74D79F; --code-bg:#1E2938; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 4.5rem)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1.0625rem;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+code,.mono{font-family:var(--mono);font-size:.9em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar{max-width:1240px;margin:0 auto;padding:.7rem 1.25rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+h1{margin:0;font-size:1.15rem;flex:1;min-width:14rem}
+.tabs{display:flex;gap:.4rem}
+.tabs a{text-decoration:none;font-weight:700;padding:.4rem .95rem;border-radius:6px;border:1.5px solid var(--line);color:var(--ink)}
+.tabs a[aria-current="page"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.tabs a .done{color:var(--ok);margin-left:.3rem}
+.tabs a[aria-current="page"] .done{color:inherit}
+
+.layout{max-width:1240px;margin:0 auto;padding:1.25rem;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:1.5rem;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.stim{position:sticky;top:5rem;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:1.1rem 1.25rem}
+@media (max-width:900px){.stim{position:static}}
+.stim h2{font-size:1.05rem;margin:0 0 .6rem}
+.stim > div[hidden]{display:none}
+.stim ul{padding-left:1.1rem;margin:.5rem 0}
+.stim li{margin:.35rem 0}
+.tips{margin-top:1rem;border-top:1px solid var(--line);padding-top:.75rem}
+.tips summary{cursor:pointer;font-weight:700}
+.tips ul{font-size:.95rem}
+
+.q{min-width:0}
+.q[hidden]{display:none}
+.qhead{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem}
+.qnum{background:var(--ink);color:var(--surface);font-weight:700;padding:.15rem .6rem;border-radius:4px}
+.q p,.q li{max-width:70ch}
+.q ul{padding-left:1.2rem}
+.tbl{overflow-x:auto;margin:.75rem 0 1.25rem}
+table{border-collapse:collapse;background:var(--surface);font-size:.95rem}
+th,td{border:1px solid var(--line);padding:.45rem .75rem;text-align:left;vertical-align:top}
+th{font-size:.88rem;color:var(--muted)}
+td.m{font-family:var(--mono);white-space:pre}
+
+h3{font-size:1.05rem;margin:1.5rem 0 .4rem}
+.answer label{font-weight:700;display:block;margin-bottom:.35rem}
+textarea{width:100%;min-height:20rem;font-family:var(--mono);font-size:.92rem;line-height:1.55;tab-size:4;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:8px;padding:.8rem}
+.under{display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap;margin-top:.4rem;font-size:.9rem;color:var(--muted)}
+button{font:inherit;font-weight:700;cursor:pointer;border-radius:6px;padding:.5rem .95rem;border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink)}
+button.quiet{background:transparent;color:var(--accent)}
+button:disabled{opacity:.45;cursor:default}
+
+.hints{margin-top:1.5rem;border:1.5px solid var(--hint-line);background:var(--hint-bg);border-radius:10px;padding:1rem 1.1rem}
+.hints h3{margin:0 0 .3rem;color:var(--hint)}
+.hints .meta{font-size:.9rem;color:var(--muted);margin:0 0 .6rem}
+.hints ol{margin:.25rem 0 .75rem;padding-left:1.3rem}
+.hints li{margin:.5rem 0}
+.hints li::marker{font-weight:700;color:var(--hint)}
+.hints pre{font-family:var(--mono);font-size:.86rem;background:var(--surface);border:1px solid var(--hint-line);border-radius:6px;padding:.7rem;overflow-x:auto;margin:.4rem 0 0;line-height:1.5}
+.hints pre code{background:none;padding:0}
+
+.selfcheck{list-style:none;padding:0}
+.selfcheck li{margin:.35rem 0}
+.selfcheck label{display:flex;gap:.6rem;align-items:flex-start}
+.selfcheck input{margin-top:.35rem;width:1.1rem;height:1.1rem;accent-color:var(--ok)}
+.ex-step{border-left:4px solid var(--line);padding:.1rem 0 .1rem 1rem;margin:1.25rem 0}
+.ex-step[hidden]{display:none}
+.ex-step h3{margin:.1rem 0 .4rem}
+.ex-step .num{display:inline grid;place-items:center;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.9rem;margin-right:.5rem}
+.note{background:var(--hint-bg);border:1px solid var(--hint-line);border-radius:8px;padding:.6rem .85rem;margin:.6rem 0}
+.note b{color:var(--hint)}
+pre.ex{font-family:var(--mono);font-size:.88rem;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.8rem;overflow-x:auto;line-height:1.5;margin:.5rem 0}
+pre.ex mark{background:var(--hint-bg);color:inherit;outline:1px solid var(--hint-line)}
+tr.crash td{color:#B3261E;font-weight:700}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) tr.crash td{color:#FF8E85}}
+:root[data-theme="dark"] tr.crash td{color:#FF8E85}
+.ex-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:1rem 0}
+.turnin label{font-weight:700;display:block;margin-bottom:.3rem}
+.turnin input[type="text"]{width:100%;max-width:26rem;font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:6px;padding:.55rem .7rem}
+.status{list-style:none;padding:0;margin:.5rem 0}
+.status li{padding:.45rem 0;border-bottom:1px solid var(--line);display:flex;gap:.75rem;flex-wrap:wrap}
+.status b{min-width:2.2rem}
+.status .warn{color:var(--hint);font-weight:700}
+.send{display:flex;gap:.5rem;flex-wrap:wrap;margin:1rem 0 .5rem}
+pre.preview{font-family:var(--mono);font-size:.82rem;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.8rem;max-height:22rem;overflow:auto;white-space:pre-wrap;line-height:1.45}
+.sendmsg{font-size:.95rem;min-height:1.4em}
+.nav-q{margin-top:2rem;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <h1>AP CSA FRQ Practice</h1>
+    <nav class="tabs" aria-label="Questions">
+      <a href="#example" data-q="ex">How it works</a>
+      <a href="#q1a" data-q="1a">1a<span class="done" id="done-1a"></span></a>
+      <a href="#q1b" data-q="1b">1b<span class="done" id="done-1b"></span></a>
+      <a href="#q2a" data-q="2a">2a<span class="done" id="done-2a"></span></a>
+      <a href="#q2b" data-q="2b">2b<span class="done" id="done-2b"></span></a>
+      <a href="#turn-in" data-q="turnin">Turn in</a>
+    </nav>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="stim">
+    <div data-set="e" hidden>
+    <h2>Practice setup (not from the exam)</h2>
+    <p>This made-up question is here only to show the process. On a real question, this panel holds the setup that every part shares.</p>
+    <p>Consider the following variable.</p>
+    <ul>
+      <li><code>word</code> is a <code>String</code> variable with a non-null value.</li>
+    </ul>
+    </div>
+    <div data-set="t" hidden>
+    <h2>Turning in your work</h2>
+    <p>Your answers go to Mr. Ware by email, from your own school account, so he knows the work is yours.</p>
+    <p>Nothing is sent until you press Send in your email.</p>
+    </div>
+    <div data-set="1">
+    <h2>Questions 1a and 1b refer to the following.</h2>
+    <p>This question involves processing strings of text.</p>
+    <p>Consider the following variables.</p>
+    <ul>
+      <li><code>colWidth</code> is an <code>int</code> variable with a positive value.</li>
+      <li><code>text</code> is a <code>String</code> variable with a non-null value.</li>
+      <li><code>otherText</code> is a <code>String</code> variable with a non-null value.</li>
+    </ul>
+    </div>
+    <div data-set="2" hidden>
+    <h2>Questions 2a and 2b refer to the following.</h2>
+    <p>This question involves writing two code segments that use information about downloaded songs.</p>
+    <p>A record company uses the following variables to maintain information about each song in the company’s catalog.</p>
+    <ul>
+      <li><code>downloads</code> is an <code>int</code> variable that represents the number of times a song was downloaded. Assume the value of this variable is positive.</li>
+      <li><code>songInfo</code> is a <code>String</code> variable that contains information about the song. The string consists of the artist name, followed by a hyphen (<code>"-"</code>), followed by the album title, followed by another hyphen, followed by the song title. Assume that no other hyphens appear in the string.</li>
+    </ul>
+    </div>
+    <details class="tips">
+      <summary>Tips before you start</summary>
+      <ul>
+        <li>You’re writing a code segment, not a whole method or class. The variables above already exist and already have values.</li>
+        <li>Read the rules, then check them against every row of the table. The table shows the edge cases.</li>
+        <li>Stick to tools from the Java Quick Reference: <code>length()</code>, <code>substring</code>, <code>indexOf</code>, <code>equals</code>, plus the <code>%</code> and <code>/</code> operators for digits.</li>
+        <li>Before you’re done, trace your code by hand with two or three rows from the table.</li>
+      </ul>
+    </details>
+  </aside>
+
+  <main>
+  <!-- worked example -->
+  <section class="q" id="q-ex" hidden>
+    <div class="qhead"><span class="qnum">Example</span></div>
+    <h2 style="margin:.25rem 0 .5rem;font-size:1.35rem">How to work an FRQ, step by step</h2>
+    <p>Follow one student through a made-up practice question. It isn’t one of your questions, so nothing here gives away an answer. Watch the steps, then use the same steps on 1a.</p>
+    <div class="note"><b>The practice question:</b> A code segment, which you will write, should print the number of places in <code>word</code> where a character is immediately followed by the same character.</div>
+
+    <div class="ex-step" data-step="1">
+      <h3><span class="num">1</span>Read the setup first</h3>
+      <p>Before the task, list what already exists and what you’re promised about it. The student wrote:</p>
+      <ul>
+        <li><code>word</code> is a <code>String</code>.</li>
+        <li>It’s non-null, so calling <code>word.length()</code> is safe.</li>
+        <li>Nothing says it has letters in it, so it could be <code>""</code>.</li>
+      </ul>
+    </div>
+
+    <div class="ex-step" data-step="2" hidden>
+      <h3><span class="num">2</span>Say the task in your own words</h3>
+      <p>The student rewrote it as: “Count the spots where a letter has the same letter right after it. Print that count once.”</p>
+      <p>Then they answered two questions: What gets printed? <em>A number.</em> How many times? <em>Once.</em></p>
+    </div>
+
+    <div class="ex-step" data-step="3" hidden>
+      <h3><span class="num">3</span>Study the table, row by row</h3>
+      <p>Every row is there for a reason. The student added a column saying what each row tests.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Value of word</th><th>Printed Output</th><th>What this row tests</th></tr></thead>
+        <tbody>
+          <tr><td class="m">"book"</td><td class="m">1</td><td>The basic case: one pair, <code>oo</code>.</td></tr>
+          <tr><td class="m">"aaa"</td><td class="m">2</td><td>Pairs can overlap. Positions 0–1 and 1–2 both count.</td></tr>
+          <tr><td class="m">"bookkeeper"</td><td class="m">3</td><td>More than one pair: <code>oo</code>, <code>kk</code>, <code>ee</code>.</td></tr>
+          <tr><td class="m">"cat"</td><td class="m">0</td><td>No pairs at all.</td></tr>
+          <tr><td class="m">"a"</td><td class="m">0</td><td>One letter has nothing after it.</td></tr>
+          <tr><td class="m">""</td><td class="m">0</td><td>An empty string must not crash.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="ex-step" data-step="4" hidden>
+      <h3><span class="num">4</span>Plan in plain English before any code</h3>
+      <ol>
+        <li>Start a count at 0.</li>
+        <li>Look at each character that has a character after it.</li>
+        <li>If the two match, add 1 to the count.</li>
+        <li>When the loop is done, print the count.</li>
+      </ol>
+      <p>If you can’t write this plan, that’s the moment to open hint 1. Read it, close it in your head, and try the plan again before you open hint 2.</p>
+    </div>
+
+    <div class="ex-step" data-step="5" hidden>
+      <h3><span class="num">5</span>Write a first draft</h3>
+      <p>The student turned each line of the plan into code:</p>
+<pre class="ex">int count = 0;
+for (int i = 0; <mark>i &lt; word.length()</mark>; i++)
+{
+    String here = word.substring(i, i + 1);
+    String next = word.substring(i + 1, i + 2);
+    if (here.equals(next))
+    {
+        count++;
+    }
+}
+System.out.println(count);</pre>
+      <p>It looks finished. Most students stop here. This student didn’t.</p>
+    </div>
+
+    <div class="ex-step" data-step="6" hidden>
+      <h3><span class="num">6</span>Trace it with a row from the table</h3>
+      <p>The student traced <code>"book"</code> by hand, one row per trip through the loop:</p>
+      <div class="tbl"><table>
+        <thead><tr><th>i</th><th>here</th><th>next</th><th>Match?</th><th>count</th></tr></thead>
+        <tbody>
+          <tr><td class="m">0</td><td class="m">"b"</td><td class="m">"o"</td><td>no</td><td class="m">0</td></tr>
+          <tr><td class="m">1</td><td class="m">"o"</td><td class="m">"o"</td><td>yes</td><td class="m">1</td></tr>
+          <tr><td class="m">2</td><td class="m">"o"</td><td class="m">"k"</td><td>no</td><td class="m">1</td></tr>
+          <tr class="crash"><td class="m">3</td><td class="m">"k"</td><td class="m">substring(4, 5)</td><td colspan="2">Error: index 5 is past the end</td></tr>
+        </tbody>
+      </table></div>
+      <p>The trace caught the bug. The last character has nothing after it, so the loop has to stop one step earlier.</p>
+    </div>
+
+    <div class="ex-step" data-step="7" hidden>
+      <h3><span class="num">7</span>Fix it and trace again</h3>
+<pre class="ex">for (int i = 0; <mark>i &lt; word.length() - 1</mark>; i++)</pre>
+      <p>Now <code>"book"</code> stops after <code>i = 2</code> and prints 1. The student also checked the edge rows quickly:</p>
+      <ul>
+        <li><code>"a"</code>: the loop needs <code>0 &lt; 0</code>, which is false, so it never runs. Prints 0.</li>
+        <li><code>""</code>: the loop needs <code>0 &lt; -1</code>, which is false. No crash. Prints 0.</li>
+      </ul>
+    </div>
+
+    <div class="ex-step" data-step="8" hidden>
+      <h3><span class="num">8</span>Tick “Check yourself” only after tracing</h3>
+      <p>Each box means “I traced this row and my code printed exactly this.” A box ticked without tracing is how the bug in step 5 would have reached the exam.</p>
+      <p><strong>The process, in short:</strong> read the setup, restate the task, study the table, plan in words, draft, trace, fix, trace again.</p>
+    </div>
+
+    <div class="ex-controls">
+      <button id="ex-next">Show the next step</button>
+      <button class="quiet" id="ex-all">Show all steps</button>
+    </div>
+    <div class="nav-q"><span></span><button data-go="q1a">Now try 1a</button></div>
+  </section>
+
+  <!-- 1a -->
+  <section class="q" id="q-1a" hidden>
+    <div class="qhead"><span class="qnum">1a</span></div>
+    <p>A code segment, which you will write, should print output according to the following rules.</p>
+    <ul>
+      <li>If the length of <code>text</code> is greater than <code>colWidth</code>, then the value of <code>text</code> will be printed.</li>
+      <li>Otherwise, the printed output will consist of <code>colWidth</code> characters contained between two <code>"|"</code> characters. The text between the <code>"|"</code> characters will consist of a sequence of periods (<code>"."</code>), followed by the value of <code>text</code>, followed by another sequence of periods.
+        <p>The printed output will have an equal number of periods on each side of <code>text</code>, if possible. If this is not possible, then there will be one fewer period on the left side of <code>text</code> than on the right side of <code>text</code>.</p></li>
+    </ul>
+    <p>The intended behavior is illustrated in the following table.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Value of colWidth</th><th>Value of text</th><th>Printed Output</th></tr></thead>
+      <tbody>
+        <tr><td class="m">5</td><td class="m">"ab"</td><td class="m">|.ab..|</td></tr>
+        <tr><td class="m">5</td><td class="m">"abc"</td><td class="m">|.abc.|</td></tr>
+        <tr><td class="m">10</td><td class="m">"ab"</td><td class="m">|....ab....|</td></tr>
+        <tr><td class="m">10</td><td class="m">"abc"</td><td class="m">|...abc....|</td></tr>
+        <tr><td class="m">10</td><td class="m">"abcdefghij"</td><td class="m">|abcdefghij|</td></tr>
+        <tr><td class="m">10</td><td class="m">"abcdefghijklmnopqrstuv"</td><td class="m">abcdefghijklmnopqrstuv</td></tr>
+      </tbody>
+    </table></div>
+    <p>Write a code segment to print the intended output. Your implementation must meet all specifications and conform to the examples shown in the table.</p>
+    <div class="answer" data-q="1a"></div>
+    <div class="hints" data-q="1a"></div>
+    <h3>Check yourself</h3>
+    <p>Trace your code by hand for each row. Tick it only if your code prints exactly what the table shows.</p>
+    <ul class="selfcheck" data-q="1a"></ul>
+    <div class="nav-q"><span></span><button data-go="q1b">Go to 1b</button></div>
+  </section>
+
+  <!-- 1b -->
+  <section class="q" id="q-1b" hidden>
+    <div class="qhead"><span class="qnum">1b</span></div>
+    <p>A code segment, which you will write, should print the length of the longest prefix of the <code>text</code> that is a substring of <code>otherText</code>. A prefix is a substring that occurs at the beginning of another string.</p>
+    <p>The intended behavior is illustrated in the following table.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Value of text</th><th>Value of otherText</th><th>Printed Output</th><th>Explanation</th></tr></thead>
+      <tbody>
+        <tr><td class="m">"apple"</td><td class="m">"pear"</td><td class="m">1</td><td>The prefix <code>"a"</code> is a substring of <code>"pear"</code>, but <code>"ap"</code> is not.</td></tr>
+        <tr><td class="m">"apple"</td><td class="m">"pineapple"</td><td class="m">5</td><td>The prefixes <code>"a"</code>, <code>"ap"</code>, <code>"app"</code>, <code>"appl"</code>, and <code>"apple"</code> are substrings of <code>"pineapple"</code>. The length of the longest substring is 5.</td></tr>
+        <tr><td class="m">"apple"</td><td class="m">"happy"</td><td class="m">3</td><td>The prefixes <code>"a"</code>, <code>"ap"</code>, and <code>"app"</code> are substrings of <code>"happy"</code>. The length of the longest substring is 3.</td></tr>
+        <tr><td class="m">"apple"</td><td class="m">"leek"</td><td class="m">0</td><td>No prefix of <code>"apple"</code> is a substring of <code>"leek"</code>.</td></tr>
+      </tbody>
+    </table></div>
+    <p>Write a code segment to print the intended output. Your implementation must meet all specifications and conform to the examples shown in the table.</p>
+    <div class="answer" data-q="1b"></div>
+    <div class="hints" data-q="1b"></div>
+    <h3>Check yourself</h3>
+    <p>Trace your code by hand for each row. Tick it only if your code prints exactly what the table shows.</p>
+    <ul class="selfcheck" data-q="1b"></ul>
+    <div class="nav-q"><button class="quiet" data-go="q1a">Back to 1a</button><button data-go="q2a">Go to 2a</button></div>
+  </section>
+
+  <!-- 2a -->
+  <section class="q" id="q-2a" hidden>
+    <div class="qhead"><span class="qnum">2a</span></div>
+    <p>A code segment, which you will write, should determine whether the ones digit of the number stored in <code>downloads</code> appears exactly one other time in the number. If so, the code segment should print <code>"exactly once"</code>; otherwise, it should print <code>"not exactly once"</code>.</p>
+    <p>For example, if <code>downloads</code> has a value of <code>1734567</code>, then the segment should print <code>"exactly once"</code> because the ones digit, which is 7, appears one other time.</p>
+    <p>As another example, if <code>downloads</code> has a value of <code>325322</code>, then the segment should print <code>"not exactly once"</code> because the ones digit, which is 2, appears two other times.</p>
+    <p>Write a code segment to print the intended output. Your implementation must conform to the examples.</p>
+    <div class="answer" data-q="2a"></div>
+    <div class="hints" data-q="2a"></div>
+    <h3>Check yourself</h3>
+    <p>Trace your code by hand for each value. The last two aren’t in the question, but they test the edges.</p>
+    <ul class="selfcheck" data-q="2a"></ul>
+    <div class="nav-q"><button class="quiet" data-go="q1b">Back to 1b</button><button data-go="q2b">Go to 2b</button></div>
+  </section>
+
+  <!-- 2b -->
+  <section class="q" id="q-2b" hidden>
+    <div class="qhead"><span class="qnum">2b</span></div>
+    <p>A code segment, which you will write, should process the string <code>songInfo</code> and print the song title and artist name separated by the string (<code>" by "</code>).</p>
+    <p>For example, if <code>songInfo</code> is <code>"Carrie Ferriero-Greatest Hits-Tell Me Why"</code>, then the code segment should print <code>"Tell Me Why by Carrie Ferriero"</code>.</p>
+    <p>As another example, if <code>songInfo</code> is <code>"Aniita-Mixtape 2-How Much More"</code>, then the code segment should print <code>"How Much More by Aniita"</code>.</p>
+    <p>Write a code segment to print the intended output. Your implementation must conform to the examples.</p>
+    <div class="answer" data-q="2b"></div>
+    <div class="hints" data-q="2b"></div>
+    <h3>Check yourself</h3>
+    <p>Trace your code by hand for each value. The last one isn’t in the question, but it tests the shortest possible parts.</p>
+    <ul class="selfcheck" data-q="2b"></ul>
+    <div class="nav-q"><button class="quiet" data-go="q2a">Back to 2a</button><button data-go="turn-in">Turn in my work</button></div>
+  </section>
+
+  <!-- turn in -->
+  <section class="q turnin" id="q-turnin" hidden>
+    <div class="qhead"><span class="qnum">Turn in</span></div>
+    <h2 style="margin:.25rem 0 .5rem;font-size:1.35rem">Email your work to Mr. Ware</h2>
+    <p>This puts all four answers, your hint counts and your self-check results into one email addressed to <strong>dware@brimmer.org</strong>.</p>
+    <label for="ti-name">Your full name</label>
+    <input id="ti-name" type="text" autocomplete="name">
+    <h3>What you’re sending</h3>
+    <ul class="status" id="ti-status"></ul>
+    <div class="send">
+      <button id="ti-gmail">Open in Gmail</button>
+      <button class="quiet" id="ti-mail">Open in my email app</button>
+      <button class="quiet" id="ti-copy">Copy everything</button>
+    </div>
+    <p class="sendmsg" id="ti-msg" role="status"></p>
+    <details>
+      <summary>If the email doesn’t open</summary>
+      <p>Press <strong>Copy everything</strong>, start a new email to <strong>dware@brimmer.org</strong>, use the subject shown below, and paste into the body.</p>
+    </details>
+    <h3>Preview</h3>
+    <p class="meta" id="ti-subject" style="color:var(--muted)"></p>
+    <pre class="preview" id="ti-preview"></pre>
+  </section>
+  </main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var store = {
+    get:function(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+    set:function(k,v){ try { localStorage.setItem(k,v); return true; } catch(e){ return false; } }
+  };
+
+  var IDS = ["1a","1b","2a","2b"];
+  var QS = {
+    "1a": {
+      placeholder: "// colWidth, text, and otherText already exist.\n// Write your code segment here.\n",
+      hints: [
+        "There are two different outputs. What single comparison decides which one you print? Read the first rule again: does “greater than” mean <code>&gt;</code> or <code>&gt;=</code>? Look at the <code>\"abcdefghij\"</code> row to check.",
+        "When <code>text</code> fits, how many periods do you need in total? The two <code>|</code> characters are not part of the <code>colWidth</code> characters, so they don’t get subtracted.",
+        "To split the periods, think about integer division. In Java, <code>3 / 2</code> is <code>1</code>. Which side should get that smaller half? Which side gets whatever is left over? Compare with <code>|.ab..|</code>.",
+        "Build the line one piece at a time, left to right. Fill in the blanks:<pre><code>if (________ &gt; colWidth)\n{\n    System.out.println(text);\n}\nelse\n{\n    int dots = ________;\n    int left = ________;\n    int right = ________;\n    String line = \"|\";\n    // loop: add left periods\n    line += text;\n    // loop: add right periods\n    line += \"|\";\n    System.out.println(line);\n}</code></pre>"
+      ],
+      checks: [
+        "colWidth 5, \"ab\" → <code>|.ab..|</code>",
+        "colWidth 5, \"abc\" → <code>|.abc.|</code>",
+        "colWidth 10, \"ab\" → <code>|....ab....|</code>",
+        "colWidth 10, \"abc\" → <code>|...abc....|</code>",
+        "colWidth 10, \"abcdefghij\" → <code>|abcdefghij|</code>",
+        "colWidth 10, \"abcdefghijklmnopqrstuv\" → <code>abcdefghijklmnopqrstuv</code>"
+      ]
+    },
+    "1b": {
+      placeholder: "// text and otherText already exist.\n// Write your code segment here.\n",
+      hints: [
+        "Write out every prefix of <code>\"apple\"</code>: <code>\"a\"</code>, <code>\"ap\"</code>, and so on. Which <code>String</code> method gives you the first <code>k</code> characters of <code>text</code>?",
+        "How can you tell whether one <code>String</code> appears inside another? Look at <code>indexOf</code> in the Java Quick Reference. What does it return when the string is not found? What does it return when the match is right at the start?",
+        "Use a loop to try every prefix length. Should the last length you try be <code>text.length() - 1</code> or <code>text.length()</code>? Check the <code>\"pineapple\"</code> row. Keep track of the biggest length that matched. What should that start at, so <code>\"leek\"</code> prints 0?",
+        "Fill in the blanks:<pre><code>int longest = ____;\nfor (int len = 1; len ____ text.length(); len++)\n{\n    String prefix = text.substring(____, ____);\n    if (otherText.indexOf(prefix) ________)\n    {\n        longest = ____;\n    }\n}\nSystem.out.println(longest);</code></pre>"
+      ],
+      checks: [
+        "\"apple\", \"pear\" → <code>1</code>",
+        "\"apple\", \"pineapple\" → <code>5</code>",
+        "\"apple\", \"happy\" → <code>3</code>",
+        "\"apple\", \"leek\" → <code>0</code>"
+      ]
+    },
+    "2a": {
+      placeholder: "// downloads and songInfo already exist.\n// Write your code segment here.\n",
+      hints: [
+        "Start with the ones digit. Which operator gives you the remainder when you divide by 10? Try it on <code>1734567</code>.",
+        "Now you need every other digit. Dividing an <code>int</code> by 10 chops off its last digit: <code>1734567 / 10</code> is <code>173456</code>. Do that once before you start counting, so the ones digit doesn’t count itself.",
+        "Use a loop that keeps going while the number is still greater than 0. Each time, look at the last digit, add 1 to a counter if it matches, then chop that digit off. After the loop, the answer depends on whether the counter is exactly 1.",
+        "Fill in the blanks:<pre><code>int ones = downloads % ____;\nint rest = downloads / ____;\nint count = 0;\nwhile (rest ____ 0)\n{\n    if (rest % 10 == ____)\n    {\n        count++;\n    }\n    rest = ________;\n}\nif (count == ____)\n{\n    System.out.println(\"exactly once\");\n}\nelse\n{\n    System.out.println(\"not exactly once\");\n}</code></pre>"
+      ],
+      checks: [
+        "1734567 → <code>exactly once</code>",
+        "325322 → <code>not exactly once</code>",
+        "7 → <code>not exactly once</code> (no other digits at all)",
+        "77 → <code>exactly once</code>"
+      ]
+    },
+    "2b": {
+      placeholder: "// downloads and songInfo already exist.\n// Write your code segment here.\n",
+      hints: [
+        "You need two pieces: the artist (before the first hyphen) and the song title (after the second hyphen). The album in the middle is never printed. Which <code>String</code> method tells you where the first <code>\"-\"</code> is?",
+        "The artist is everything from index 0 up to the first hyphen. <code>substring(a, b)</code> doesn’t include index <code>b</code>, so the hyphen itself gets left out.",
+        "<code>indexOf(\"-\")</code> only finds the first hyphen. To find the second one, cut off everything up to and including the first hyphen, then search what’s left. Remember to skip past the hyphen with <code>+ 1</code>, or the title will start with a <code>-</code>.",
+        "Fill in the blanks:<pre><code>int first = songInfo.indexOf(\"-\");\nString artist = songInfo.substring(____, ____);\nString rest = songInfo.substring(________);\nint second = rest.indexOf(\"-\");\nString title = rest.substring(________);\nSystem.out.println(title + ______ + artist);</code></pre>"
+      ],
+      checks: [
+        "\"Carrie Ferriero-Greatest Hits-Tell Me Why\" → <code>Tell Me Why by Carrie Ferriero</code>",
+        "\"Aniita-Mixtape 2-How Much More\" → <code>How Much More by Aniita</code>",
+        "\"A-B-C\" → <code>C by A</code>"
+      ]
+    }
+  };
+
+  function setupQuestion(id){
+    var cfg = QS[id];
+    // answer box
+    var ans = document.querySelector('.answer[data-q="'+id+'"]');
+    ans.innerHTML = '<label for="ta-'+id+'">Your answer</label><textarea id="ta-'+id+'" spellcheck="false" autocomplete="off"></textarea>' +
+      '<div class="under"><span class="save"></span><button class="quiet copy">Copy my answer</button></div>';
+    var ta = ans.querySelector("textarea"), save = ans.querySelector(".save");
+    ta.placeholder = cfg.placeholder;
+    var saved = store.get("frq1-"+id+"-code");
+    if (saved){ ta.value = saved; save.textContent = "Your answer was restored."; }
+    var t;
+    ta.addEventListener("input", function(){
+      clearTimeout(t);
+      t = setTimeout(function(){
+        save.textContent = store.set("frq1-"+id+"-code", ta.value) ? "Saved on this device." : "This browser won’t save. Copy your answer before you leave.";
+        markDone();
+      }, 400);
+    });
+    ta.addEventListener("keydown", function(e){
+      if (e.key === "Tab" && !e.shiftKey){ e.preventDefault(); ta.setRangeText("    ", ta.selectionStart, ta.selectionEnd, "end"); ta.dispatchEvent(new Event("input")); }
+    });
+    ans.querySelector(".copy").addEventListener("click", function(){
+      var b = this;
+      if (navigator.clipboard){ navigator.clipboard.writeText(ta.value).then(function(){ b.textContent = "Copied"; setTimeout(function(){ b.textContent = "Copy my answer"; }, 1500); }, function(){ ta.select(); }); }
+      else ta.select();
+    });
+
+    // hints
+    var hb = document.querySelector('.hints[data-q="'+id+'"]');
+    var shown = parseInt(store.get("frq1-"+id+"-hints") || "0", 10) || 0;
+    function drawHints(){
+      var total = cfg.hints.length;
+      var html = "<h3>Need a hint?</h3><p class='meta'>Try on your own first. Each hint gives away a little more" + (shown ? ". Hints used: " + shown + " of " + total : "") + ".</p>";
+      if (shown) html += "<ol>" + cfg.hints.slice(0, shown).map(function(h){ return "<li>" + h + "</li>"; }).join("") + "</ol>";
+      if (shown < total){
+        var label = shown === total - 1 ? "Show the code outline" : (shown ? "Show the next hint" : "Show a hint");
+        html += "<button class='more'>" + label + "</button>";
+      } else html += "<p class='meta'>That’s every hint. Finish the blanks in your own answer box.</p>";
+      hb.innerHTML = html;
+      var more = hb.querySelector(".more");
+      if (more) more.addEventListener("click", function(){
+        shown++; store.set("frq1-"+id+"-hints", String(shown)); drawHints();
+        var items = hb.querySelectorAll("li"); if (items.length) items[items.length-1].scrollIntoView({block:"nearest"});
+      });
+    }
+    drawHints();
+
+    // self-check
+    var sc = document.querySelector('.selfcheck[data-q="'+id+'"]');
+    var marks = (store.get("frq1-"+id+"-checks") || "").split("");
+    sc.innerHTML = cfg.checks.map(function(c, i){
+      return '<li><label><input type="checkbox"' + (marks[i] === "1" ? " checked" : "") + '><span>' + c + '</span></label></li>';
+    }).join("");
+    sc.addEventListener("change", function(){
+      var v = Array.prototype.map.call(sc.querySelectorAll("input"), function(x){ return x.checked ? "1" : "0"; }).join("");
+      store.set("frq1-"+id+"-checks", v); markDone();
+    });
+
+  }
+
+  function markDone(){
+    IDS.forEach(function(id){
+      var all = document.querySelectorAll('.selfcheck[data-q="'+id+'"] input');
+      var ok = all.length && Array.prototype.every.call(all, function(x){ return x.checked; });
+      document.getElementById("done-"+id).textContent = ok ? "✓" : "";
+      document.getElementById("done-"+id).setAttribute("aria-label", ok ? "all rows checked" : "");
+    });
+  }
+
+  function route(){
+    var h = location.hash.replace("#","");
+    var id = h === "example" ? "ex" : h === "turn-in" ? "turnin" : h.slice(1);
+    if (id !== "ex" && id !== "turnin" && (h.charAt(0) !== "q" || IDS.indexOf(id) < 0)) id = "1a";
+    if (id === "turnin") buildTurnIn();
+    ["ex","turnin"].concat(IDS).forEach(function(q){ document.getElementById("q-"+q).hidden = (q !== id); });
+    document.querySelectorAll(".stim > div[data-set]").forEach(function(d){ d.hidden = (d.dataset.set !== id.charAt(0)); });
+    document.querySelectorAll(".tabs a").forEach(function(a){
+      if (a.dataset.q === id) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
+    });
+    window.scrollTo(0,0);
+  }
+
+  IDS.forEach(setupQuestion); markDone();
+
+  // ---------- turn in by email ----------
+  var TO = "dware@brimmer.org";
+  var nameIn = document.getElementById("ti-name");
+  nameIn.value = store.get("frq-student-name") || "";
+  nameIn.addEventListener("input", function(){ store.set("frq-student-name", nameIn.value); buildTurnIn(); });
+  var current = {subject:"", body:""};
+  function info(id){
+    var code = (document.getElementById("ta-"+id).value || "").replace(/\s+$/,"");
+    var hints = parseInt(store.get("frq1-"+id+"-hints") || "0", 10) || 0;
+    var boxes = document.querySelectorAll('.selfcheck[data-q="'+id+'"] input');
+    var ticked = Array.prototype.filter.call(boxes, function(x){ return x.checked; }).length;
+    return {code:code, hints:hints, total:QS[id].hints.length, ticked:ticked, rows:boxes.length};
+  }
+  function buildTurnIn(){
+    var name = nameIn.value.trim();
+    var when = new Date().toLocaleString();
+    var lines = ["AP CSA FRQ Practice: Questions 1a, 1b, 2a, 2b", "Student: " + (name || "(no name entered)"), "Prepared: " + when, ""];
+    var st = "";
+    IDS.forEach(function(id){
+      var d = info(id);
+      lines.push("========== " + id + " ==========");
+      lines.push("Hints opened: " + d.hints + " of " + d.total);
+      lines.push("Self-check rows ticked: " + d.ticked + " of " + d.rows);
+      lines.push("");
+      lines.push(d.code || "(no answer)");
+      lines.push("");
+      st += "<li><b>" + id + "</b><span>" + (d.code ? d.code.split("\n").length + " lines of code" : "<span class='warn'>No answer yet</span>") +
+            " · " + d.hints + " of " + d.total + " hints · " + d.ticked + " of " + d.rows + " rows ticked</span></li>";
+    });
+    current.subject = "FRQ Practice 1a-2b: " + (name || "Student");
+    current.body = lines.join("\n");
+    document.getElementById("ti-status").innerHTML = st;
+    document.getElementById("ti-subject").textContent = "Subject: " + current.subject;
+    document.getElementById("ti-preview").textContent = current.body;
+  }
+  function ready(){
+    var msg = document.getElementById("ti-msg");
+    buildTurnIn();
+    if (!nameIn.value.trim()){ msg.textContent = "Type your name first, so Mr. Ware knows whose work this is."; nameIn.focus(); return false; }
+    msg.textContent = "";
+    return true;
+  }
+  function openUrl(url){
+    var w = window.open(url, "_blank", "noopener");
+    if (!w) { try { window.top.location.href = url; } catch(e){ location.href = url; } }
+  }
+  document.getElementById("ti-gmail").addEventListener("click", function(){
+    if (!ready()) return;
+    openUrl("https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(TO) + "&su=" + encodeURIComponent(current.subject) + "&body=" + encodeURIComponent(current.body));
+    document.getElementById("ti-msg").textContent = "Check the new tab: your email is ready. Look it over, then press Send.";
+  });
+  document.getElementById("ti-mail").addEventListener("click", function(){
+    if (!ready()) return;
+    var url = "mailto:" + TO + "?subject=" + encodeURIComponent(current.subject) + "&body=" + encodeURIComponent(current.body);
+    openUrl(url);
+    document.getElementById("ti-msg").textContent = url.length > 1900
+      ? "Some email apps cut off long emails. If yours looks shorter than the preview, use Copy everything and paste it in."
+      : "Your email app should open with everything filled in. Look it over, then press Send.";
+  });
+  document.getElementById("ti-copy").addEventListener("click", function(){
+    if (!ready()) return;
+    var msg = document.getElementById("ti-msg");
+    var text = current.body;
+    if (navigator.clipboard){
+      navigator.clipboard.writeText(text).then(function(){ msg.textContent = "Copied. Paste it into a new email to " + TO + "."; },
+        function(){ msg.textContent = "Couldn’t copy automatically. Select the preview below and copy it."; });
+    } else msg.textContent = "Select the preview below and copy it.";
+  });
+  (function(){
+    var steps = document.querySelectorAll(".ex-step"), next = document.getElementById("ex-next"), allB = document.getElementById("ex-all");
+    function shownCount(){ return Array.prototype.filter.call(steps, function(x){ return !x.hidden; }).length; }
+    function sync(){ var done = shownCount() >= steps.length; next.disabled = done; allB.disabled = done; if (done) next.textContent = "All steps shown"; }
+    next.addEventListener("click", function(){
+      var n = shownCount(); if (n < steps.length){ steps[n].hidden = false; steps[n].scrollIntoView({behavior:"smooth", block:"start"}); }
+      sync();
+    });
+    allB.addEventListener("click", function(){ steps.forEach(function(x){ x.hidden = false; }); sync(); });
+  })();
+  document.querySelectorAll("[data-go]").forEach(function(b){ b.addEventListener("click", function(){ location.hash = b.dataset.go; }); });
+  window.addEventListener("hashchange", route);
+  route();
+})();
+</script>
+</body>
+</html>
