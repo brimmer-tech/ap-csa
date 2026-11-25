@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AP CSA Code Matcher — Java vs. Block-Based Code</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* =====================================================================
+       1. THEME DESIGN TOKENS (Dark Gray Default & Light Gray Mode)
+       ===================================================================== */
+    :root,
+    [data-theme="dark"] {
+      --bg-page: #181a1f;
+      --bg-header: #1e2128;
+      --bg-card: #23262e;
+      --bg-card-hover: #2a2e38;
+      --bg-elevated: #2c303b;
+      --bg-input: #1a1d24;
+      --bg-java: #14171f;
+      --border-subtle: #313644;
+      --border-strong: #464d61;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --row-done-bg: rgba(16, 185, 129, 0.1);
+      --row-done-border: rgba(16, 185, 129, 0.5);
+      --row-err-bg: rgba(239, 68, 68, 0.1);
+      --row-err-border: rgba(239, 68, 68, 0.55);
+      --dropdown-bg: #1e222b;
+      --dropdown-hover: #2d3240;
+      --dropdown-shadow: 0 18px 36px -6px rgba(0, 0, 0, 0.58);
+      --blank-bg: rgba(148, 163, 184, 0.08);
+      --blank-border: #4b5563;
+      --blank-text: #cbd5e1;
+      --pill-bg: #2a2f3b;
+      --pill-text: #e2e8f0;
+      --tab-inactive-bg: #262a34;
+      --tab-inactive-hover: #313644;
+      --tab-inactive-text: #cbd5e1;
+      --progress-track: #2c313d;
+      --modal-backdrop: rgba(10, 12, 16, 0.72);
+
+      /* Java Syntax Highlighting — Dark Mode */
+      --j-kw: #c084fc;
+      --j-cls: #38bdf8;
+      --j-fn: #60a5fa;
+      --j-const: #fbbf24;
+      --j-op: #94a3b8;
+      --j-var: #f8fafc;
+    }
+
+    [data-theme="light"] {
+      --bg-page: #e5e7eb;
+      --bg-header: #f3f4f6;
+      --bg-card: #f7f8fa;
+      --bg-card-hover: #ffffff;
+      --bg-elevated: #eceef2;
+      --bg-input: #ffffff;
+      --bg-java: #edf1f7;
+      --border-subtle: #cfd5df;
+      --border-strong: #9ca3af;
+      --text-primary: #111827;
+      --text-secondary: #374151;
+      --text-muted: #5b6472;
+      --row-done-bg: #e8f7f0;
+      --row-done-border: #10b981;
+      --row-err-bg: #fdecec;
+      --row-err-border: #ef4444;
+      --dropdown-bg: #ffffff;
+      --dropdown-hover: #eef2f7;
+      --dropdown-shadow: 0 16px 32px -6px rgba(15, 23, 42, 0.18);
+      --blank-bg: #eef0f4;
+      --blank-border: #94a3b8;
+      --blank-text: #475569;
+      --pill-bg: #e2e6ed;
+      --pill-text: #1f2937;
+      --tab-inactive-bg: #e5e8ee;
+      --tab-inactive-hover: #d8dde6;
+      --tab-inactive-text: #374151;
+      --progress-track: #d1d5db;
+      --modal-backdrop: rgba(15, 23, 42, 0.45);
+
+      /* Java Syntax Highlighting — Light Gray Mode (high-contrast accessible) */
+      --j-kw: #7c3aed;
+      --j-cls: #0369a1;
+      --j-fn: #1d4ed8;
+      --j-const: #b45309;
+      --j-op: #475569;
+      --j-var: #0f172a;
+    }
+
+    /* =====================================================================
+       2. BASE LAYOUT & THEME TRANSITIONS
+       ===================================================================== */
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      transition: background-color 0.22s ease, color 0.22s ease;
+    }
+
+    .theme-header {
+      background-color: var(--bg-header);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background-color 0.22s ease, border-color 0.22s ease;
+    }
+
+    .theme-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .theme-elevated {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .theme-btn-secondary {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+    }
+    .theme-btn-secondary:hover {
+      background-color: var(--bg-card-hover);
+      border-color: var(--border-strong);
+    }
+
+    .theme-input {
+      background-color: var(--bg-input);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+    }
+    .theme-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.22);
+    }
+
+    .row-correct {
+      background-color: var(--row-done-bg) !important;
+      border-color: var(--row-done-border) !important;
+    }
+
+    .row-incorrect {
+      background-color: var(--row-err-bg) !important;
+      border-color: var(--row-err-border) !important;
+    }
+
+    /* =====================================================================
+       3. JAVA CODE BOX & SYNTAX HIGHLIGHTING
+       ===================================================================== */
+    .java-box {
+      background-color: var(--bg-java);
+      color: var(--j-var);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.84rem;
+      line-height: 1.5;
+      padding: 10px 13px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      white-space: pre-wrap;
+      word-break: break-word;
+      width: 100%;
+    }
+    .j-kw    { color: var(--j-kw); font-weight: 600; }
+    .j-cls   { color: var(--j-cls); font-weight: 600; }
+    .j-fn    { color: var(--j-fn); font-weight: 600; }
+    .j-const { color: var(--j-const); font-weight: 700; }
+    .j-op    { color: var(--j-op); }
+    .j-var   { color: var(--j-var); }
+
+    /* =====================================================================
+       4. SCRATCH / MAKECODE AUTHENTIC VISUAL BLOCKS
+       ===================================================================== */
+    .blk-op      { --blk-bg: #4CBF56; --blk-border: #33913C; --blk-dark: #3CA346; }
+    .blk-text    { --blk-bg: #14B8A6; --blk-border: #0F766E; --blk-dark: #0D9488; }
+    .blk-list    { --blk-bg: #FF661A; --blk-border: #CC4B0A; --blk-dark: #E0530D; }
+    .blk-sensing { --blk-bg: #38A3D1; --blk-border: #237BA3; --blk-dark: #2C8CB8; }
+    .blk-math    { --blk-bg: #8B5CF6; --blk-border: #6D28D9; --blk-dark: #7C3AED; }
+
+    .scratch-stack {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px;
+      background-color: var(--blk-bg);
+      border: 1.5px solid var(--blk-border);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.78rem;
+      line-height: 1.25;
+      padding: 6px 11px;
+      border-radius: 7px;
+      box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 2px 4px rgba(0, 0, 0, 0.16);
+      user-select: none;
+    }
+
+    .scratch-reporter {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px;
+      background-color: var(--blk-bg);
+      border: 1.5px solid var(--blk-border);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.78rem;
+      line-height: 1.25;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 2px 4px rgba(0, 0, 0, 0.16);
+      user-select: none;
+    }
+
+    .scratch-boolean {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background-color: var(--blk-bg);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.78rem;
+      line-height: 1.25;
+      padding: 5px 15px;
+      clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0% 50%);
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.24));
+      user-select: none;
+    }
+
+    .blk-slot {
+      background-color: #ffffff;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 0.73rem;
+      padding: 1px 8px;
+      border-radius: 9999px;
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.2);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .blk-dropdown {
+      background-color: var(--blk-dark);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.73rem;
+      padding: 1px 7px;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .blank-slot-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 9px;
+      border: 1.5px dashed var(--blank-border);
+      background-color: var(--blank-bg);
+      color: var(--blank-text);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    /* =====================================================================
+       5. CUSTOM DROPDOWN & ANIMATIONS
+       ===================================================================== */
+    .dropdown-menu {
+      background-color: var(--dropdown-bg);
+      border: 1px solid var(--border-strong);
+      box-shadow: var(--dropdown-shadow);
+    }
+
+    .dropdown-item {
+      transition: background-color 0.12s ease;
+    }
+    .dropdown-item:hover:not(:disabled) {
+      background-color: var(--dropdown-hover);
+    }
+    .dropdown-item:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    @keyframes shakeRow {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .animate-shake {
+      animation: shakeRow 0.42s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.96) translateY(6px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .animate-pop {
+      animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Class Badge Pill Styles (readable in both dark & light modes) */
+    [data-theme="dark"] .cls-String    { background: rgba(56, 189, 248, 0.16); color: #7dd3fc; border-color: rgba(56, 189, 248, 0.35); }
+    [data-theme="dark"] .cls-Integer   { background: rgba(167, 139, 250, 0.16); color: #c4b5fd; border-color: rgba(167, 139, 250, 0.35); }
+    [data-theme="dark"] .cls-Double    { background: rgba(232, 121, 249, 0.16); color: #f0abfc; border-color: rgba(232, 121, 249, 0.35); }
+    [data-theme="dark"] .cls-Math      { background: rgba(52, 211, 153, 0.16); color: #6ee7b7; border-color: rgba(52, 211, 153, 0.35); }
+    [data-theme="dark"] .cls-ArrayList { background: rgba(251, 146, 60, 0.16); color: #fdba74; border-color: rgba(251, 146, 60, 0.35); }
+    [data-theme="dark"] .cls-File      { background: rgba(251, 191, 36, 0.16); color: #fcd34d; border-color: rgba(251, 191, 36, 0.35); }
+    [data-theme="dark"] .cls-Scanner   { background: rgba(34, 211, 238, 0.16); color: #67e8f9; border-color: rgba(34, 211, 238, 0.35); }
+    [data-theme="dark"] .cls-Object    { background: rgba(148, 163, 184, 0.18); color: #cbd5e1; border-color: rgba(148, 163, 184, 0.35); }
+
+    [data-theme="light"] .cls-String    { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+    [data-theme="light"] .cls-Integer   { background: #ede9fe; color: #6d28d9; border-color: #ddd6fe; }
+    [data-theme="light"] .cls-Double    { background: #fae8ff; color: #a21caf; border-color: #f5d0fe; }
+    [data-theme="light"] .cls-Math      { background: #d1fae5; color: #047857; border-color: #a7f3d0; }
+    [data-theme="light"] .cls-ArrayList { background: #ffedd5; color: #c2410c; border-color: #fed7aa; }
+    [data-theme="light"] .cls-File      { background: #fef3c7; color: #b45309; border-color: #fde68a; }
+    [data-theme="light"] .cls-Scanner   { background: #cffafe; color: #0e7490; border-color: #a5f3fc; }
+    [data-theme="light"] .cls-Object    { background: #e2e8f0; color: #334155; border-color: #cbd5e1; }
+
+    /* =====================================================================
+       6. PRINT STYLES (Always Crisp White Paper Report)
+       ===================================================================== */
+    #printReportArea {
+      display: none;
+    }
+
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      #appShell, #reportModal, #toastContainer, #resetConfirmModal {
+        display: none !important;
+      }
+      #printReportArea {
+        display: block !important;
+        padding: 0;
+        font-family: 'Inter', Arial, sans-serif;
+        color: #111827;
+      }
+      .print-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+        margin-top: 12px;
+      }
+      .print-table th,
+      .print-table td {
+        border: 1px solid #cbd5e1;
+        padding: 6px 8px;
+        text-align: left;
+        vertical-align: top;
+      }
+      .print-table th {
+        background-color: #f1f5f9 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .print-break-avoid {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- ==================== MAIN APP SHELL ==================== -->
+  <div id="appShell" class="flex-1 flex flex-col">
+
+    <!-- ==================== STICKY HEADER ==================== -->
+    <header class="theme-header sticky top-0 z-30 shadow-sm">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5">
+
+        <!-- Top Row: Title + Progress + Theme Toggle + Turn In -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+          <!-- Brand -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shrink-0">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-lg sm:text-xl font-extrabold tracking-tight leading-tight">
+                AP CSA <span class="text-blue-500">Code Matcher</span>
+              </h1>
+              <p class="text-xs sm:text-sm" style="color: var(--text-muted);">
+                Match all 34 Java Quick Reference commands to Block-Based Code — or select a <strong style="color: var(--text-secondary);">Blank Slot</strong>.
+              </p>
+            </div>
+          </div>
+
+          <!-- Right Controls: Progress Pill, Theme Toggle, Turn In -->
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Completed Progress Pill -->
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold border border-emerald-500/40 bg-emerald-500/10 text-emerald-500">
+              <span class="w-4 h-4 rounded-full bg-emerald-500 text-white inline-flex items-center justify-center text-[10px]">✓</span>
+              <span id="overallCompletedBadge">0 / 34 Completed</span>
+            </div>
+
+            <!-- Dark Mode / Light Gray Mode Toggle -->
+            <button
+              id="themeToggleBtn"
+              type="button"
+              onclick="toggleTheme()"
+              class="theme-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold cursor-pointer"
+              title="Switch between Dark Mode and Light Gray Mode"
+              aria-label="Toggle color theme"
+            >
+              <!-- Sun Icon (shown in Dark Mode to switch to Light Gray) -->
+              <svg id="iconSun" class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <!-- Moon Icon (shown in Light Gray Mode to switch to Dark Mode) -->
+              <svg id="iconMoon" class="w-4 h-4 text-indigo-600 hidden" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+              <span id="themeToggleLabel">Light Gray</span>
+            </button>
+
+            <!-- Turn In / Export Report Button -->
+            <button
+              type="button"
+              onclick="openReportModal()"
+              class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-sm transition cursor-pointer"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Turn In / Export
+            </button>
+          </div>
+        </div>
+
+        <!-- Overall Progress Bar -->
+        <div class="mt-3 w-full h-2 rounded-full overflow-hidden" style="background-color: var(--progress-track);">
+          <div id="overallProgressBar" class="h-full bg-gradient-to-r from-blue-500 to-emerald-500 transition-all duration-300" style="width: 0%;"></div>
+        </div>
+
+        <!-- Bottom Toolbar: Category Tabs + Actions -->
+        <div class="mt-3 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2.5">
+          <!-- 4 Category Tabs -->
+          <div id="categoryTabs" class="flex flex-wrap items-center gap-1.5" role="tablist">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Utility Buttons -->
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Descriptions ON/OFF -->
+            <button
+              id="descToggleBtn"
+              type="button"
+              onclick="toggleDescriptions()"
+              class="theme-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5 text-sky-500" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span id="descToggleLabel">Descriptions: ON</span>
+            </button>
+
+            <!-- Check All Filled -->
+            <button
+              type="button"
+              onclick="checkAllFilledInTab()"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition cursor-pointer shadow-sm"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              Check All Filled
+            </button>
+
+            <!-- Reset Tab -->
+            <button
+              type="button"
+              onclick="openResetConfirm()"
+              class="theme-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Reset Tab
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-5">
+
+      <!-- Collapsible How to Play Strip -->
+      <div class="theme-card rounded-2xl px-4 py-3 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div class="flex items-start sm:items-center gap-2.5 text-xs sm:text-sm" style="color: var(--text-secondary);">
+          <span class="px-2 py-0.5 rounded-md bg-blue-500/15 text-blue-500 font-bold text-xs shrink-0">How It Works</span>
+          <span>
+            Every dropdown shares the <strong>same 34-item pool</strong> across all 4 tabs (<strong>18 visual blocks</strong> + <strong>16 Blank Slots</strong>). Pick a match for each Java command and click <strong>Check</strong> to earn a green checkmark.
+          </span>
+        </div>
+        <div id="poolSummaryPill" class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-xl shrink-0" style="background-color: var(--pill-bg); color: var(--pill-text);">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Column Header Bar (Desktop) -->
+      <div class="hidden md:grid md:grid-cols-12 gap-4 px-4 py-2.5 mb-3 rounded-xl theme-elevated text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted);">
+        <div class="col-span-6 flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+          1. Java (2025 AP CSA Quick Reference)
+        </div>
+        <div class="col-span-5 flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          2. Block-Based Code (Shared Pool Dropdown)
+        </div>
+        <div class="col-span-1 text-right">Status</div>
+      </div>
+
+      <!-- Rows List -->
+      <div id="rowsContainer" class="space-y-3">
+        <!-- Rendered dynamically -->
+      </div>
+
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="theme-header py-3 px-4 text-center text-xs mt-8" style="color: var(--text-muted); border-top: 1px solid var(--border-subtle); border-bottom: none;">
+      Java signatures and descriptions follow the 2025 College Board AP Computer Science A Exam Quick Reference.
+    </footer>
+
+  </div>
+
+  <!-- ==================== TOAST NOTIFICATION ==================== -->
+  <div id="toastContainer" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 opacity-0 translate-y-4 w-[92%] max-w-lg">
+    <div id="toastBox" class="rounded-xl px-4 py-3 shadow-2xl border flex items-center gap-3 text-sm font-semibold">
+      <span id="toastIcon" class="shrink-0"></span>
+      <span id="toastMessage" class="leading-snug"></span>
+    </div>
+  </div>
+
+  <!-- ==================== RESET TAB CONFIRMATION MODAL (No confirm()) ==================== -->
+  <div id="resetConfirmModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" style="background-color: var(--modal-backdrop); backdrop-filter: blur(4px);">
+    <div class="theme-card rounded-2xl max-w-sm w-full p-5 shadow-2xl animate-pop">
+      <h2 class="text-base font-extrabold">Reset Current Tab?</h2>
+      <p class="text-xs sm:text-sm mt-1.5" style="color: var(--text-secondary);">
+        This will clear your selections and checkmarks on <strong id="resetTabNameLabel">this tab</strong> and return those blocks to the shared pool. Other tabs will stay untouched.
+      </p>
+      <div class="flex justify-end gap-2 mt-5">
+        <button type="button" onclick="closeResetConfirm()" class="theme-btn-secondary px-3.5 py-2 rounded-xl text-xs font-semibold cursor-pointer">
+          Cancel
+        </button>
+        <button type="button" onclick="confirmResetCurrentTab()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white cursor-pointer transition">
+          Yes, Reset Tab
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TURN IN / EXPORT REPORT MODAL ==================== -->
+  <div id="reportModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 overflow-y-auto" style="background-color: var(--modal-backdrop); backdrop-filter: blur(4px);">
+    <div class="theme-card rounded-3xl max-w-lg w-full p-6 shadow-2xl animate-pop my-auto">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-extrabold">Turn In / Export Report</h2>
+          <p class="text-xs sm:text-sm mt-0.5" style="color: var(--text-muted);">
+            Print as PDF or download a Word (.doc) report to upload to your class assignment.
+          </p>
+        </div>
+        <button type="button" onclick="closeReportModal()" class="theme-btn-secondary p-1.5 rounded-lg cursor-pointer" aria-label="Close modal">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Student Info Inputs -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+        <div>
+          <label for="studentNameInput" class="block text-xs font-bold mb-1" style="color: var(--text-secondary);">Student Name</label>
+          <input id="studentNameInput" type="text" placeholder="e.g., Jordan Patel" class="theme-input w-full px-3 py-2 rounded-xl text-sm" />
+        </div>
+        <div>
+          <label for="studentPeriodInput" class="block text-xs font-bold mb-1" style="color: var(--text-secondary);">Class Period / Section</label>
+          <input id="studentPeriodInput" type="text" placeholder="e.g., Period 3" class="theme-input w-full px-3 py-2 rounded-xl text-sm" />
+        </div>
+      </div>
+
+      <!-- Live Integrity & Progress Summary -->
+      <div class="grid grid-cols-3 gap-2.5 mt-4">
+        <div class="theme-elevated rounded-2xl p-3 text-center">
+          <div id="repCompleted" class="text-lg font-extrabold text-emerald-500">0 / 34</div>
+          <div class="text-[11px] font-semibold uppercase tracking-wide mt-0.5" style="color: var(--text-muted);">Completed</div>
+        </div>
+        <div class="theme-elevated rounded-2xl p-3 text-center">
+          <div id="repAttempts" class="text-lg font-extrabold text-blue-500">0</div>
+          <div class="text-[11px] font-semibold uppercase tracking-wide mt-0.5" style="color: var(--text-muted);">Check Attempts</div>
+        </div>
+        <div class="theme-elevated rounded-2xl p-3 text-center">
+          <div id="repFirstTry" class="text-lg font-extrabold text-amber-500">—</div>
+          <div class="text-[11px] font-semibold uppercase tracking-wide mt-0.5" style="color: var(--text-muted);">1st-Try Acc.</div>
+        </div>
+      </div>
+
+      <!-- Incomplete Warning Banner (if < 34 completed) -->
+      <div id="repIncompleteNote" class="hidden mt-3 rounded-xl px-3.5 py-2.5 text-xs font-medium border border-amber-500/40 bg-amber-500/10 text-amber-500">
+        You still have unmatched rows. You can still export a progress report now, or finish all 34 rows first!
+      </div>
+
+      <!-- Export Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-2.5 mt-5">
+        <button
+          type="button"
+          onclick="printReport()"
+          class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow-sm transition cursor-pointer"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+          </svg>
+          Print / Save PDF
+        </button>
+
+        <button
+          type="button"
+          onclick="downloadWordReport()"
+          class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-sm transition cursor-pointer"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Download .doc Report
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DEDICATED PRINT REPORT AREA ==================== -->
+  <div id="printReportArea"></div>
+
+  <!-- ==================== APPLICATION SCRIPT ==================== -->
+  <script>
+    /* =========================================================================
+       1. THEME MANAGEMENT (Dark Mode Default <-> Light Gray Mode, localStorage)
+       ========================================================================= */
+    const THEME_STORAGE_KEY = 'apcsa_code_matcher_theme';
+
+    function applyTheme(theme) {
+      const normalized = theme === 'light' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', normalized);
+
+      const iconSun = document.getElementById('iconSun');
+      const iconMoon = document.getElementById('iconMoon');
+      const label = document.getElementById('themeToggleLabel');
+
+      if (normalized === 'light') {
+        iconSun.classList.add('hidden');
+        iconMoon.classList.remove('hidden');
+        label.textContent = 'Dark Mode';
+      } else {
+        iconSun.classList.remove('hidden');
+        iconMoon.classList.add('hidden');
+        label.textContent = 'Light Gray';
+      }
+
+      try {
+        localStorage.setItem(THEME_STORAGE_KEY, normalized);
+      } catch (e) {
+        // Ignore storage errors in restricted iframes
+      }
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    }
+
+    function initTheme() {
+      let saved = 'dark';
+      try {
+        saved = localStorage.getItem(THEME_STORAGE_KEY) || 'dark';
+      } catch (e) {
+        saved = 'dark';
+      }
+      applyTheme(saved);
+    }
+
+    /* =========================================================================
+       2. SHARED BLOCK-BASED CODE POOL (17 UNIQUE BLOCKS + 16 BLANK SLOTS = 34)
+       ========================================================================= */
+    const BLANK_ID = '__BLANK__';
+
+    const BLOCK_POOL = [
+      {
+        id: BLANK_ID,
+        code: 0,
+        total: 16,
+        label: 'Blank Slot (No Equivalent)',
+        html: `
+          <span class="blank-slot-pill">
+            <svg class="w-3.5 h-3.5 opacity-75 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+            </svg>
+            <span>— Blank Slot (No Equivalent) —</span>
+          </span>`,
+      },
+      {
+        id: 'blk_str_len',
+        code: 1,
+        total: 1,
+        label: 'length of [str]',
+        html: `<div class="scratch-reporter blk-op"><span>length of</span><span class="blk-slot">str</span></div>`,
+      },
+      {
+        id: 'blk_str_sub',
+        code: 2,
+        total: 1,
+        label: 'substring of [str] from (from) of length (len)',
+        html: `<div class="scratch-reporter blk-text"><span>substring of</span><span class="blk-slot">str</span><span>from</span><span class="blk-slot">from</span><span>length</span><span class="blk-slot">len</span></div>`,
+      },
+      {
+        id: 'blk_str_idx',
+        code: 3,
+        total: 1,
+        label: 'index of [str] in [text]',
+        html: `<div class="scratch-reporter blk-text"><span>index of</span><span class="blk-slot">str</span><span>in</span><span class="blk-slot">text</span></div>`,
+      },
+      {
+        id: 'blk_str_eq',
+        code: 4,
+        total: 1,
+        label: '[str1] = [str2]',
+        html: `<div class="scratch-boolean blk-op"><span class="blk-slot">str1</span><span>=</span><span class="blk-slot">str2</span></div>`,
+      },
+      {
+        id: 'blk_str_split',
+        code: 5,
+        total: 1,
+        label: 'split [str] at [del]',
+        html: `<div class="scratch-reporter blk-text"><span>split</span><span class="blk-slot">str</span><span>at</span><span class="blk-slot">del</span></div>`,
+      },
+      {
+        id: 'blk_parse_int',
+        code: 6,
+        total: 1,
+        label: 'parse to number [s]',
+        html: `<div class="scratch-reporter blk-math"><span>parse to number</span><span class="blk-slot">s</span></div>`,
+      },
+      {
+        id: 'blk_math_abs',
+        code: 7,
+        total: 2,
+        label: 'abs of (x)',
+        html: `<div class="scratch-reporter blk-op"><span class="blk-dropdown">abs <span>▾</span></span><span>of</span><span class="blk-slot">x</span></div>`,
+      },
+      {
+        id: 'blk_math_pow',
+        code: 8,
+        total: 1,
+        label: '(base) ^ (exponent)',
+        html: `<div class="scratch-reporter blk-math"><span class="blk-slot">base</span><span>^</span><span class="blk-slot">exponent</span></div>`,
+      },
+      {
+        id: 'blk_math_sqrt',
+        code: 9,
+        total: 1,
+        label: 'sqrt of (x)',
+        html: `<div class="scratch-reporter blk-op"><span class="blk-dropdown">sqrt <span>▾</span></span><span>of</span><span class="blk-slot">x</span></div>`,
+      },
+      {
+        id: 'blk_math_rand',
+        code: 10,
+        total: 1,
+        label: 'pick random (0.0) to (1.0)',
+        html: `<div class="scratch-reporter blk-op"><span>pick random</span><span class="blk-slot">0.0</span><span>to</span><span class="blk-slot">1.0</span></div>`,
+      },
+      {
+        id: 'blk_list_size',
+        code: 11,
+        total: 1,
+        label: 'length of [list]',
+        html: `<div class="scratch-reporter blk-list"><span>length of</span><span class="blk-dropdown">list <span>▾</span></span></div>`,
+      },
+      {
+        id: 'blk_list_add',
+        code: 12,
+        total: 1,
+        label: 'add [obj] to [list]',
+        html: `<div class="scratch-stack blk-list"><span>add</span><span class="blk-slot">obj</span><span>to</span><span class="blk-dropdown">list <span>▾</span></span></div>`,
+      },
+      {
+        id: 'blk_list_insert',
+        code: 13,
+        total: 1,
+        label: 'insert [obj] at (index) of [list]',
+        html: `<div class="scratch-stack blk-list"><span>insert</span><span class="blk-slot">obj</span><span>at</span><span class="blk-slot">index</span><span>of</span><span class="blk-dropdown">list <span>▾</span></span></div>`,
+      },
+      {
+        id: 'blk_list_get',
+        code: 14,
+        total: 1,
+        label: 'item (index) of [list]',
+        html: `<div class="scratch-reporter blk-list"><span>item</span><span class="blk-slot">index</span><span>of</span><span class="blk-dropdown">list <span>▾</span></span></div>`,
+      },
+      {
+        id: 'blk_list_set',
+        code: 15,
+        total: 1,
+        label: 'replace item (index) of [list] with [obj]',
+        html: `<div class="scratch-stack blk-list"><span>replace item</span><span class="blk-slot">index</span><span>of</span><span class="blk-dropdown">list <span>▾</span></span><span>with</span><span class="blk-slot">obj</span></div>`,
+      },
+      {
+        id: 'blk_list_rem',
+        code: 16,
+        total: 1,
+        label: 'delete (index) of [list]',
+        html: `<div class="scratch-stack blk-list"><span>delete</span><span class="blk-slot">index</span><span>of</span><span class="blk-dropdown">list <span>▾</span></span></div>`,
+      },
+      {
+        id: 'blk_io_line',
+        code: 17,
+        total: 1,
+        label: 'ask [prompt] and wait → (answer)',
+        html: `
+          <div class="inline-flex flex-wrap items-center gap-1.5">
+            <div class="scratch-stack blk-sensing"><span>ask</span><span class="blk-slot">prompt</span><span>and wait</span></div>
+            <span class="text-xs font-bold opacity-60">→</span>
+            <div class="scratch-reporter blk-sensing"><span>answer</span></div>
+          </div>`,
+      },
+    ];
+
+    const BLOCK_BY_ID = Object.fromEntries(BLOCK_POOL.map((b) => [b.id, b]));
+
+    /* =========================================================================
+       3. COMPLETE 2025 AP CSA QUICK REFERENCE DATASET (34 ITEMS, HASHED ANSWERS)
+       ========================================================================= */
+    const CATEGORY_TABS = [
+      {
+        id: 'string',
+        shortTitle: '1. String Class',
+        title: 'String Class',
+        items: [
+          {
+            id: 's1', rowIdx: 0, className: 'String', h: 1113,
+            signature: 'String(String str)',
+            desc: 'Constructs a new String object that represents the same sequence of characters as str.',
+            tip: 'Object constructors are specific to OOP languages like Java.',
+            javaHtml: `<span class="j-cls">String</span><span class="j-op">(</span><span class="j-cls">String</span> <span class="j-var">str</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 's2', rowIdx: 1, className: 'String', h: 1225,
+            signature: 'int length()',
+            desc: 'Returns the number of characters in a String object.',
+            tip: 'Strings use .length() with parentheses, while ArrayLists use .size().',
+            javaHtml: `<span class="j-kw">int</span> <span class="j-fn">length</span><span class="j-op">()</span>`,
+          },
+          {
+            id: 's3', rowIdx: 2, className: 'String', h: 1306,
+            signature: 'String substring(int from, int to)',
+            desc: 'Returns the substring beginning at index from and ending at index to - 1.',
+            tip: 'Java uses an exclusive ending index (to - 1), whereas block substrings typically take a start and length.',
+            javaHtml: `<span class="j-cls">String</span> <span class="j-fn">substring</span><span class="j-op">(</span><span class="j-kw">int</span> <span class="j-var">from</span><span class="j-op">,</span> <span class="j-kw">int</span> <span class="j-var">to</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 's4', rowIdx: 3, className: 'String', h: 1428,
+            signature: 'String substring(int from)',
+            desc: 'Returns substring(from, length()).',
+            tip: 'Method overloading (same name, fewer parameters) is a Java OOP feature.',
+            javaHtml: `<span class="j-cls">String</span> <span class="j-fn">substring</span><span class="j-op">(</span><span class="j-kw">int</span> <span class="j-var">from</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 's5', rowIdx: 4, className: 'String', h: 1523,
+            signature: 'int indexOf(String str)',
+            desc: 'Returns the index of the first occurrence of str; returns -1 if not found.',
+            tip: 'Java returns a 0-based index (or -1 when missing).',
+            javaHtml: `<span class="j-kw">int</span> <span class="j-fn">indexOf</span><span class="j-op">(</span><span class="j-cls">String</span> <span class="j-var">str</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 's6', rowIdx: 5, className: 'String', h: 1604,
+            signature: 'boolean equals(Object other)',
+            desc: 'Returns true if this corresponds to the same sequence of characters as other; returns false otherwise.',
+            tip: 'Always use .equals() instead of == to compare String values in Java.',
+            javaHtml: `<span class="j-kw">boolean</span> <span class="j-fn">equals</span><span class="j-op">(</span><span class="j-cls">Object</span> <span class="j-var">other</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 's7', rowIdx: 6, className: 'String', h: 1712,
+            signature: 'int compareTo(String other)',
+            desc: 'Returns < 0 if this < other, 0 if equal, > 0 if this > other (alphabetical order).',
+            tip: 'Returns an integer difference for lexicographical sorting rather than a boolean.',
+            javaHtml: `<span class="j-kw">int</span> <span class="j-fn">compareTo</span><span class="j-op">(</span><span class="j-cls">String</span> <span class="j-var">other</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 's8', rowIdx: 7, className: 'String', h: 1821,
+            signature: 'String[] split(String del)',
+            desc: 'Returns a String array where each element is a substring split around matches of delimiter del.',
+            tip: 'Splits text into an array of substrings at every occurrence of del.',
+            javaHtml: `<span class="j-cls">String</span><span class="j-op">[]</span> <span class="j-fn">split</span><span class="j-op">(</span><span class="j-cls">String</span> <span class="j-var">del</span><span class="j-op">)</span>`,
+          },
+        ],
+      },
+      {
+        id: 'math',
+        shortTitle: '2. Integer, Double & Math',
+        title: 'Integer, Double & Math Classes',
+        items: [
+          {
+            id: 'm1', rowIdx: 8, className: 'Integer', h: 1922,
+            signature: 'Integer.MIN_VALUE',
+            desc: 'The minimum value represented by an int or Integer (-2,147,483,648).',
+            tip: 'Fixed 32-bit signed integer bounds are specific to statically typed languages.',
+            javaHtml: `<span class="j-cls">Integer</span><span class="j-op">.</span><span class="j-const">MIN_VALUE</span>`,
+          },
+          {
+            id: 'm2', rowIdx: 9, className: 'Integer', h: 2027,
+            signature: 'Integer.MAX_VALUE',
+            desc: 'The maximum value represented by an int or Integer (2,147,483,647).',
+            tip: 'Commonly used to initialize a running minimum search in Java.',
+            javaHtml: `<span class="j-cls">Integer</span><span class="j-op">.</span><span class="j-const">MAX_VALUE</span>`,
+          },
+          {
+            id: 'm3', rowIdx: 10, className: 'Integer', h: 2112,
+            signature: 'static int parseInt(String s)',
+            desc: 'Returns the String argument as an int.',
+            tip: 'Converts numeric text like "42" into an integer value.',
+            javaHtml: `<span class="j-kw">static int</span> <span class="j-fn">parseInt</span><span class="j-op">(</span><span class="j-cls">String</span> <span class="j-var">s</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 'm4', rowIdx: 11, className: 'Double', h: 2206,
+            signature: 'static double parseDouble(String s)',
+            desc: 'Returns the String argument as a double.',
+            tip: 'Block languages have a single number type rather than separate int and double parsers.',
+            javaHtml: `<span class="j-kw">static double</span> <span class="j-fn">parseDouble</span><span class="j-op">(</span><span class="j-cls">String</span> <span class="j-var">s</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 'm5', rowIdx: 12, className: 'Math', h: 2329,
+            signature: 'static int abs(int x)',
+            desc: 'Returns the absolute value of an int value.',
+            tip: 'Java overloads Math.abs() for int and double; both map to the abs block!',
+            javaHtml: `<span class="j-kw">static int</span> <span class="j-fn">abs</span><span class="j-op">(</span><span class="j-kw">int</span> <span class="j-var">x</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 'm6', rowIdx: 13, className: 'Math', h: 2403,
+            signature: 'static double abs(double x)',
+            desc: 'Returns the absolute value of a double value.',
+            tip: 'Notice there are two abs blocks in the shared pool for int and double.',
+            javaHtml: `<span class="j-kw">static double</span> <span class="j-fn">abs</span><span class="j-op">(</span><span class="j-kw">double</span> <span class="j-var">x</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 'm7', rowIdx: 14, className: 'Math', h: 2515,
+            signature: 'static double pow(double base, double exponent)',
+            desc: 'Returns the value of the first parameter raised to the power of the second parameter.',
+            tip: 'Math.pow always returns a double in Java.',
+            javaHtml: `<span class="j-kw">static double</span> <span class="j-fn">pow</span><span class="j-op">(</span><span class="j-kw">double</span> <span class="j-var">base</span><span class="j-op">,</span> <span class="j-kw">double</span> <span class="j-var">exponent</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 'm8', rowIdx: 15, className: 'Math', h: 2627,
+            signature: 'static double sqrt(double x)',
+            desc: 'Returns the nonnegative square root of a double value.',
+            tip: 'Passing a negative value returns NaN (Not a Number).',
+            javaHtml: `<span class="j-kw">static double</span> <span class="j-fn">sqrt</span><span class="j-op">(</span><span class="j-kw">double</span> <span class="j-var">x</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 'm9', rowIdx: 16, className: 'Math', h: 2708,
+            signature: 'static double random()',
+            desc: 'Returns a double value greater than or equal to 0.0 and less than 1.0.',
+            tip: 'Java Math.random() is [0.0, 1.0) exclusive of 1.0, unlike Scratch pick random which is inclusive.',
+            javaHtml: `<span class="j-kw">static double</span> <span class="j-fn">random</span><span class="j-op">()</span>`,
+          },
+        ],
+      },
+      {
+        id: 'arraylist',
+        shortTitle: '3. ArrayList Class',
+        title: 'ArrayList Class',
+        items: [
+          {
+            id: 'a1', rowIdx: 17, className: 'ArrayList', h: 2820,
+            signature: 'int size()',
+            desc: 'Returns the number of elements in the list.',
+            tip: 'Every ArrayList method has a direct visual list-block counterpart!',
+            javaHtml: `<span class="j-kw">int</span> <span class="j-fn">size</span><span class="j-op">()</span>`,
+          },
+          {
+            id: 'a2', rowIdx: 18, className: 'ArrayList', h: 2901,
+            signature: 'boolean add(E obj)',
+            desc: 'Appends obj to end of list; returns true.',
+            tip: 'Appends to the end and grows the list size by 1.',
+            javaHtml: `<span class="j-kw">boolean</span> <span class="j-fn">add</span><span class="j-op">(</span><span class="j-cls">E</span> <span class="j-var">obj</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 'a3', rowIdx: 19, className: 'ArrayList', h: 3013,
+            signature: 'void add(int index, E obj)',
+            desc: 'Inserts obj at position index (0 <= index <= size), shifting elements at index and higher right.',
+            tip: 'Watch out: Java lists are 0-based, whereas Scratch lists are 1-based.',
+            javaHtml: `<span class="j-kw">void</span> <span class="j-fn">add</span><span class="j-op">(</span><span class="j-kw">int</span> <span class="j-var">index</span><span class="j-op">,</span> <span class="j-cls">E</span> <span class="j-var">obj</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 'a4', rowIdx: 20, className: 'ArrayList', h: 3125,
+            signature: 'E get(int index)',
+            desc: 'Returns the element at position index in the list.',
+            tip: 'Reads the element at index without modifying the list.',
+            javaHtml: `<span class="j-cls">E</span> <span class="j-fn">get</span><span class="j-op">(</span><span class="j-kw">int</span> <span class="j-var">index</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 'a5', rowIdx: 21, className: 'ArrayList', h: 3206,
+            signature: 'E set(int index, E obj)',
+            desc: 'Replaces the element at position index with obj; returns the former element.',
+            tip: 'Java set() also returns the previous value that was overwritten.',
+            javaHtml: `<span class="j-cls">E</span> <span class="j-fn">set</span><span class="j-op">(</span><span class="j-kw">int</span> <span class="j-var">index</span><span class="j-op">,</span> <span class="j-cls">E</span> <span class="j-var">obj</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 'a6', rowIdx: 22, className: 'ArrayList', h: 3318,
+            signature: 'E remove(int index)',
+            desc: 'Removes element at index, shifting subsequent elements left and returning the former element.',
+            tip: 'Shifting elements left is why removing during a forward loop requires care.',
+            javaHtml: `<span class="j-cls">E</span> <span class="j-fn">remove</span><span class="j-op">(</span><span class="j-kw">int</span> <span class="j-var">index</span><span class="j-op">)</span>`,
+          },
+        ],
+      },
+      {
+        id: 'io_obj',
+        shortTitle: '4. File, Scanner & Object',
+        title: 'File, Scanner & Object Classes',
+        items: [
+          {
+            id: 'f1', rowIdx: 23, className: 'File', h: 3404,
+            signature: 'File(String pathname)',
+            desc: 'The File constructor that accepts a String pathname.',
+            tip: 'Direct file-system objects do not exist in standard block environments.',
+            javaHtml: `<span class="j-cls">File</span><span class="j-op">(</span><span class="j-cls">String</span> <span class="j-var">pathname</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 'f2', rowIdx: 24, className: 'Scanner', h: 3509,
+            signature: 'Scanner(File f)',
+            desc: 'The Scanner constructor that accepts a File for reading.',
+            tip: 'File stream readers are specific to Java.',
+            javaHtml: `<span class="j-cls">Scanner</span><span class="j-op">(</span><span class="j-cls">File</span> <span class="j-var">f</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 'f3', rowIdx: 25, className: 'Scanner', h: 3614,
+            signature: 'int nextInt()',
+            desc: 'Returns the next int read from the file or input source; throws InputMismatchException if invalid.',
+            tip: 'Strongly typed token scanning with exceptions is Java-specific.',
+            javaHtml: `<span class="j-kw">int</span> <span class="j-fn">nextInt</span><span class="j-op">()</span>`,
+          },
+          {
+            id: 'f4', rowIdx: 26, className: 'Scanner', h: 3719,
+            signature: 'double nextDouble()',
+            desc: 'Returns the next double read from the file or input source; throws InputMismatchException if invalid.',
+            tip: 'Strongly typed decimal scanning is Java-specific.',
+            javaHtml: `<span class="j-kw">double</span> <span class="j-fn">nextDouble</span><span class="j-op">()</span>`,
+          },
+          {
+            id: 'f5', rowIdx: 27, className: 'Scanner', h: 3824,
+            signature: 'boolean nextBoolean()',
+            desc: 'Returns the next boolean read from the file or input source; throws InputMismatchException if invalid.',
+            tip: 'Strongly typed boolean scanning is Java-specific.',
+            javaHtml: `<span class="j-kw">boolean</span> <span class="j-fn">nextBoolean</span><span class="j-op">()</span>`,
+          },
+          {
+            id: 'f6', rowIdx: 28, className: 'Scanner', h: 3924,
+            signature: 'String nextLine()',
+            desc: 'Returns the next line of text as a String read from the file or input source.',
+            tip: 'Reading a full line of text corresponds closely to Scratch ask/answer.',
+            javaHtml: `<span class="j-cls">String</span> <span class="j-fn">nextLine</span><span class="j-op">()</span>`,
+          },
+          {
+            id: 'f7', rowIdx: 29, className: 'Scanner', h: 4003,
+            signature: 'String next()',
+            desc: 'Returns the next whitespace-delimited String token from the file or input source.',
+            tip: 'Whitespace token reading is specific to Java Scanner.',
+            javaHtml: `<span class="j-cls">String</span> <span class="j-fn">next</span><span class="j-op">()</span>`,
+          },
+          {
+            id: 'f8', rowIdx: 30, className: 'Scanner', h: 4108,
+            signature: 'boolean hasNext()',
+            desc: 'Returns true if there is a next item to read in the file or input source; false otherwise.',
+            tip: 'Stream lookahead is specific to Java Scanner.',
+            javaHtml: `<span class="j-kw">boolean</span> <span class="j-fn">hasNext</span><span class="j-op">()</span>`,
+          },
+          {
+            id: 'f9', rowIdx: 31, className: 'Scanner', h: 4213,
+            signature: 'void close()',
+            desc: 'Closes this scanner.',
+            tip: 'Explicit resource closing is not needed in block-based environments.',
+            javaHtml: `<span class="j-kw">void</span> <span class="j-fn">close</span><span class="j-op">()</span>`,
+          },
+          {
+            id: 'f10', rowIdx: 32, className: 'Object', h: 4318,
+            signature: 'boolean equals(Object other)',
+            desc: 'Default Object method: indicates whether some other object is "equal to" this one.',
+            tip: 'Object superclass method overriding is an OOP concept unique to Java.',
+            javaHtml: `<span class="j-kw">boolean</span> <span class="j-fn">equals</span><span class="j-op">(</span><span class="j-cls">Object</span> <span class="j-var">other</span><span class="j-op">)</span>`,
+          },
+          {
+            id: 'f11', rowIdx: 33, className: 'Object', h: 4423,
+            signature: 'String toString()',
+            desc: 'Default Object method: returns a string representation of the object.',
+            tip: 'Java automatically calls toString() when printing an object.',
+            javaHtml: `<span class="j-cls">String</span> <span class="j-fn">toString</span><span class="j-op">()</span>`,
+          },
+        ],
+      },
+    ];
+
+    const ALL_ITEMS = CATEGORY_TABS.flatMap((t) => t.items);
+    const TOTAL_ITEMS = ALL_ITEMS.length; // 34
+
+    /* =========================================================================
+       4. HASHED VALIDATION (No plain-text answer key in student code)
+       ========================================================================= */
+    function computeRowHash(rowIdx, optCode) {
+      const mixed = (optCode * 7 + rowIdx * 5 + 13) % 31;
+      return (rowIdx + 11) * 100 + mixed;
+    }
+
+    function isRowSelectionCorrect(item, blockId) {
+      if (!blockId || !BLOCK_BY_ID[blockId]) return false;
+      const optCode = BLOCK_BY_ID[blockId].code;
+      return computeRowHash(item.rowIdx, optCode) === item.h;
+    }
+
+    /* =========================================================================
+       5. APPLICATION STATE
+       ========================================================================= */
+    let currentTabIndex = 0;
+    let showDescriptions = true;
+    let openDropdownRowId = null;
+    let toastTimer = null;
+
+    // Per-row state keyed by item.id
+    const rowState = {};
+    ALL_ITEMS.forEach((item) => {
+      rowState[item.id] = {
+        selectedId: null,       // chosen block option ID from shared pool
+        status: 'unmatched',    // 'unmatched' | 'correct' | 'incorrect'
+        attempts: 0,            // how many times student checked this row
+        firstTryCorrect: null,  // true | false | null
+      };
+    });
+
+    /* =========================================================================
+       6. SHARED POOL INVENTORY CALCULATIONS
+       ========================================================================= */
+    function getRemainingCounts() {
+      const remaining = {};
+      BLOCK_POOL.forEach((opt) => {
+        remaining[opt.id] = opt.total;
+      });
+      Object.values(rowState).forEach((st) => {
+        if (st.selectedId && remaining[st.selectedId] !== undefined) {
+          remaining[st.selectedId] -= 1;
+        }
+      });
+      return remaining;
+    }
+
+    function getMetrics() {
+      let completed = 0;
+      let totalAttempts = 0;
+      let checkedRows = 0;
+      let firstTryCorrect = 0;
+
+      ALL_ITEMS.forEach((item) => {
+        const st = rowState[item.id];
+        if (st.status === 'correct') completed += 1;
+        totalAttempts += st.attempts;
+        if (st.firstTryCorrect !== null) {
+          checkedRows += 1;
+          if (st.firstTryCorrect) firstTryCorrect += 1;
+        }
+      });
+
+      const firstTryPct = checkedRows > 0 ? Math.round((firstTryCorrect / checkedRows) * 100) : null;
+      return { completed, totalAttempts, checkedRows, firstTryCorrect, firstTryPct };
+    }
+
+    /* =========================================================================
+       7. USER INTERACTIONS
+       ========================================================================= */
+    function switchTab(idx) {
+      currentTabIndex = idx;
+      openDropdownRowId = null;
+      renderAll();
+    }
+
+    function toggleDescriptions() {
+      showDescriptions = !showDescriptions;
+      document.getElementById('descToggleLabel').textContent = showDescriptions ? 'Descriptions: ON' : 'Descriptions: OFF';
+      renderRows();
+    }
+
+    function toggleDropdown(rowId, event) {
+      if (event) event.stopPropagation();
+      if (rowState[rowId].status === 'correct') return;
+      openDropdownRowId = openDropdownRowId === rowId ? null : rowId;
+      renderRows();
+    }
+
+    function selectOption(rowId, blockId, event) {
+      if (event) event.stopPropagation();
+      const st = rowState[rowId];
+      if (st.status === 'correct') return;
+
+      // Verify pool availability if picking a new option
+      if (blockId !== null && st.selectedId !== blockId) {
+        const remaining = getRemainingCounts();
+        if (remaining[blockId] <= 0) return;
+      }
+
+      st.selectedId = blockId;
+      if (st.status === 'incorrect') {
+        st.status = 'unmatched';
+      }
+      openDropdownRowId = null;
+      renderAll();
+    }
+
+    function checkSingleRow(rowId) {
+      const item = ALL_ITEMS.find((it) => it.id === rowId);
+      const st = rowState[rowId];
+      if (!item || st.status === 'correct') return;
+
+      if (!st.selectedId) {
+        showToast('Pick a Block-Based Code option or Blank Slot first.', 'info');
+        return;
+      }
+
+      st.attempts += 1;
+      const correct = isRowSelectionCorrect(item, st.selectedId);
+
+      if (st.firstTryCorrect === null) {
+        st.firstTryCorrect = correct;
+      }
+
+      if (correct) {
+        st.status = 'correct';
+        openDropdownRowId = null;
+        renderAll();
+        const m = getMetrics();
+        if (m.completed === TOTAL_ITEMS) {
+          showToast('All 34 AP CSA items matched! Click "Turn In / Export" to save your report.', 'success');
+        } else {
+          showToast(`✓ Correct! ${item.className}: ${item.signature}`, 'success');
+        }
+      } else {
+        st.status = 'incorrect';
+        renderAll();
+        triggerRowShake(rowId);
+        showToast(`Not a match yet for ${item.signature} — try another block or the Blank Slot.`, 'error');
+      }
+    }
+
+    function checkAllFilledInTab() {
+      const tab = CATEGORY_TABS[currentTabIndex];
+      let newlyCorrect = 0;
+      let newlyWrong = 0;
+      const wrongIds = [];
+
+      tab.items.forEach((item) => {
+        const st = rowState[item.id];
+        if (st.status === 'correct' || !st.selectedId) return;
+
+        st.attempts += 1;
+        const correct = isRowSelectionCorrect(item, st.selectedId);
+        if (st.firstTryCorrect === null) {
+          st.firstTryCorrect = correct;
+        }
+
+        if (correct) {
+          st.status = 'correct';
+          newlyCorrect += 1;
+        } else {
+          st.status = 'incorrect';
+          newlyWrong += 1;
+          wrongIds.push(item.id);
+        }
+      });
+
+      if (newlyCorrect === 0 && newlyWrong === 0) {
+        showToast('No newly filled rows to check on this tab.', 'info');
+        return;
+      }
+
+      openDropdownRowId = null;
+      renderAll();
+      wrongIds.forEach((id) => triggerRowShake(id));
+
+      if (newlyWrong === 0) {
+        showToast(`✓ Nice work! ${newlyCorrect} ${newlyCorrect === 1 ? 'row' : 'rows'} verified correct.`, 'success');
+      } else if (newlyCorrect === 0) {
+        showToast(`${newlyWrong} ${newlyWrong === 1 ? 'row needs' : 'rows need'} another look (highlighted in red).`, 'error');
+      } else {
+        showToast(`${newlyCorrect} correct ✓, ${newlyWrong} to adjust (highlighted in red).`, 'info');
+      }
+    }
+
+    function triggerRowShake(rowId) {
+      const el = document.getElementById(`row-${rowId}`);
+      if (!el) return;
+      el.classList.remove('animate-shake');
+      void el.offsetWidth; // Force reflow
+      el.classList.add('animate-shake');
+    }
+
+    function openResetConfirm() {
+      const tab = CATEGORY_TABS[currentTabIndex];
+      document.getElementById('resetTabNameLabel').textContent = tab.title;
+      const modal = document.getElementById('resetConfirmModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeResetConfirm() {
+      const modal = document.getElementById('resetConfirmModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function confirmResetCurrentTab() {
+      const tab = CATEGORY_TABS[currentTabIndex];
+      tab.items.forEach((item) => {
+        rowState[item.id] = {
+          selectedId: null,
+          status: 'unmatched',
+          attempts: 0,
+          firstTryCorrect: null,
+        };
+      });
+      openDropdownRowId = null;
+      closeResetConfirm();
+      renderAll();
+      showToast(`${tab.title} has been reset.`, 'info');
+    }
+
+    // Close open dropdown when clicking anywhere outside
+    document.addEventListener('click', () => {
+      if (openDropdownRowId !== null) {
+        openDropdownRowId = null;
+        renderRows();
+      }
+    });
+
+    /* =========================================================================
+       8. TOAST FEEDBACK
+       ========================================================================= */
+    function showToast(message, variant = 'info') {
+      const container = document.getElementById('toastContainer');
+      const box = document.getElementById('toastBox');
+      const icon = document.getElementById('toastIcon');
+      const msg = document.getElementById('toastMessage');
+
+      const map = {
+        success: {
+          cls: 'bg-emerald-600 text-white border-emerald-700',
+          svg: '<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>',
+        },
+        error: {
+          cls: 'bg-rose-600 text-white border-rose-700',
+          svg: '<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>',
+        },
+        info: {
+          cls: 'bg-slate-800 text-white border-slate-700',
+          svg: '<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+        },
+      };
+
+      const style = map[variant] || map.info;
+      box.className = `rounded-xl px-4 py-3 shadow-2xl border flex items-center gap-3 text-sm font-semibold ${style.cls}`;
+      icon.innerHTML = style.svg;
+      msg.textContent = message;
+
+      container.classList.remove('opacity-0', 'translate-y-4');
+      container.classList.add('opacity-100', 'translate-y-0');
+
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        container.classList.add('opacity-0', 'translate-y-4');
+        container.classList.remove('opacity-100', 'translate-y-0');
+      }, 3400);
+    }
+
+    /* =========================================================================
+       9. RENDERING
+       ========================================================================= */
+    function renderAll() {
+      renderProgress();
+      renderTabs();
+      renderPoolSummary();
+      renderRows();
+    }
+
+    function renderProgress() {
+      const m = getMetrics();
+      document.getElementById('overallCompletedBadge').textContent = `${m.completed} / ${TOTAL_ITEMS} Completed`;
+      const pct = Math.round((m.completed / TOTAL_ITEMS) * 100);
+      document.getElementById('overallProgressBar').style.width = `${pct}%`;
+    }
+
+    function renderTabs() {
+      const container = document.getElementById('categoryTabs');
+      container.innerHTML = CATEGORY_TABS.map((tab, idx) => {
+        const doneCount = tab.items.filter((it) => rowState[it.id].status === 'correct').length;
+        const isActive = idx === currentTabIndex;
+        const isDone = doneCount === tab.items.length;
+
+        const styleAttr = isActive
+          ? 'background-color: #2563eb; color: #ffffff; border-color: #2563eb;'
+          : 'background-color: var(--tab-inactive-bg); color: var(--tab-inactive-text); border-color: var(--border-subtle);';
+
+        const badge = isDone
+          ? `<span class="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full ${isActive ? 'bg-white text-emerald-600' : 'bg-emerald-500 text-white'} text-[10px] font-bold">✓</span>`
+          : `<span class="ml-1.5 text-[11px] opacity-80">(${doneCount}/${tab.items.length})</span>`;
+
+        return `
+          <button
+            type="button"
+            role="tab"
+            aria-selected="${isActive}"
+            onclick="switchTab(${idx})"
+            style="${styleAttr}"
+            class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold border transition cursor-pointer hover:opacity-95"
+          >
+            ${tab.shortTitle}${badge}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function renderPoolSummary() {
+      const remaining = getRemainingCounts();
+      const blanksLeft = remaining[BLANK_ID];
+      let blocksLeft = 0;
+      BLOCK_POOL.forEach((opt) => {
+        if (opt.id !== BLANK_ID) blocksLeft += remaining[opt.id];
+      });
+
+      document.getElementById('poolSummaryPill').innerHTML = `
+        <span>Shared Pool Left:</span>
+        <span class="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-500 font-bold">${blocksLeft} Blocks</span>
+        <span class="px-2 py-0.5 rounded-md bg-slate-500/15 font-bold" style="color: var(--text-secondary);">${blanksLeft} Blanks</span>
+      `;
+    }
+
+    function renderRows() {
+      const tab = CATEGORY_TABS[currentTabIndex];
+      const remaining = getRemainingCounts();
+      const container = document.getElementById('rowsContainer');
+
+      container.innerHTML = tab.items.map((item, idxInTab) => {
+        const st = rowState[item.id];
+        const isCorrect = st.status === 'correct';
+        const isIncorrect = st.status === 'incorrect';
+        const isOpen = openDropdownRowId === item.id;
+        const selectedOpt = st.selectedId ? BLOCK_BY_ID[st.selectedId] : null;
+
+        // Open menu upward for the last 2 rows in a tab to prevent viewport clipping
+        const openUpward = idxInTab >= tab.items.length - 2 && tab.items.length > 3;
+        const menuPositionCls = openUpward ? 'bottom-full mb-2' : 'top-full mt-2';
+
+        const rowStatusCls = isCorrect ? 'row-correct' : isIncorrect ? 'row-incorrect' : '';
+        const zIndexCls = isOpen ? 'relative z-40' : 'relative z-10';
+
+        // Dropdown Trigger Label
+        const triggerContent = selectedOpt
+          ? selectedOpt.html
+          : `<span class="text-xs sm:text-sm font-medium" style="color: var(--text-muted);">Select Block Code or Blank Slot...</span>`;
+
+        // Dropdown Menu HTML
+        let menuHtml = '';
+        if (isOpen && !isCorrect) {
+          const clearBtnHtml = st.selectedId
+            ? `
+              <button
+                type="button"
+                onclick="selectOption('${item.id}', null, event)"
+                class="dropdown-item w-full text-left px-3 py-2 text-xs font-semibold text-rose-500 border-b flex items-center gap-1.5 cursor-pointer"
+                style="border-color: var(--border-subtle);"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Clear Selection (return to pool)
+              </button>`
+            : '';
+
+          const optionsHtml = BLOCK_POOL.map((opt) => {
+            const left = remaining[opt.id];
+            const isCurrent = st.selectedId === opt.id;
+            const disabled = left <= 0 && !isCurrent;
+            const countBadgeCls = left > 0
+              ? 'bg-blue-500/15 text-blue-500'
+              : 'bg-slate-500/15 text-slate-400';
+
+            return `
+              <button
+                type="button"
+                ${disabled ? 'disabled' : ''}
+                onclick="selectOption('${item.id}', '${opt.id}', event)"
+                class="dropdown-item w-full text-left px-3 py-2.5 flex items-center justify-between gap-2 border-b last:border-b-0 cursor-pointer ${isCurrent ? 'ring-1 ring-inset ring-blue-500/50' : ''}"
+                style="border-color: var(--border-subtle);"
+              >
+                <div class="flex items-center gap-2 flex-wrap">${opt.html}</div>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0 ${countBadgeCls}">
+                  ${isCurrent ? 'Selected' : `${left} left`}
+                </span>
+              </button>
+            `;
+          }).join('');
+
+          menuHtml = `
+            <div class="dropdown-menu absolute left-0 right-0 ${menuPositionCls} rounded-2xl overflow-hidden z-50 max-h-80 overflow-y-auto animate-pop">
+              ${clearBtnHtml}
+              ${optionsHtml}
+            </div>
+          `;
+        }
+
+        // Right-side Action / Status Cell
+        const statusCellHtml = isCorrect
+          ? `
+            <div class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-emerald-500 text-white shadow-sm" title="Matched correctly!">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>`
+          : `
+            <button
+              type="button"
+              onclick="checkSingleRow('${item.id}')"
+              class="px-3.5 py-2 rounded-xl text-xs font-bold transition cursor-pointer shadow-sm ${
+                st.selectedId
+                  ? 'bg-blue-600 hover:bg-blue-500 text-white'
+                  : 'theme-btn-secondary opacity-65'
+              }"
+            >
+              Check
+            </button>`;
+
+        return `
+          <div id="row-${item.id}" class="theme-card ${rowStatusCls} ${zIndexCls} rounded-2xl p-4 shadow-sm">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-center">
+
+              <!-- Column 1: Java Signature + Optional Description -->
+              <div class="md:col-span-6 space-y-1.5">
+                <div class="flex items-center gap-2">
+                  <span class="cls-${item.className} text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border">${item.className} Class</span>
+                  ${isIncorrect ? '<span class="text-[11px] font-bold text-rose-500">Try again</span>' : ''}
+                </div>
+                <div class="java-box">${item.javaHtml}</div>
+                ${showDescriptions ? `<p class="text-xs leading-relaxed px-0.5" style="color: var(--text-secondary);">${escapeHtml(item.desc)}</p>` : ''}
+                ${isCorrect ? `<p class="text-xs font-medium text-emerald-500 px-0.5 pt-0.5">✓ AP Tip: ${escapeHtml(item.tip)}</p>` : ''}
+              </div>
+
+              <!-- Column 2: Block-Based Code Shared Pool Dropdown -->
+              <div class="md:col-span-5 relative">
+                <button
+                  type="button"
+                  onclick="toggleDropdown('${item.id}', event)"
+                  ${isCorrect ? 'disabled' : ''}
+                  class="w-full min-h-[54px] px-3.5 py-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition ${isCorrect ? 'cursor-default opacity-95' : 'cursor-pointer'}"
+                  style="background-color: var(--bg-input); border-color: ${isOpen ? '#3b82f6' : 'var(--border-subtle)'};"
+                >
+                  <div class="flex-1 overflow-x-auto">${triggerContent}</div>
+                  ${
+                    isCorrect
+                      ? '<span class="text-xs font-bold text-emerald-500 shrink-0">Locked</span>'
+                      : `<svg class="w-4 h-4 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}" style="color: var(--text-muted);" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>`
+                  }
+                </button>
+                ${menuHtml}
+              </div>
+
+              <!-- Column 3: Check Button / Green Checkmark -->
+              <div class="md:col-span-1 flex md:justify-end items-center">
+                ${statusCellHtml}
+              </div>
+
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* =========================================================================
+       10. TURN IN / EXPORT REPORT (PRINT PDF & .DOC DOWNLOAD)
+       ========================================================================= */
+    function openReportModal() {
+      const m = getMetrics();
+      document.getElementById('repCompleted').textContent = `${m.completed} / ${TOTAL_ITEMS}`;
+      document.getElementById('repAttempts').textContent = `${m.totalAttempts}`;
+      document.getElementById('repFirstTry').textContent = m.firstTryPct !== null ? `${m.firstTryPct}%` : '—';
+
+      const warn = document.getElementById('repIncompleteNote');
+      if (m.completed < TOTAL_ITEMS) {
+        warn.classList.remove('hidden');
+      } else {
+        warn.classList.add('hidden');
+      }
+
+      const modal = document.getElementById('reportModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeReportModal() {
+      const modal = document.getElementById('reportModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function buildReportHtmlDocument(forWord = false) {
+      const name = (document.getElementById('studentNameInput').value || '').trim() || 'Student';
+      const period = (document.getElementById('studentPeriodInput').value || '').trim() || 'N/A';
+      const timestamp = new Date().toLocaleString();
+      const m = getMetrics();
+      const pctDone = Math.round((m.completed / TOTAL_ITEMS) * 100);
+      const firstTryStr = m.firstTryPct !== null ? `${m.firstTryPct}% (${m.firstTryCorrect}/${m.checkedRows})` : 'N/A';
+
+      const rowsHtml = ALL_ITEMS.map((item, i) => {
+        const st = rowState[item.id];
+        const chosenLabel = st.selectedId && BLOCK_BY_ID[st.selectedId]
+          ? BLOCK_BY_ID[st.selectedId].label
+          : '(No selection)';
+        const statusLabel = st.status === 'correct'
+          ? '✓ Correct'
+          : st.status === 'incorrect'
+            ? '✗ Incorrect'
+            : 'Unanswered';
+        const statusColor = st.status === 'correct'
+          ? '#047857'
+          : st.status === 'incorrect'
+            ? '#b91c1c'
+            : '#64748b';
+
+        return `
+          <tr class="print-break-avoid">
+            <td style="text-align:center;">${i + 1}</td>
+            <td><strong>${escapeHtml(item.className)}</strong></td>
+            <td style="font-family: Consolas, monospace;">${escapeHtml(item.signature)}</td>
+            <td>${escapeHtml(chosenLabel)}</td>
+            <td style="color:${statusColor}; font-weight:bold;">${statusLabel}</td>
+            <td style="text-align:center;">${st.attempts}</td>
+          </tr>
+        `;
+      }).join('');
+
+      const bodyContent = `
+        <div style="font-family: Arial, Helvetica, sans-serif; color: #111827;">
+          <h1 style="margin: 0 0 4px 0; font-size: 20px;">AP CSA Code Matcher — Student Turn-In Report</h1>
+          <p style="margin: 0 0 12px 0; font-size: 12px; color: #4b5563;">2025 College Board AP Computer Science A Java Quick Reference (Java vs. Block-Based Code)</p>
+
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 14px; font-size: 12px;">
+            <tr>
+              <td style="border: 1px solid #cbd5e1; padding: 6px 10px; background: #f8fafc;"><strong>Student Name:</strong> ${escapeHtml(name)}</td>
+              <td style="border: 1px solid #cbd5e1; padding: 6px 10px; background: #f8fafc;"><strong>Class / Period:</strong> ${escapeHtml(period)}</td>
+              <td style="border: 1px solid #cbd5e1; padding: 6px 10px; background: #f8fafc;"><strong>Date:</strong> ${escapeHtml(timestamp)}</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #cbd5e1; padding: 6px 10px;"><strong>Completed Rows:</strong> ${m.completed} / ${TOTAL_ITEMS} (${pctDone}%)</td>
+              <td style="border: 1px solid #cbd5e1; padding: 6px 10px;"><strong>Total Check Attempts:</strong> ${m.totalAttempts}</td>
+              <td style="border: 1px solid #cbd5e1; padding: 6px 10px;"><strong>First-Try Accuracy:</strong> ${firstTryStr}</td>
+            </tr>
+          </table>
+
+          <table class="print-table" style="width: 100%; border-collapse: collapse; font-size: 11px;">
+            <thead>
+              <tr style="background: #f1f5f9;">
+                <th style="border: 1px solid #cbd5e1; padding: 6px; width: 32px;">#</th>
+                <th style="border: 1px solid #cbd5e1; padding: 6px; width: 78px;">Class</th>
+                <th style="border: 1px solid #cbd5e1; padding: 6px;">Java Quick Reference Command</th>
+                <th style="border: 1px solid #cbd5e1; padding: 6px;">Student Selected Block / Slot</th>
+                <th style="border: 1px solid #cbd5e1; padding: 6px; width: 88px;">Status</th>
+                <th style="border: 1px solid #cbd5e1; padding: 6px; width: 64px;">Checks</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      if (!forWord) return bodyContent;
+
+      return `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta charset="utf-8"><title>AP CSA Code Matcher Report</title></head>
+        <body>${bodyContent}</body>
+        </html>
+      `;
+    }
+
+    function printReport() {
+      document.getElementById('printReportArea').innerHTML = buildReportHtmlDocument(false);
+      closeReportModal();
+      setTimeout(() => {
+        window.print();
+      }, 120);
+    }
+
+    function downloadWordReport() {
+      const rawName = (document.getElementById('studentNameInput').value || 'Student').trim();
+      const safeName = rawName.replace(/[^a-z0-9]+/gi, '_').replace(/^_|_$/g, '') || 'Student';
+      const docContent = buildReportHtmlDocument(true);
+
+      const blob = new Blob(['\ufeff', docContent], { type: 'application/msword;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `AP_CSA_Code_Matcher_${safeName}.doc`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      showToast('Word (.doc) report downloaded!', 'success');
+    }
+
+    /* =========================================================================
+       11. UTILITIES & INITIALIZATION
+       ========================================================================= */
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      renderAll();
+    });
+  </script>
+</body>
+</html>
