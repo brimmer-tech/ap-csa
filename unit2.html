@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AP CSA Unit 2 — Selection and Iteration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  color-scheme: light;
+  --paper:#F5F6F2; --panel:#FFFFFF; --ink:#1E2733; --ink-2:#5A6676; --rule:#D9DDD6;
+  --accent:#0F766E; --accent-soft:#DCF1EE; --ok:#1A7F4B; --ok-soft:#E1F3E8; --bad:#B3261E; --bad-soft:#F9E3E1;
+  --code-bg:#1C2230; --code-ink:#E6E9EF; --code-kw:#8FB4FF; --code-str:#A8D8A0; --code-cm:#8A93A3; --code-num:#F2C98A;
+  --hi:#FFE9A8;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#141922; --panel:#1C2330; --ink:#E7EAF0; --ink-2:#A3ACBA; --rule:#2E3747;
+    --accent:#5FD3C4; --accent-soft:#12372F; --ok:#5FCB8E; --ok-soft:#173526; --bad:#FF8A80; --bad-soft:#4A2320;
+    --code-bg:#0F131B; --hi:#6B5A14;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#141922; --panel:#1C2330; --ink:#E7EAF0; --ink-2:#A3ACBA; --rule:#2E3747;
+  --accent:#5FD3C4; --accent-soft:#12372F; --ok:#5FCB8E; --ok-soft:#173526; --bad:#FF8A80; --bad-soft:#4A2320;
+  --code-bg:#0F131B; --hi:#6B5A14;
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+*{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Source Sans 3","Segoe UI",Helvetica,Arial,sans-serif;font-size:17px;line-height:1.5}
+code,pre,.mono{font-family:"JetBrains Mono",Menlo,Consolas,monospace}
+code{background:var(--accent-soft);padding:1px 5px;border-radius:4px;font-size:.92em}
+a{color:var(--accent)}
+h1{font-size:1.9rem;line-height:1.15;margin:0 0 .25rem;font-weight:700}
+h2{font-size:1.45rem;margin:2.4rem 0 .6rem;font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.05rem;margin:1.4rem 0 .4rem;font-weight:600}
+p{margin:.5rem 0}
+.sub{color:var(--ink-2)}
+
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--paper);z-index:10}
+.wrap{display:grid;grid-template-columns:230px minmax(0,760px);gap:40px;max-width:1080px;margin:0 auto;padding:28px 20px 80px}
+nav.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start}
+nav.side a{display:block;padding:6px 10px;border-left:2px solid var(--rule);color:var(--ink-2);text-decoration:none;font-size:.95rem}
+nav.side a.on{border-left-color:var(--accent);color:var(--ink);font-weight:600}
+nav.side a:hover{color:var(--ink)}
+.prog{margin-top:18px;padding:12px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--panel);font-size:.9rem}
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+.prog button{margin-top:6px}
+
+main>section{scroll-margin-top:20px}
+.lead{font-size:1.1rem}
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.95rem}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:600;color:var(--ink-2)}
+.scroll{overflow-x:auto}
+ul{padding-left:1.2rem}
+li{margin:.3rem 0}
+
+/* the tracer panel */
+.tracer{border:1px solid var(--rule);border-radius:10px;background:var(--panel);margin:1.1rem 0;overflow:hidden}
+.tracer .q{padding:10px 14px;font-weight:600;border-bottom:1px solid var(--rule)}
+.tracer pre{margin:0;padding:14px 16px;background:var(--code-bg);color:var(--code-ink);font-size:.92rem;line-height:1.55;overflow-x:auto;tab-size:4}
+.kw{color:var(--code-kw)} .str{color:var(--code-str)} .cm{color:var(--code-cm)} .num{color:var(--code-num)}
+.tracer .ans{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 14px}
+.tracer input[type=text]{flex:1 1 180px;min-width:0;padding:8px 10px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);color:var(--ink);font-family:inherit;font-size:1rem}
+.tracer .out{padding:0 14px 14px;display:none}
+.tracer .out.show{display:block}
+.verdict{padding:8px 12px;border-radius:6px;margin-bottom:8px;font-weight:600}
+.verdict.ok{background:var(--ok-soft);color:var(--ok)} .verdict.bad{background:var(--bad-soft);color:var(--bad)}
+.tracer .out p{margin:.3rem 0}
+.tracer .out pre{border-radius:6px}
+
+button{font-family:inherit;font-size:.95rem;padding:8px 14px;border-radius:6px;border:1px solid var(--rule);background:var(--panel);color:var(--ink);cursor:pointer}
+button.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] button.pri, :root:not([data-theme="light"]) button.pri{color:#0F131B}
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]) button.pri{color:#fff} }
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* widgets */
+.widget{border:1px solid var(--rule);border-radius:10px;background:var(--panel);padding:14px 16px;margin:1.1rem 0}
+.widget .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:.4rem 0}
+.widget label{font-size:.95rem;color:var(--ink-2)}
+.widget input[type=text],.widget input[type=number]{padding:7px 9px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);color:var(--ink);font-family:"JetBrains Mono",monospace;font-size:1rem}
+.widget input[type=number]{width:80px}
+.cells{display:flex;gap:4px;flex-wrap:wrap;margin:10px 0 4px}
+.cell{width:38px;text-align:center;border:1px solid var(--rule);border-radius:6px;background:var(--paper)}
+.cell b{display:block;font-family:"JetBrains Mono",monospace;font-size:1.1rem;padding:6px 0 2px}
+.cell small{display:block;color:var(--ink-2);font-size:.75rem;padding-bottom:4px}
+.cell.in{background:var(--hi);border-color:var(--hi)}
+.cell.end{border-style:dashed}
+.result{font-family:"JetBrains Mono",monospace;background:var(--code-bg);color:var(--code-ink);padding:10px 12px;border-radius:6px;margin-top:8px;overflow-x:auto}
+
+/* flashcards */
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.card{border:1px solid var(--rule);border-radius:8px;background:var(--panel);padding:12px;min-height:88px;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:600;user-select:none}
+.card.flip{background:var(--accent-soft);font-weight:400;font-size:.92rem}
+.card:focus-visible{outline:2px solid var(--accent)}
+
+/* quiz */
+.qz{border:1px solid var(--rule);border-radius:10px;background:var(--panel);padding:14px 16px;margin:1rem 0}
+.qz .stem{font-weight:600}
+.qz pre{margin:.6rem 0;padding:12px 14px;background:var(--code-bg);color:var(--code-ink);border-radius:6px;font-size:.92rem;overflow-x:auto}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--rule);border-radius:6px;margin:6px 0;cursor:pointer}
+.opt input{margin-top:4px}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)} .opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.qz .why{display:none;margin-top:8px;padding:10px 12px;border-radius:6px;background:var(--accent-soft)}
+.qz .why.show{display:block}
+.score{border:1px solid var(--rule);border-radius:10px;padding:14px 16px;background:var(--panel)}
+.topicbar{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:.95rem}
+.topicbar span{width:150px}
+.topicbar .bar{flex:1;margin:0}
+.topicbar .bar i{background:var(--accent)}
+
+@media (max-width:820px){
+  .wrap{grid-template-columns:1fr;gap:0;padding:16px 14px 60px}
+  nav.side{position:sticky;top:env(safe-area-inset-top,0px);background:var(--paper);z-index:5;display:flex;gap:6px;overflow-x:auto;padding:8px 0;border-bottom:1px solid var(--rule);margin-bottom:8px}
+  nav.side a{border-left:0;border-bottom:2px solid transparent;white-space:nowrap;padding:6px 8px;font-size:.9rem}
+  nav.side a.on{border-bottom-color:var(--accent)}
+  .prog{display:none}
+  h1{font-size:1.5rem}
+}
+.frq{border:1px solid var(--rule);border-radius:10px;background:var(--panel);padding:14px 16px;margin:1.1rem 0}
+.frq pre.code,.widget pre.code{margin:.6rem 0;padding:12px 14px;background:var(--code-bg);color:var(--code-ink);border-radius:6px;font-size:.9rem;line-height:1.5;overflow-x:auto}
+.frq textarea{width:100%;min-height:150px;padding:10px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);color:var(--ink);font-family:"JetBrains Mono",Menlo,Consolas,monospace;font-size:.9rem;line-height:1.5;resize:vertical}
+.frq-model{display:none;margin-top:10px}
+.frq-model.show{display:block}
+.frq label.chk{display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer}
+.frq label.chk input{margin-top:5px}
+.sline{display:block;padding:0 4px}
+.sline.on{background:rgba(255,224,138,.28);border-radius:3px}
+button:disabled{opacity:.5;cursor:default}
+.tut{border-color:var(--accent)}
+.tut>summary{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;cursor:pointer;list-style:none;font-weight:700;font-size:1.05rem}
+.tut>summary::-webkit-details-marker{display:none}
+.tut>summary::before{content:"\25B8";color:var(--accent);font-size:1.1rem}
+.tut[open]>summary::before{content:"\25BE"}
+.tut[open]>summary{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--rule)}
+.tut>summary .sub{font-weight:400;font-size:.9rem}
+.tut>summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.tstep{display:none}
+.tstep.on{display:block}
+.tstep h4{margin:.2rem 0 .5rem;font-size:1.1rem}
+.tpips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.pip{padding:3px 10px;border:1px solid var(--rule);border-radius:999px;font-size:.85rem;color:var(--ink-2);background:var(--paper)}
+.pip.on{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:700}
+.tdots{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
+.tdots button{min-width:36px;padding:4px 8px}
+.tdots button.cur{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.tcode{margin:.6rem 0;padding:12px 14px;background:var(--code-bg);color:var(--code-ink);border-radius:6px;font-family:"JetBrains Mono",Menlo,Consolas,monospace;font-size:.92rem;line-height:2;overflow-x:auto;white-space:pre}
+input.blank{width:8em;padding:1px 6px;font:inherit;color:var(--code-ink);background:rgba(255,255,255,.1);border:1px dashed var(--code-kw);border-radius:4px}
+input.blank.short{width:3.4em}
+input.blank.ok{border-style:solid;border-color:#7BE0A6}
+input.blank.bad{border-style:solid;border-color:#FF9A92}
+.tcall{border-left:4px solid var(--accent);background:var(--accent-soft);padding:8px 12px;border-radius:0 6px 6px 0;margin:.7rem 0}
+.tcall.warn{border-left-color:var(--bad);background:var(--bad-soft)}
+.trow{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.tfb{display:none;margin-top:8px;padding:8px 12px;border-radius:6px;font-weight:600}
+.tfb.show{display:block}
+.tfb.ok{background:var(--ok-soft);color:var(--ok)}
+.tfb.bad{background:var(--bad-soft);color:var(--bad)}
+.tfb.info{background:var(--accent-soft);color:var(--ink);font-weight:400}
+.tchoices button{display:block;width:100%;text-align:left;margin:6px 0;font-family:"JetBrains Mono",Menlo,Consolas,monospace;font-size:.9rem}
+.tchoices.prose button{font-family:inherit;font-size:1rem}
+.tchoices button.ok{border-color:var(--ok);background:var(--ok-soft)}
+.tchoices button.bad{border-color:var(--bad);background:var(--bad-soft)}
+.tnav{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:14px;padding-top:10px;border-top:1px solid var(--rule)}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+
+pre.code{margin:.6rem 0;padding:12px 14px;background:var(--code-bg);color:var(--code-ink);border-radius:6px;font-size:.9rem;line-height:1.5;overflow-x:auto;white-space:pre}
+.cl{display:block;padding:0 6px;border-radius:3px;white-space:pre}
+.cl.on{background:rgba(255,224,138,.28)}
+.cl.dim{opacity:.45}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+.presets button{font-family:"JetBrains Mono",Menlo,Consolas,monospace;font-size:.8rem;padding:4px 8px}
+.widget input[type=text].wide{width:100%;max-width:520px;font-family:"JetBrains Mono",Menlo,Consolas,monospace}
+.widget table td.t,.widget table td.f{font-family:"JetBrains Mono",Menlo,Consolas,monospace;font-size:.9rem}
+td.t{color:var(--ok);font-weight:600} td.f{color:var(--bad)}
+tr.diff td{background:var(--bad-soft)}
+tr.cur td{background:var(--accent-soft)}
+td.vv{font-family:"JetBrains Mono",Menlo,Consolas,monospace}
+.ngrid{display:grid;gap:3px;margin:10px 0;max-width:440px}
+.ncell{aspect-ratio:1;border:1px solid var(--rule);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-family:"JetBrains Mono",Menlo,Consolas,monospace;background:var(--paper);color:var(--ink-2)}
+.ncell.on{background:var(--accent-soft);border-color:var(--accent);color:var(--ink);font-weight:600}
+.ncell.now{background:var(--hi);color:#1E2733}
+.qz.mono .opt span{font-family:"JetBrains Mono",Menlo,Consolas,monospace;font-size:.9rem}
+.widget pre.code{margin:.4rem 0}
+.widget td pre.code{margin:0;font-size:.8rem;padding:6px 8px}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="side" id="nav">
+  <a href="#start" class="on">Start here</a>
+  <a href="#algo">Building blocks</a>
+  <a href="#bool">Boolean expressions</a>
+  <a href="#if">if statements</a>
+  <a href="#compound">Compound Boolean</a>
+  <a href="#equiv">Equivalent expressions</a>
+  <a href="#while">while loops</a>
+  <a href="#for">for loops</a>
+  <a href="#trace">Trace tables</a>
+  <a href="#algos">Number algorithms</a>
+  <a href="#strings">String algorithms</a>
+  <a href="#nested">Nested loops</a>
+  <a href="#runtime">Counting executions</a>
+  <a href="#frq">FRQ practice</a>
+  <a href="#traps">Common traps</a>
+  <a href="#vocab">Flashcards</a>
+  <a href="#quiz">Quiz</a>
+  <div class="prog">
+    <div>Tracers solved: <b id="pt">0</b>/<span id="ptn">0</span></div>
+    <div class="bar"><i id="pbar"></i></div>
+    <div>Best quiz score: <b id="pq">—</b></div>
+    <button id="reset" style="margin-top:6px">Reset my progress</button>
+  </div>
+</nav>
+
+<main>
+<section id="start">
+  <h1>AP CSA Unit 2<br>Selection and Iteration</h1>
+  <p class="sub">CodeHS Cortado lessons 2.1–2.12. Worth 25–35% of the multiple-choice section.</p>
+  <p class="lead">Selection chooses a path and iteration repeats one. Nearly every algorithm in this course is built from the two. Each topic below has notes, short Java examples, and tracers: read the code, type what it prints or stores, then check. Your progress saves in this browser.</p>
+  <div class="scroll"><table>
+    <tr><th>Cortado lesson</th><th>Topic</th><th>Where it is in this guide</th></tr>
+    <tr><td>2.1</td><td>Algorithms with Selection and Repetition</td><td>Building blocks</td></tr>
+    <tr><td>2.2</td><td>Boolean Expressions</td><td>Boolean expressions</td></tr>
+    <tr><td>2.3, 2.4</td><td>if Statements, Nested if Statements</td><td>if statements</td></tr>
+    <tr><td>2.5</td><td>Compound Boolean Expressions</td><td>Compound Boolean</td></tr>
+    <tr><td>2.6</td><td>Comparing Boolean Expressions</td><td>Equivalent expressions</td></tr>
+    <tr><td>2.7</td><td>while Loops</td><td>while loops</td></tr>
+    <tr><td>2.8</td><td>for Loops</td><td>for loops, Trace tables</td></tr>
+    <tr><td>2.9</td><td>Implementing Selection and Iteration Algorithms</td><td>Number algorithms</td></tr>
+    <tr><td>2.10</td><td>Implementing String Algorithms</td><td>String algorithms</td></tr>
+    <tr><td>2.11</td><td>Nested Iteration</td><td>Nested loops</td></tr>
+    <tr><td>2.12</td><td>Informal Run-Time Analysis</td><td>Counting executions</td></tr>
+    <tr><td>2.13, 2.14</td><td>Mid-Unit and End of Unit Assessments</td><td>FRQ practice and the Unit quiz</td></tr>
+  </table></div>
+  <p class="sub">Lesson names come from the <a href="https://codehs.com/course/apcsacortado/explore">CodeHS Cortado course</a>. Topic content follows the Unit 2 section of the <a href="https://apcentral.collegeboard.org/courses/ap-computer-science-a/course">College Board course framework</a>.</p>
+  <h3>Warm-up</h3>
+  <div class="tracer" data-id="t0" data-answer="even|done" data-topic="Warm-up">
+  <div class="q">What prints? (separate lines with <code>|</code>)</div>
+<pre><span class="kw">int</span> x = <span class="num">12</span>;
+<span class="kw">if</span> (x % <span class="num">2</span> == <span class="num">0</span>)
+{
+    System.out.println(<span class="str">"even"</span>);
+}
+System.out.println(<span class="str">"done"</span>);</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>12 % 2 is 0, so the condition is true and <code>even</code> prints. <code>done</code> is outside the <code>if</code>, so it always prints.</p></div>
+</div>
+</section>
+
+<section id="algo">
+  <h2>Building blocks of algorithms</h2>
+  <p class="lead">Every algorithm is built from three blocks. What changes from one program to the next is which blocks it uses, and in what order.</p>
+  <div class="scroll"><table>
+    <tr><th>Block</th><th>What it does</th><th>Everyday example</th><th>In Java</th></tr>
+    <tr><td><b>Sequencing</b></td><td>Steps run in order, one at a time</td><td>Put on socks, then shoes</td><td>statements one after another</td></tr>
+    <tr><td><b>Selection</b></td><td>A true-or-false decision picks the path</td><td>If it is raining, take an umbrella</td><td><code>if</code>, <code>if-else</code></td></tr>
+    <tr><td><b>Repetition</b></td><td>A process repeats until a desired outcome is reached</td><td>Stir until the sauce thickens</td><td><code>while</code>, <code>for</code></td></tr>
+  </table></div>
+  <p>The order in which the blocks are combined changes the outcome. The next two tracers use exactly the same statements in a different order.</p>
+  <div class="tracer" data-id="t1" data-answer="repetition" data-topic="Building blocks">
+  <div class="q">A recipe says “Stir until the sauce thickens.” Which building block is that? (sequencing, selection, or repetition)</div>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>A step that repeats until a desired outcome is reached is repetition. In Java it becomes a loop.</p></div>
+</div>
+  <div class="tracer" data-id="t2" data-answer="4" data-topic="Building blocks">
+  <div class="q">What is <code>x</code> at the end?</div>
+<pre><span class="kw">int</span> x = <span class="num">3</span>;
+<span class="kw">if</span> (x &gt; <span class="num">2</span>)
+{
+    x = x - <span class="num">2</span>;
+}
+x = x * <span class="num">4</span>;</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>x starts at 3. The condition 3 &gt; 2 is true, so x becomes 1. Then x is multiplied by 4: 4.</p></div>
+</div>
+  <div class="tracer" data-id="t3" data-answer="10" data-topic="Building blocks">
+  <div class="q">Same statements, different order. What is <code>x</code> now?</div>
+<pre><span class="kw">int</span> x = <span class="num">3</span>;
+x = x * <span class="num">4</span>;
+<span class="kw">if</span> (x &gt; <span class="num">2</span>)
+{
+    x = x - <span class="num">2</span>;
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>x becomes 12 first. Then 12 &gt; 2 is true, so x becomes 10. The order of the building blocks changes the outcome.</p></div>
+</div>
+</section>
+
+<section id="bool">
+  <h2>Boolean expressions</h2>
+  <p class="lead">A Boolean expression evaluates to <code>true</code> or <code>false</code>. Relational operators build one from two values.</p>
+  <div class="scroll"><table>
+    <tr><th>Operator</th><th>Meaning</th><th>Example when x is 7</th><th>Result</th></tr>
+    <tr><td><code>==</code></td><td>equal to</td><td><code>x == 7</code></td><td>true</td></tr>
+    <tr><td><code>!=</code></td><td>not equal to</td><td><code>x != 7</code></td><td>false</td></tr>
+    <tr><td><code>&lt;</code> <code>&gt;</code></td><td>less than, greater than</td><td><code>x &gt; 5</code></td><td>true</td></tr>
+    <tr><td><code>&lt;=</code> <code>&gt;=</code></td><td>at most, at least</td><td><code>x &lt;= 6</code></td><td>false</td></tr>
+    <tr><td><code>%</code> with <code>==</code></td><td>divisibility test</td><td><code>x % 2 == 0</code></td><td>false (7 is odd)</td></tr>
+  </table></div>
+  <ul>
+    <li><code>=</code> <b>stores</b> a value. <code>==</code> <b>compares</b> two values. For an int, <code>if (x = 5)</code> does not even compile.</li>
+    <li><code>==</code> and <code>!=</code> work on any type. With primitives they compare the actual values; with objects they compare references (see the Equivalent expressions section). <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code> work only on numbers.</li>
+    <li>A Boolean expression can be stored in a variable: <code>boolean isEven = (n % 2 == 0);</code></li>
+    <li>Avoid <code>==</code> on computed doubles. Computers cannot store every decimal exactly, so <code>0.1 + 0.2 == 0.3</code> is false. Use ints when you need an exact comparison.</li>
+  </ul>
+
+  <div class="widget" id="blab">
+    <h3 style="margin-top:0">Boolean expression lab</h3>
+    <p class="sub" style="margin-top:0">Type any expression using <code>x</code> and <code>y</code>. It is evaluated with Java’s rules, including integer division and short-circuiting. Try the preset buttons.</p>
+    <div class="row"><label>x <input type="number" id="bx" value="7"></label><label>y <input type="number" id="by" value="3"></label></div>
+    <div class="row"><label for="bexp">Expression</label><input type="text" class="wide" id="bexp" value="x &gt; 5 &amp;&amp; y &lt; 3" spellcheck="false" autocomplete="off"></div>
+    <div class="presets" id="bpre"></div>
+    <div class="result" id="bres"></div>
+    <p class="sub" id="bnote" style="margin:.4rem 0 0"></p>
+  </div>
+  <div class="tracer" data-id="t4" data-answer="false" data-topic="Boolean expressions">
+  <div class="q">What prints?</div>
+<pre>System.out.println(<span class="num">0.1</span> + <span class="num">0.2</span> == <span class="num">0.3</span>);</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>The computer stores 0.1 + 0.2 as a value very slightly different from 0.3 (round-off error), so == reports false. Avoid == with computed doubles.</p></div>
+</div>
+  <div class="tracer" data-id="t5" data-answer="true" data-topic="Boolean expressions">
+  <div class="q">What prints?</div>
+<pre><span class="kw">int</span> n = <span class="num">1237</span>;
+System.out.println(n % <span class="num">10</span> == <span class="num">7</span>);</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>1237 % 10 is 7 (the last digit), so the comparison is true.</p></div>
+</div>
+</section>
+
+<section id="if">
+  <h2>if statements and nested if statements</h2>
+  <p class="lead">A selection statement changes the sequential flow of a program: it runs different code depending on a Boolean expression.</p>
+  <h3>One-way and two-way selection</h3>
+  <ul>
+    <li>A <b>one-way</b> selection (<code>if</code>) runs its body only when the condition is true.</li>
+    <li>A <b>two-way</b> selection (<code>if-else</code>) runs exactly one of its two bodies.</li>
+  </ul>
+  <pre class="code"><span class="kw">int</span> score = <span class="num">72</span>;
+<span class="kw">if</span> (score &gt;= <span class="num">60</span>)
+{
+    System.out.println(<span class="str">"pass"</span>);
+}
+<span class="kw">else</span>
+{
+    System.out.println(<span class="str">"retry"</span>);
+}</pre>
+  <ul>
+    <li>Use braces every time. Without them, only the single next statement belongs to the <code>if</code>:</li>
+  </ul>
+  <pre class="code"><span class="kw">int</span> x = <span class="num">8</span>;
+<span class="kw">if</span> (x &gt; <span class="num">5</span>)
+    System.out.println(<span class="str">"big"</span>);
+    System.out.println(<span class="str">"always"</span>);   <span class="cm">// not part of the if</span></pre>
+  <ul>
+    <li>A semicolon right after the condition, as in <code>if (x &gt; 3);</code>, ends the <code>if</code> with an empty body. Whatever follows always runs.</li>
+  </ul>
+  <h3>Multi-way selection</h3>
+  <p>An <code>if / else if / else</code> chain tests conditions from the top. <b>No more than one body runs</b>: the first one whose condition is true. If none is true, a trailing <code>else</code> runs. Because the first true condition wins, the order of the tests matters.</p>
+  <div class="scroll"><table>
+    <tr><th>Separate <code>if</code> statements</th><th><code>if / else if</code> chain</th></tr>
+    <tr><td>Every condition is tested</td><td>Testing stops at the first true condition</td></tr>
+    <tr><td>Zero, one, or several bodies can run</td><td>At most one body runs</td></tr>
+  </table></div>
+  <div class="widget" id="bf">
+    <h3 style="margin-top:0">Branch finder</h3>
+    <p class="sub" style="margin-top:0">Change the score and watch which branch runs. Conditions after the first true one are never tested.</p>
+    <div class="row"><label>score <input type="number" id="bfs" value="85"></label></div>
+    <pre class="code" id="bfcode"></pre>
+    <p id="bfres" style="margin:.3rem 0 0"></p>
+  </div>
+  <h3>Nested if statements</h3>
+  <p>An <code>if</code> can sit inside another <code>if</code> or <code>else</code>. The inner condition is <b>evaluated only when the outer condition is true</b>. When braces are missing, an <code>else</code> pairs with the nearest unmatched <code>if</code>, no matter how the code is indented.</p>
+  <div class="tracer" data-id="t6" data-answer="FizzBuzz" data-topic="if statements">
+  <div class="q">What prints?</div>
+<pre><span class="kw">int</span> n = <span class="num">15</span>;
+<span class="kw">String</span> r = <span class="str">""</span>;
+<span class="kw">if</span> (n % <span class="num">3</span> == <span class="num">0</span>)
+{
+    r += <span class="str">"Fizz"</span>;
+}
+<span class="kw">if</span> (n % <span class="num">5</span> == <span class="num">0</span>)
+{
+    r += <span class="str">"Buzz"</span>;
+}
+System.out.println(r);</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>These are two separate if statements, so both conditions are checked. 15 is divisible by 3 and by 5, so both bodies run.</p></div>
+</div>
+  <div class="tracer" data-id="t7" data-answer="Fizz" data-topic="if statements">
+  <div class="q">Now the second test is an <code>else if</code>. What prints?</div>
+<pre><span class="kw">int</span> n = <span class="num">15</span>;
+<span class="kw">String</span> r = <span class="str">""</span>;
+<span class="kw">if</span> (n % <span class="num">3</span> == <span class="num">0</span>)
+{
+    r += <span class="str">"Fizz"</span>;
+}
+<span class="kw">else</span> <span class="kw">if</span> (n % <span class="num">5</span> == <span class="num">0</span>)
+{
+    r += <span class="str">"Buzz"</span>;
+}
+System.out.println(r);</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>In an if / else-if chain, only the first true branch runs. Once n % 3 == 0 is true, the else-if is skipped.</p></div>
+</div>
+  <div class="tracer" data-id="t8" data-answer="big" data-topic="if statements">
+  <div class="q">What prints?</div>
+<pre><span class="kw">int</span> x = <span class="num">1</span>;
+<span class="kw">if</span> (x &gt; <span class="num">3</span>);
+{
+    System.out.println(<span class="str">"big"</span>);
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>The semicolon after the condition is an empty body. The braces that follow are just a plain block that always runs.</p></div>
+</div>
+  <div class="tracer" data-id="t9" data-answer="first only" data-topic="if statements">
+  <div class="q">What prints?</div>
+<pre><span class="kw">int</span> a = <span class="num">4</span>;
+<span class="kw">int</span> b = -<span class="num">2</span>;
+<span class="kw">if</span> (a &gt; <span class="num">0</span>)
+{
+    <span class="kw">if</span> (b &gt; <span class="num">0</span>)
+    {
+        System.out.println(<span class="str">"both"</span>);
+    }
+    <span class="kw">else</span>
+    {
+        System.out.println(<span class="str">"first only"</span>);
+    }
+}
+<span class="kw">else</span>
+{
+    System.out.println(<span class="str">"neither"</span>);
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>a &gt; 0 is true, so the inner if is evaluated. b &gt; 0 is false, so the inner else runs.</p></div>
+</div>
+  <div class="tracer" data-id="t10" data-answer="end" data-topic="if statements">
+  <div class="q">What prints? (separate lines with <code>|</code>)</div>
+<pre><span class="kw">int</span> a = -<span class="num">1</span>;
+<span class="kw">int</span> b = <span class="num">5</span>;
+<span class="kw">if</span> (a &gt; <span class="num">0</span>)
+    <span class="kw">if</span> (b &gt; <span class="num">0</span>)
+        System.out.println(<span class="str">"A"</span>);
+<span class="kw">else</span>
+    System.out.println(<span class="str">"B"</span>);
+System.out.println(<span class="str">"end"</span>);</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>An else pairs with the nearest unmatched if, whatever the indentation suggests. Here the else belongs to <code>if (b &gt; 0)</code>. Since a &gt; 0 is false, nothing inside is evaluated, and only <code>end</code> prints.</p></div>
+</div>
+</section>
+
+<section id="compound">
+  <h2>Compound Boolean expressions</h2>
+  <p class="lead">The logical operators <code>!</code> (not), <code>&amp;&amp;</code> (and), and <code>||</code> (or) combine Boolean values.</p>
+  <div class="scroll"><table>
+    <tr><th>a</th><th>b</th><th><code>a &amp;&amp; b</code></th><th><code>a || b</code></th><th><code>!a</code></th></tr>
+    <tr><td>true</td><td>true</td><td>true</td><td>true</td><td>false</td></tr>
+    <tr><td>true</td><td>false</td><td>false</td><td>true</td><td>false</td></tr>
+    <tr><td>false</td><td>true</td><td>false</td><td>true</td><td>true</td></tr>
+    <tr><td>false</td><td>false</td><td>false</td><td>false</td><td>true</td></tr>
+  </table></div>
+  <ul>
+    <li><b>Precedence:</b> <code>!</code> first, then <code>&amp;&amp;</code>, then <code>||</code>. So <code>a || b &amp;&amp; c</code> means <code>a || (b &amp;&amp; c)</code>. Parentheses make your intent clear.</li>
+    <li><b>Short-circuit evaluation:</b> <code>&amp;&amp;</code> skips its right side when the left side is false, and <code>||</code> skips its right side when the left side is true. In that case the right side is never evaluated.</li>
+    <li>Short-circuiting lets you write a <b>guard</b> on the left that protects the right:</li>
+  </ul>
+  <pre class="code"><span class="kw">int</span> x = <span class="num">10</span>;
+<span class="kw">int</span> y = <span class="num">0</span>;
+<span class="kw">String</span> s = <span class="kw">null</span>;
+<span class="kw">if</span> (y != <span class="num">0</span> &amp;&amp; x / y &gt; <span class="num">2</span>)           <span class="cm">// never divides by zero</span>
+{
+    System.out.println(<span class="str">"big ratio"</span>);
+}
+<span class="kw">if</span> (s != <span class="kw">null</span> &amp;&amp; s.length() &gt; <span class="num">0</span>)   <span class="cm">// never calls a method on null</span>
+{
+    System.out.println(<span class="str">"has text"</span>);
+}</pre>
+  <p>Try these in the <a href="#bool">Boolean expression lab</a>: set y to 0 and compare <code>y != 0 &amp;&amp; x / y &gt; 2</code> with <code>x / y &gt; 2 &amp;&amp; y != 0</code>.</p>
+  <div class="tracer" data-id="t11" data-answer="true" data-topic="Compound Boolean">
+  <div class="q">What prints?</div>
+<pre><span class="kw">boolean</span> a = <span class="kw">true</span>;
+<span class="kw">boolean</span> b = <span class="kw">false</span>;
+<span class="kw">boolean</span> c = <span class="kw">false</span>;
+System.out.println(a || b &amp;&amp; c);</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>&amp;&amp; is evaluated before ||. So b &amp;&amp; c is false, and a || false is true.</p></div>
+</div>
+  <div class="tracer" data-id="t12" data-answer="true" data-topic="Compound Boolean">
+  <div class="q">What prints?</div>
+<pre><span class="kw">int</span> x = <span class="num">7</span>;
+<span class="kw">int</span> y = <span class="num">3</span>;
+System.out.println(!(x &gt; <span class="num">5</span> &amp;&amp; y &lt; <span class="num">3</span>));</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>x &gt; 5 is true and y &lt; 3 is false, so the &amp;&amp; is false. The ! flips it to true.</p></div>
+</div>
+  <div class="tracer" data-id="t13" data-answer="0" data-topic="Compound Boolean">
+  <div class="q">What prints?</div>
+<pre><span class="kw">int</span> x = <span class="num">0</span>;
+<span class="kw">int</span> count = <span class="num">0</span>;
+<span class="kw">if</span> (x != <span class="num">0</span> &amp;&amp; <span class="num">10</span> / x &gt; <span class="num">1</span>)
+{
+    count = <span class="num">1</span>;
+}
+System.out.println(count);</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>x != 0 is false, so the &amp;&amp; is already false. Short-circuit evaluation skips the right side, so 10 / x never runs and nothing is thrown.</p></div>
+</div>
+  <div class="tracer" data-id="t14" data-answer="ArithmeticException" data-topic="Compound Boolean">
+  <div class="q">The two tests are swapped. What is thrown? (type the exception name)</div>
+<pre><span class="kw">int</span> x = <span class="num">0</span>;
+<span class="kw">if</span> (<span class="num">10</span> / x &gt; <span class="num">1</span> &amp;&amp; x != <span class="num">0</span>)
+{
+    System.out.println(<span class="str">"ok"</span>);
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>Now 10 / x runs first. Dividing an int by the int zero throws an ArithmeticException. Put the guard on the left.</p></div>
+</div>
+</section>
+
+<section id="equiv">
+  <h2>Equivalent expressions and comparing objects</h2>
+  <p class="lead">Two Boolean expressions are <b>equivalent</b> if they evaluate to the same value in all cases. A truth table can prove it.</p>
+  <h3>De Morgan’s laws</h3>
+  <div class="scroll"><table>
+    <tr><th>Expression</th><th>Equivalent to</th></tr>
+    <tr><td><code>!(a &amp;&amp; b)</code></td><td><code>!a || !b</code></td></tr>
+    <tr><td><code>!(a || b)</code></td><td><code>!a &amp;&amp; !b</code></td></tr>
+  </table></div>
+  <p>Negate each part <b>and</b> switch the operator. When the parts are relational, negate the comparison: <code>&lt;</code> becomes <code>&gt;=</code>, <code>&gt;</code> becomes <code>&lt;=</code>, <code>==</code> becomes <code>!=</code>. So <code>!(x &lt; 5)</code> is <code>x &gt;= 5</code>, not <code>x &gt; 5</code>.</p>
+  <div class="widget" id="tt">
+    <h3 style="margin-top:0">Equivalence checker</h3>
+    <p class="sub" style="margin-top:0">Use the Boolean variables <code>a</code>, <code>b</code>, and <code>c</code>. Rows where the two expressions disagree are highlighted.</p>
+    <div class="row"><label>Expression 1 <input type="text" class="wide" id="tt1" value="!(a &amp;&amp; b)" spellcheck="false" autocomplete="off"></label></div>
+    <div class="row"><label>Expression 2 <input type="text" class="wide" id="tt2" value="!a || !b" spellcheck="false" autocomplete="off"></label></div>
+    <div class="presets" id="ttpre"></div>
+    <div class="scroll"><table id="ttab"></table></div>
+    <div class="result" id="ttres"></div>
+  </div>
+  <h3>Comparing objects</h3>
+  <ul>
+    <li>Two variables can refer to the <b>same object</b>. <code>==</code> and <code>!=</code> compare <b>references</b>: are they the same object?</li>
+    <li><code>equals</code> compares <b>contents</b>. Use <code>s1.equals(s2)</code> to compare two Strings.</li>
+    <li>You can compare a reference with <code>null</code> using <code>==</code> or <code>!=</code> to see whether it refers to an object at all. Calling a method on <code>null</code> throws a <code>NullPointerException</code>.</li>
+    <li>A class can define its own <code>equals</code>, usually comparing the objects’ attributes. (Writing your own <code>equals</code> is outside this course’s exam.)</li>
+  </ul>
+  <pre class="code"><span class="kw">String</span> a = <span class="str">"hi"</span>;
+<span class="kw">String</span> b = a;                  <span class="cm">// b refers to the same object as a</span>
+<span class="kw">String</span> c = <span class="kw">new</span> <span class="kw">String</span>(<span class="str">"hi"</span>);   <span class="cm">// a different object with the same characters</span>
+<span class="kw">boolean</span> r1 = (a == b);         <span class="cm">// true</span>
+<span class="kw">boolean</span> r2 = (a == c);         <span class="cm">// false</span>
+<span class="kw">boolean</span> r3 = a.equals(c);      <span class="cm">// true</span></pre>
+  <div class="tracer" data-id="t15" data-answer="B" data-topic="Equivalent expressions">
+  <div class="q">Which is equivalent to <code>!(a &amp;&amp; b)</code>? Type the letter.<br>A. <code>!a &amp;&amp; !b</code><br>B. <code>!a || !b</code><br>C. <code>a || b</code><br>D. <code>a &amp;&amp; !b</code></div>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>De Morgan’s law: negate each part and switch &amp;&amp; to ||. A truth table confirms it, and the Equivalence checker above lets you try it.</p></div>
+</div>
+  <div class="tracer" data-id="t16" data-answer="yes" data-topic="Equivalent expressions">
+  <div class="q">Is <code>!(x &lt; 5 || y == 2)</code> equivalent to <code>x &gt;= 5 &amp;&amp; y != 2</code>? (yes or no)</div>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>Negate each part (<code>!(x &lt; 5)</code> is <code>x &gt;= 5</code>, and <code>!(y == 2)</code> is <code>y != 2</code>) and switch || to &amp;&amp;.</p></div>
+</div>
+  <div class="tracer" data-id="t17" data-answer="true false true" data-topic="Comparing objects">
+  <div class="q">What prints?</div>
+<pre><span class="kw">String</span> a = <span class="str">"hi"</span>;
+<span class="kw">String</span> b = a;
+<span class="kw">String</span> c = <span class="kw">new</span> <span class="kw">String</span>(<span class="str">"hi"</span>);
+System.out.println((a == b) + <span class="str">" "</span> + (a == c) + <span class="str">" "</span> + a.equals(c));</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>a and b hold the same reference, so a == b is true. c is a different object that happens to hold the same characters, so a == c is false, but a.equals(c) is true.</p></div>
+</div>
+  <div class="tracer" data-id="t18" data-answer="NullPointerException" data-topic="Comparing objects">
+  <div class="q">What is thrown? (type the exception name)</div>
+<pre><span class="kw">String</span> s = <span class="kw">null</span>;
+System.out.println(s.length() &gt; <span class="num">0</span> &amp;&amp; s != <span class="kw">null</span>);</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>The reference s is null, so s.length() has no object to run on. The guard s != null must come first.</p></div>
+</div>
+</section>
+
+<section id="while">
+  <h2>while loops</h2>
+  <p class="lead">Iteration repeats a segment of code zero or more times, as long as a Boolean expression stays true.</p>
+  <pre class="code"><span class="kw">int</span> n = <span class="num">20</span>;                 <span class="cm">// initialize</span>
+<span class="kw">while</span> (n &gt; <span class="num">1</span>)               <span class="cm">// test: checked before every pass, even the first</span>
+{
+    n = n / <span class="num">2</span>;              <span class="cm">// body: includes an update that moves toward ending</span>
+}</pre>
+  <ul>
+    <li>The condition is evaluated <b>before every pass</b>, including the first. If it is false at the start, the body runs <b>zero</b> times.</li>
+    <li>A loop needs a start, a test, and an <b>update inside the body</b> that eventually makes the test false.</li>
+    <li>An <b>infinite loop</b> happens when the test is always true. An <b>off-by-one error</b> happens when a loop runs one time too many or one time too few.</li>
+  </ul>
+  <div class="scroll"><table>
+    <tr><th>Symptom</th><th>Usual cause</th></tr>
+    <tr><td>Runs forever</td><td>The update is missing, moves the wrong way, or jumps past a test written with <code>!=</code></td></tr>
+    <tr><td>One pass too many or too few</td><td><code>&lt;</code> vs <code>&lt;=</code>, or a start value that is off by one</td></tr>
+    <tr><td>Never runs</td><td>The condition is already false before the first pass</td></tr>
+  </table></div>
+  <p>To check a loop, trace the first pass and the last pass. The <a href="#trace">trace table stepper</a> shows every step.</p>
+  <div class="tracer" data-id="t19" data-answer="4" data-topic="while loops">
+  <div class="q">What is <code>steps</code> at the end?</div>
+<pre><span class="kw">int</span> n = <span class="num">20</span>;
+<span class="kw">int</span> steps = <span class="num">0</span>;
+<span class="kw">while</span> (n &gt; <span class="num">1</span>)
+{
+    n = n / <span class="num">2</span>;
+    steps++;
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>n goes 20, 10, 5, 2, 1. The loop stops when n is 1, after 4 passes.</p></div>
+</div>
+  <div class="tracer" data-id="t20" data-answer="10" data-topic="while loops">
+  <div class="q">What is <code>i</code> at the end?</div>
+<pre><span class="kw">int</span> i = <span class="num">10</span>;
+<span class="kw">while</span> (i &lt; <span class="num">5</span>)
+{
+    i++;
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>The condition 10 &lt; 5 is false the first time, so the body runs zero times. A while loop checks before every pass, including the first.</p></div>
+</div>
+  <div class="tracer" data-id="t21" data-answer="C" data-topic="while loops">
+  <div class="q">Which loop never ends? Type the letter.<br>A. <code>int i = 0; while (i &lt; 5) { i++; }</code><br>B. <code>int i = 1; while (i &lt; 100) { i *= 2; }</code><br>C. <code>int i = 10; while (i != 0) { i -= 3; }</code><br>D. <code>int i = 5; while (i &gt; 0) { i--; }</code></div>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>In C, i takes 10, 7, 4, 1, -2, … and skips 0, so i != 0 is always true. Testing with &gt; or &lt; instead of != avoids this trap.</p></div>
+</div>
+  <div class="tracer" data-id="t22" data-answer="5" data-topic="while loops">
+  <div class="q">What is <code>k</code> at the end?</div>
+<pre><span class="kw">int</span> total = <span class="num">0</span>;
+<span class="kw">int</span> k = <span class="num">1</span>;
+<span class="kw">while</span> (total &lt; <span class="num">10</span>)
+{
+    total += k;
+    k++;
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>total grows 1, 3, 6, 10 while k goes 2, 3, 4, 5. When total reaches 10 the test fails, and k is already 5.</p></div>
+</div>
+</section>
+
+<section id="for">
+  <h2>for loops</h2>
+  <p class="lead">A <code>for</code> loop packs the start, the test, and the update into one header.</p>
+  <pre class="code"><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++)    <span class="cm">// initialization; test; update</span>
+{
+    System.out.print(i + <span class="str">" "</span>);
+}</pre>
+  <p>Execution order: <b>initialization</b> (once) → <b>test</b> → <b>body</b> → <b>update</b> → test → body → update → … until the test is false. The update runs after the whole body.</p>
+  <ul>
+    <li>The variable set up in the initialization is the <b>loop control variable</b>. If you declare it in the header (<code>int i = 0</code>), it exists only inside the loop.</li>
+    <li>Any <code>for</code> loop can be rewritten as an equivalent <code>while</code> loop, and the other way around.</li>
+  </ul>
+  <div class="scroll"><table>
+    <tr><th>Goal</th><th>Header</th><th>Passes</th></tr>
+    <tr><td>Count 0 up to n - 1</td><td><code>for (int i = 0; i &lt; n; i++)</code></td><td>n</td></tr>
+    <tr><td>Count 1 up to n</td><td><code>for (int i = 1; i &lt;= n; i++)</code></td><td>n</td></tr>
+    <tr><td>Count down from n to 1</td><td><code>for (int i = n; i &gt; 0; i--)</code></td><td>n</td></tr>
+    <tr><td>Every other value</td><td><code>for (int i = 0; i &lt; n; i += 2)</code></td><td>about n / 2</td></tr>
+  </table></div>
+  <div class="widget" id="lx">
+    <h3 style="margin-top:0">for loop explorer</h3>
+    <p class="sub" style="margin-top:0">Build a loop header and see every test, pass, and update. If the test never becomes false, it warns you.</p>
+    <div class="row mono" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace">
+      for (int i =
+      <input type="number" id="lxs" value="3">;
+      i
+      <select id="lxo"><option>&lt;</option><option selected>&lt;=</option><option>&gt;</option><option>&gt;=</option><option>!=</option></select>
+      <input type="number" id="lxl" value="20">;
+      <select id="lxu"><option>i++</option><option>i--</option><option selected>i += k</option><option>i -= k</option><option>i *= k</option></select>
+      <span id="lxkwrap">k = <input type="number" id="lxk" value="4"></span>)
+    </div>
+    <div class="result" id="lxres"></div>
+    <div class="scroll"><table id="lxtab"></table></div>
+    <p class="sub" style="margin:.4rem 0 .2rem">The same loop written as a while loop:</p>
+    <pre class="code" id="lxwhile"></pre>
+  </div>
+  <div class="tracer" data-id="t23" data-answer="3 7 11 15 19" data-topic="for loops">
+  <div class="q">What prints?</div>
+<pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">3</span>; i &lt;= <span class="num">20</span>; i += <span class="num">4</span>)
+{
+    System.out.print(i + <span class="str">" "</span>);
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>i starts at 3 and goes up by 4 while it is at most 20: 3, 7, 11, 15, 19. Next would be 23, which fails the test.</p></div>
+</div>
+  <div class="tracer" data-id="t24" data-answer="10 7 4 1" data-topic="for loops">
+  <div class="q">What prints?</div>
+<pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">10</span>; i &gt; <span class="num">0</span>; i -= <span class="num">3</span>)
+{
+    System.out.print(i + <span class="str">" "</span>);
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>i counts down by 3 while it is greater than 0: 10, 7, 4, 1. Next would be -2.</p></div>
+</div>
+  <div class="tracer" data-id="t25" data-answer="A" data-topic="for loops">
+  <div class="q">Which <code>while</code> loop does the same thing as <code>for (int i = 0; i &lt; 4; i++) { sum += i; }</code>? Type the letter.<br>A. <code>int i = 0; while (i &lt; 4) { sum += i; i++; }</code><br>B. <code>int i = 0; while (i &lt; 4) { i++; sum += i; }</code><br>C. <code>int i = 1; while (i &lt;= 4) { sum += i; i++; }</code><br>D. <code>while (i &lt; 4) { sum += i; }</code></div>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>A has the initialization before the loop, the test as the condition, and the update at the end of the body. B updates too early, C adds 1 to 4 instead of 0 to 3, and D never updates i.</p></div>
+</div>
+  <div class="tracer" data-id="t26" data-answer="5" data-topic="for loops">
+  <div class="q">What prints?</div>
+<pre><span class="kw">int</span> i;
+<span class="kw">for</span> (i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++)
+{
+}
+System.out.println(i);</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>Because i is declared before the loop, it still exists afterward. The loop ends when i reaches 5.</p></div>
+</div>
+</section>
+
+<section id="trace">
+  <h2>Trace tables</h2>
+  <p class="lead">A trace table records every variable after each step. When a question asks what code prints or stores, build one.</p>
+  <ul>
+    <li>Make a column for each variable and a row for each step that changes something.</li>
+    <li>For a loop, add a row for each test too. The last row is the test that fails.</li>
+    <li>For nested loops, remember the inner variable restarts on every outer pass.</li>
+  </ul>
+  <div class="widget" id="st">
+    <h3 style="margin-top:0">Trace table stepper</h3>
+    <p class="sub" style="margin-top:0">Pick a program and step through it. The highlighted line is the one that just ran. Some programs let you change the input.</p>
+    <div class="row"><label>Program <select id="stp"></select></label>
+      <label id="stinw">Input (<span id="stinlab"></span>) <input type="text" id="stin" size="12" spellcheck="false" autocomplete="off"></label></div>
+    <pre class="code" id="stcode"></pre>
+    <div class="row"><button class="pri" id="stnext">Step</button><button id="stback">Back</button><button id="strun">Run to the end</button><button id="streset">Reset</button></div>
+    <div class="result" id="stout"></div>
+    <div class="scroll"><table id="sttab"></table></div>
+  </div>
+</section>
+
+<section id="algos">
+  <h2>Number algorithms</h2>
+  <p class="lead">Selection and iteration combine into a small set of standard algorithms. Learn the pattern, then adapt it.</p>
+  <h3>Divisibility</h3>
+  <pre class="code"><span class="kw">int</span> n = <span class="num">36</span>;
+<span class="kw">int</span> d = <span class="num">6</span>;
+<span class="kw">boolean</span> divisible = (n % d == <span class="num">0</span>);   <span class="cm">// true when d divides n evenly</span></pre>
+  <p><code>n % d == 0</code> is true when d divides n evenly. <code>n % 2 == 0</code> tests for even.</p>
+  <h3>Digits of an integer</h3>
+  <pre class="code"><span class="kw">int</span> num = <span class="num">4072</span>;
+<span class="kw">while</span> (num &gt; <span class="num">0</span>)
+{
+    <span class="kw">int</span> digit = num % <span class="num">10</span>;   <span class="cm">// the last digit</span>
+    num = num / <span class="num">10</span>;         <span class="cm">// removes the last digit</span>
+}</pre>
+  <p><code>% 10</code> gives the last digit and <code>/ 10</code> removes it (integer division). Repeat while the number is greater than 0.</p>
+  <h3>Counting, sum, and average</h3>
+  <pre class="code"><span class="kw">int</span> sum = <span class="num">0</span>;
+<span class="kw">int</span> count = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">10</span>; i++)
+{
+    sum += i;               <span class="cm">// accumulator</span>
+    count++;                <span class="cm">// counter</span>
+}
+<span class="kw">double</span> avg = (<span class="kw">double</span>) sum / count;</pre>
+  <p>A <b>counter</b> adds 1 each time a criterion is met. An <b>accumulator</b> adds a value each pass. For an average, divide by the count, and make sure one operand is a <code>double</code>, or the division truncates.</p>
+  <h3>Minimum or maximum</h3>
+  <pre class="code"><span class="kw">int</span> max = <span class="num">0</span>;                  <span class="cm">// start at or below the smallest value you expect</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">6</span>; i++)
+{
+    <span class="kw">int</span> v = (i * <span class="num">5</span>) % <span class="num">7</span>;
+    <span class="kw">if</span> (v &gt; max)
+    {
+        max = v;              <span class="cm">// remember the largest so far</span>
+    }
+}</pre>
+  <p>Start with a value that any real value will beat, then replace it whenever a better one comes along. (For a minimum, start with a very large value, or the first value.)</p>
+  <div class="tracer" data-id="t27" data-answer="13" data-topic="Number algorithms">
+  <div class="q">What is <code>sum</code> at the end?</div>
+<pre><span class="kw">int</span> num = <span class="num">4072</span>;
+<span class="kw">int</span> sum = <span class="num">0</span>;
+<span class="kw">while</span> (num &gt; <span class="num">0</span>)
+{
+    sum += num % <span class="num">10</span>;
+    num /= <span class="num">10</span>;
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>The loop peels off the last digit each pass: 2, 7, 0, 4. Their sum is 13.</p></div>
+</div>
+  <div class="tracer" data-id="t28" data-answer="10" data-topic="Number algorithms">
+  <div class="q">What is <code>count</code> at the end?</div>
+<pre><span class="kw">int</span> count = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">30</span>; i++)
+{
+    <span class="kw">if</span> (i % <span class="num">4</span> == <span class="num">0</span> || i % <span class="num">6</span> == <span class="num">0</span>)
+    {
+        count++;
+    }
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>Multiples of 4 up to 30: 7. Multiples of 6: 5. Multiples of both (12 and 24) are counted once by the ||: 7 + 5 - 2 = 10.</p></div>
+</div>
+  <div class="tracer" data-id="t29" data-answer="6" data-topic="Number algorithms">
+  <div class="q">What is <code>max</code> at the end?</div>
+<pre><span class="kw">int</span> max = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">6</span>; i++)
+{
+    <span class="kw">int</span> v = (i * <span class="num">5</span>) % <span class="num">7</span>;
+    <span class="kw">if</span> (v &gt; max)
+    {
+        max = v;
+    }
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>v takes the values 5, 3, 1, 6, 4, 2 as i goes from 1 to 6. The largest is 6.</p></div>
+</div>
+  <div class="tracer" data-id="t30" data-answer="2.0" data-topic="Number algorithms">
+  <div class="q">What is <code>avg</code>? (include the decimal)</div>
+<pre><span class="kw">int</span> sum = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">4</span>; i++)
+{
+    sum += i;
+}
+<span class="kw">double</span> avg = sum / <span class="num">4</span>;</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>sum is 10. The division 10 / 4 happens with two ints, so it is 2. That int is then stored as 2.0. Use <code>sum / 4.0</code> to keep the decimal part.</p></div>
+</div>
+</section>
+
+<section id="strings">
+  <h2>String algorithms</h2>
+  <p class="lead">To process a String, loop over its positions and look at one substring at a time. The <code>char</code> type is not part of this course, so you will use <code>substring(i, i + 1)</code> for a single letter.</p>
+  <h3>Find out whether a letter has a property</h3>
+  <pre class="code"><span class="kw">String</span> s = <span class="str">"banana"</span>;
+<span class="kw">boolean</span> found = <span class="kw">false</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; s.length(); i++)
+{
+    <span class="kw">if</span> (s.substring(i, i + <span class="num">1</span>).equals(<span class="str">"n"</span>))
+    {
+        found = <span class="kw">true</span>;          <span class="cm">// at least one letter has the property</span>
+    }
+}</pre>
+  <p>Start with <code>found = false</code> and switch it to <code>true</code> when a match appears. To ask whether <em>every</em> letter has a property, start with <code>true</code> and switch to <code>false</code> at the first letter that fails.</p>
+  <h3>Count letters that meet a condition</h3>
+  <pre class="code"><span class="kw">String</span> s = <span class="str">"banana"</span>;
+<span class="kw">int</span> count = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; s.length(); i++)
+{
+    <span class="kw">String</span> letter = s.substring(i, i + <span class="num">1</span>);
+    <span class="kw">if</span> (letter.equals(<span class="str">"a"</span>))
+    {
+        count++;
+    }
+}</pre>
+  <h3>Build a reversed string</h3>
+  <pre class="code"><span class="kw">String</span> w = <span class="str">"java"</span>;
+<span class="kw">String</span> reversed = <span class="str">""</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; w.length(); i++)
+{
+    reversed = w.substring(i, i + <span class="num">1</span>) + reversed;   <span class="cm">// the new letter goes in front</span>
+}</pre>
+  <h3>Look at several letters at a time</h3>
+  <pre class="code"><span class="kw">String</span> s = <span class="str">"banana"</span>;
+<span class="kw">int</span> count = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; s.length() - <span class="num">1</span>; i++)   <span class="cm">// stop early so i + 2 still fits</span>
+{
+    <span class="kw">if</span> (s.substring(i, i + <span class="num">2</span>).equals(<span class="str">"an"</span>))
+    {
+        count++;
+    }
+}</pre>
+  <ul>
+    <li>Valid indexes are 0 to <code>length() - 1</code>. A window of 2 letters needs <code>i + 2 &lt;= length()</code>, so the loop test is <code>i &lt; s.length() - 1</code>. Going past the end throws an exception.</li>
+    <li>Compare the letters with <code>equals</code>, not <code>==</code>.</li>
+    <li>The trace table stepper has a “reverse a word” program you can run on any word.</li>
+  </ul>
+  <div class="tracer" data-id="t31" data-answer="3" data-topic="String algorithms">
+  <div class="q">What is <code>c</code> at the end?</div>
+<pre><span class="kw">String</span> s = <span class="str">"banana"</span>;
+<span class="kw">int</span> c = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; s.length(); i++)
+{
+    <span class="kw">if</span> (s.substring(i, i + <span class="num">1</span>).equals(<span class="str">"a"</span>))
+    {
+        c++;
+    }
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>The loop checks each one-letter substring of “banana.” The letter a appears at indexes 1, 3, and 5.</p></div>
+</div>
+  <div class="tracer" data-id="t32" data-answer="avaj" data-topic="String algorithms">
+  <div class="q">What is <code>r</code> at the end?</div>
+<pre><span class="kw">String</span> w = <span class="str">"java"</span>;
+<span class="kw">String</span> r = <span class="str">""</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; w.length(); i++)
+{
+    r = w.substring(i, i + <span class="num">1</span>) + r;
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>Each new letter is placed in front of the letters collected so far: j, aj, vaj, avaj.</p></div>
+</div>
+  <div class="tracer" data-id="t33" data-answer="2" data-topic="String algorithms">
+  <div class="q">What is <code>c</code> at the end?</div>
+<pre><span class="kw">String</span> s = <span class="str">"banana"</span>;
+<span class="kw">int</span> c = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; s.length() - <span class="num">1</span>; i++)
+{
+    <span class="kw">if</span> (s.substring(i, i + <span class="num">2</span>).equals(<span class="str">"an"</span>))
+    {
+        c++;
+    }
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>The two-letter windows of “banana” are ba, an, na, an, na. The window an appears twice. The loop stops at <code>length() - 1</code> so the last window still fits.</p></div>
+</div>
+  <div class="tracer" data-id="t34" data-answer="StringIndexOutOfBoundsException~~IndexOutOfBoundsException" data-topic="String algorithms">
+  <div class="q">The loop test uses <code>&lt;=</code>. What is thrown? (type the exception name)</div>
+<pre><span class="kw">String</span> s = <span class="str">"abc"</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt;= s.length(); i++)
+{
+    System.out.print(s.substring(i, i + <span class="num">1</span>));
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>When i is 3, substring(3, 4) asks for index 4 of a 3-letter string. (The exam names the general IndexOutOfBoundsException; Java throws its subclass for strings.)</p></div>
+</div>
+</section>
+
+<section id="nested">
+  <h2>Nested loops</h2>
+  <p class="lead">When a loop is inside another loop, the inner loop must finish <b>all</b> of its passes before the outer loop moves to its next pass.</p>
+  <pre class="code"><span class="kw">for</span> (<span class="kw">int</span> row = <span class="num">1</span>; row &lt;= <span class="num">3</span>; row++)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> col = <span class="num">1</span>; col &lt;= row; col++)
+    {
+        System.out.print(<span class="str">"*"</span>);
+    }
+    System.out.println();
+}</pre>
+  <ul>
+    <li>If the inner loop always runs the same number of times, the body runs (outer passes) × (inner passes) times.</li>
+    <li>If the inner bound depends on the outer variable (like <code>col &lt;= row</code>), add up the inner counts: 1 + 2 + 3 + …</li>
+    <li>Nested loops produce grids and triangles: the outer loop is usually the row, the inner loop is the column.</li>
+  </ul>
+  <div class="widget" id="nl">
+    <h3 style="margin-top:0">Nested loop grid</h3>
+    <p class="sub" style="margin-top:0">Each filled cell is one run of the body. The number is the order it ran. Rows are <code>i</code> and columns are <code>j</code>.</p>
+    <div class="row"><label>Inner loop <select id="nlp"></select></label><label>n <input type="number" id="nln" value="5" min="1" max="8"></label><button id="nlplay">Show the order</button></div>
+    <pre class="code" id="nlcode"></pre>
+    <div class="ngrid" id="nlgrid"></div>
+    <div class="result" id="nlres"></div>
+  </div>
+  <div class="tracer" data-id="t35" data-answer="1|12|123" data-topic="Nested loops">
+  <div class="q">What prints? (separate lines with <code>|</code>)</div>
+<pre><span class="kw">for</span> (<span class="kw">int</span> r = <span class="num">1</span>; r &lt;= <span class="num">3</span>; r++)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> c = <span class="num">1</span>; c &lt;= r; c++)
+    {
+        System.out.print(c);
+    }
+    System.out.println();
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>The inner loop restarts for every row. Row 1 prints 1, row 2 prints 12, row 3 prints 123 (the print calls add no spaces). The println ends each row.</p></div>
+</div>
+  <div class="tracer" data-id="t36" data-answer="1 2 3|2 4 6|3 6 9" data-topic="Nested loops">
+  <div class="q">What prints? (separate lines with <code>|</code>)</div>
+<pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">3</span>; i++)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">1</span>; j &lt;= <span class="num">3</span>; j++)
+    {
+        System.out.print(i * j + <span class="str">" "</span>);
+    }
+    System.out.println();
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>For each i, the inner loop runs j from 1 to 3 and prints i * j. The inner loop finishes all its passes before i goes up.</p></div>
+</div>
+  <div class="tracer" data-id="t37" data-answer="20" data-topic="Nested loops">
+  <div class="q">What is <code>count</code> at the end?</div>
+<pre><span class="kw">int</span> count = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">4</span>; i++)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">0</span>; j &lt; <span class="num">5</span>; j++)
+    {
+        count++;
+    }
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>The outer loop runs 4 times. Each time, the inner loop runs 5 times. 4 × 5 = 20.</p></div>
+</div>
+  <div class="tracer" data-id="t38" data-answer="10" data-topic="Nested loops">
+  <div class="q">What is <code>count</code> at the end?</div>
+<pre><span class="kw">int</span> count = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> j = i + <span class="num">1</span>; j &lt; <span class="num">5</span>; j++)
+    {
+        count++;
+    }
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>The inner loop runs 4, 3, 2, 1, then 0 times: 4 + 3 + 2 + 1 + 0 = 10.</p></div>
+</div>
+</section>
+
+<section id="runtime">
+  <h2>Counting executions</h2>
+  <p class="lead">A <b>statement execution count</b> is the number of times a statement runs. You find it by tracing the loops, and it tells you how the amount of work grows.</p>
+  <ul>
+    <li>One loop that runs n times: the body runs n times.</li>
+    <li>Two loops one after the other: the counts <b>add</b>.</li>
+    <li>Loops nested inside each other: the counts <b>multiply</b> (or add up row by row when the inner bound changes).</li>
+    <li>A loop that doubles its variable (<code>i *= 2</code>) runs far fewer times than n.</li>
+  </ul>
+  <div class="widget" id="rt">
+    <h3 style="margin-top:0">Execution counts</h3>
+    <p class="sub" style="margin-top:0">Change n and compare how each pattern grows when n doubles.</p>
+    <div class="row"><label>n <input type="number" id="rtn" value="10" min="1" max="300"></label></div>
+    <div class="scroll"><table id="rtab"></table></div>
+  </div>
+  <div class="tracer" data-id="t39" data-answer="100" data-topic="Counting executions">
+  <div class="q">With n = 10, how many times does <code>count++</code> run?</div>
+<pre><span class="kw">int</span> n = <span class="num">10</span>;
+<span class="kw">int</span> count = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">0</span>; j &lt; n; j++)
+    {
+        count++;
+    }
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>The outer loop runs 10 times and the inner loop runs 10 times for each: 10 × 10 = 100.</p></div>
+</div>
+  <div class="tracer" data-id="t40" data-answer="4" data-topic="Counting executions">
+  <div class="q">Using the same code, if n doubles to 20, the count is multiplied by what number?</div>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>With n = 20 the count is 20 × 20 = 400, which is 4 times 100. Doubling n quadruples the work of a nested loop.</p></div>
+</div>
+  <div class="tracer" data-id="t41" data-answer="6" data-topic="Counting executions">
+  <div class="q">How many times does <code>count++</code> run?</div>
+<pre><span class="kw">int</span> count = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt; <span class="num">64</span>; i *= <span class="num">2</span>)
+{
+    count++;
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>i takes 1, 2, 4, 8, 16, 32. Next is 64, which fails the test. Doubling loops run far fewer times than n.</p></div>
+</div>
+</section>
+
+<section id="frq">
+  <h2>FRQ practice: the TextTools class</h2>
+  <p class="lead">Write your own answer first, on paper or in the boxes below, then reveal the model solution and score yourself. The unit’s AP Classroom progress checks include a free-response type called Methods and Control Structures; this original practice question is in that style. Your typed answers and self-scores save in this browser. Not sure where to start? Open the guided walkthrough right below the scenario.</p>
+
+  <div class="frq">
+    <h3 style="margin-top:0">Scenario</h3>
+    <p>You are writing a utility class named <code>TextTools</code> with three static methods. The comments describe what each method must do. Complete all three methods.</p>
+    <pre class="code"><span class="kw">public</span> <span class="kw">class</span> TextTools
+{
+    /**
+     * Returns the sum of the digits of num.
+     * Precondition: num &gt; <span class="num">0</span>
+     * Example: digitSum(<span class="num">4072</span>) returns <span class="num">13</span>
+     */
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">int</span> digitSum(<span class="kw">int</span> num)
+    {
+        /* to be implemented in part (a) */
+    }
+
+    /**
+     * Returns <span class="kw">true</span> <span class="kw">if</span> word reads the same forward and backward;
+     * otherwise, returns <span class="kw">false</span>.
+     * Precondition: word.length() &gt; <span class="num">0</span>
+     * Examples: isPalindrome(<span class="str">"level"</span>) returns <span class="kw">true</span>
+     *           isPalindrome(<span class="str">"lever"</span>) returns <span class="kw">false</span>
+     */
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">boolean</span> isPalindrome(<span class="kw">String</span> word)
+    {
+        /* to be implemented in part (b) */
+    }
+
+    /**
+     * Prints a right triangle of stars with rows rows. Row <span class="num">1</span> has
+     * one star, row <span class="num">2</span> has two stars, and so on. Each row ends
+     * with a <span class="kw">new</span> line.
+     * Precondition: rows &gt; <span class="num">0</span>
+     * Example: printTriangle(<span class="num">3</span>) prints
+     *   *
+     *   **
+     *   ***
+     */
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> printTriangle(<span class="kw">int</span> rows)
+    {
+        /* to be implemented in part (c) */
+    }
+}</pre>
+  </div>
+
+  <details class='frq tut' id='tut'>
+    <summary><span>Guided walkthrough: how to earn all 6 points</span><span class='sub' id='tsum'>Stuck? Open this</span></summary>
+    <p class='sub' style='margin-top:0'>Not sure where to begin? Start here. Each step turns one sentence of the problem into code, and each is worth one rubric point (except step 1). Do the small task, read the feedback, and move on. At the end you will redo the whole question from memory.</p>
+    <div class='tpips' aria-label='Rubric points built so far'>
+      <span class='pip' data-pt='a1'>(a) loop</span>
+      <span class='pip' data-pt='a2'>(a) digits and sum</span>
+      <span class='pip' data-pt='b1'>(b) loop</span>
+      <span class='pip' data-pt='b2'>(b) compare and return</span>
+      <span class='pip' data-pt='c1'>(c) outer loop</span>
+      <span class='pip' data-pt='c2'>(c) inner loop and lines</span>
+      <b id='tptxt'></b>
+    </div>
+    <div class='tdots' id='tdots' role='group' aria-label='Walkthrough steps'></div>
+
+    <div class='tstep' data-step='0'>
+      <h4>Step 1 · Read the problem as a to-do list</h4>
+      <p>Before writing any code, turn each method description into one job. The class and all three method headers are given. <b>You only fill in the empty bodies.</b></p>
+      <div class='scroll'><table>
+        <tr><th>The problem says…</th><th>Your job</th><th>Points</th></tr>
+        <tr><td>“Returns the sum of the digits of <code>num</code>”</td><td><code>digitSum</code>: a loop that visits every digit and a total to return</td><td>2</td></tr>
+        <tr><td>“Returns true if <code>word</code> reads the same forward and backward”</td><td><code>isPalindrome</code>: a loop that compares letters, and the right <code>return</code> statements</td><td>2</td></tr>
+        <tr><td>“Prints a right triangle of stars”</td><td><code>printTriangle</code>: two nested loops that print</td><td>2</td></tr>
+      </table></div>
+      <p><b>Four habits for any methods-and-loops FRQ</b></p>
+      <ol>
+        <li>Read all the parts before writing anything.</li>
+        <li>Work out one example by hand (for example, the digits of 4072) before you write the loop.</li>
+        <li>Say what each pass of the loop does in one plain-English sentence.</li>
+        <li>Translate that sentence using a pattern you know. The next steps hand you the patterns.</li>
+      </ol>
+      <p><b>Quick check.</b> Should you change any of the method headers (the first line of each method)?</p>
+      <div class='tchoices prose'>
+        <button data-ok='0' data-why='Not quite. The headers are given, and other code depends on them. Changing a header can break everything that calls it.'>Yes, rewrite them so they match my answer</button>
+        <button data-ok='1' data-why='Right. Leave every header exactly as given and write only inside the braces.'>No, leave them alone and fill in the bodies</button>
+      </div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='1' data-pt='a1'>
+      <h4>Step 2 · Part (a), keep looping while digits remain · 1 point</h4>
+      <p><b>Say it in English first:</b> “Keep going as long as there are digits left in <code>num</code>.” A number has digits left while it is greater than 0, because each pass removes one digit and the last removal leaves 0.</p>
+      <p>Which loop condition does that?</p>
+      <div class='tchoices'>
+        <button data-ok='0' data-why='No. When num reaches 0, the test 0 &gt;= 0 is still true, so the loop never ends.'>while (num &gt;= 0)</button>
+        <button data-ok='1' data-why='Yes. It runs while digits remain and stops the moment num becomes 0.'>while (num &gt; 0)</button>
+        <button data-ok='0' data-why='No. For a positive num this is false at the start, so the loop would run zero times.'>while (num &lt; 0)</button>
+        <button data-ok='0' data-why='No. 4072 becomes 407, 40, 4, 0, and then keeps going without ever equaling 1, so it never ends.'>while (num != 1)</button>
+      </div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='2' data-pt='a2' data-hint='num % 10 is the last digit. Dividing an int by 10 drops the last digit. The method must return the total you have been building.' data-win='Correct. num % 10 is the last digit, num / 10 removes it, and sum collects the digits. Part (a) is done: 2 points.'>
+      <h4>Step 3 · Part (a), take a digit and add it · 1 point</h4>
+      <p><b>Say it in English first:</b> “Add the last digit to the total, then throw that digit away.”</p>
+      <div class='tcall'><b>Pattern:</b> <code>total += number % 10;</code> grabs the last digit. <code>number /= 10;</code> removes it. Both use integer arithmetic.</div>
+<pre class='tcode'><span class='kw'>public static int</span> digitSum(<span class='kw'>int</span> num)
+{
+    <span class='kw'>int</span> sum = <span class='num'>0</span>;
+    <span class='kw'>while</span> (num &gt; <span class='num'>0</span>)
+    {
+        sum += num <input class='blank short' data-ans='%' aria-label='Operator that gives the last digit'> <span class='num'>10</span>;
+        num <input class='blank short' data-ans='/' aria-label='Operator that removes the last digit'>= <span class='num'>10</span>;
+    }
+    <span class='kw'>return</span> <input class='blank short' data-ans='sum' aria-label='Value to return'>;
+}</pre>
+      <div class='tcall warn'><b>Common trap:</b> <code>sum = num % 10;</code> (plain <code>=</code>) replaces the total each time, so only the last digit processed survives.</div>
+      <div class='trow'><button class='tcheck pri'>Check</button><button class='thint'>Hint</button><button class='tshow'>Show me</button></div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='3' data-pt='b1'>
+      <h4>Step 4 · Part (b), choose the loop · 1 point</h4>
+      <p><b>Say it in English first:</b> “A word is a palindrome if each letter matches the letter in the mirror position.” The first letter pairs with the last, the second with the second to last, and so on. Once you have checked the first half, every pair has been checked.</p>
+      <p>Which loop header visits each mirror pair once, without going out of bounds?</p>
+      <div class='tchoices'>
+        <button data-ok='0' data-why='No. This checks only the first and last letters, so “abca” would wrongly count as a palindrome.'>for (int i = 0; i &lt; 1; i++)</button>
+        <button data-ok='0' data-why='No. When i equals word.length(), substring(i, i + 1) is out of range and throws an exception.'>for (int i = 0; i &lt;= word.length(); i++)</button>
+        <button data-ok='1' data-why='Yes. For a word of length n, positions 0 up to n / 2 - 1 cover every mirror pair. The middle letter of an odd-length word needs no partner.'>for (int i = 0; i &lt; word.length() / 2; i++)</button>
+        <button data-ok='0' data-why='No. i starts at 0, so the test 0 &gt; word.length() / 2 is false right away and the loop never runs.'>for (int i = 0; i &gt; word.length() / 2; i++)</button>
+      </div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='4' data-pt='b2' data-hint='Compare Strings with a method, not ==. The first mismatch settles the answer immediately. Only after every pair has matched can you return the other value.' data-win='Correct. equals compares the letters, one mismatch returns false right away, and true is returned only after the loop has checked every pair. Part (b) is done: 2 points.'>
+      <h4>Step 5 · Part (b), compare and return · 1 point</h4>
+      <p><b>Say it in English first:</b> “If a pair does not match, the answer is false right now. If the loop finishes without a mismatch, the answer is true.”</p>
+<pre class='tcode'><span class='kw'>public static boolean</span> isPalindrome(String word)
+{
+    <span class='kw'>for</span> (<span class='kw'>int</span> i = <span class='num'>0</span>; i &lt; word.length() / <span class='num'>2</span>; i++)
+    {
+        String left = word.substring(i, i + <span class='num'>1</span>);
+        String right = word.substring(word.length() - <span class='num'>1</span> - i, word.length() - i);
+        <span class='kw'>if</span> (!left.<input class='blank' data-ans='equals' aria-label='String method that compares contents'>(right))
+        {
+            <span class='kw'>return</span> <input class='blank short' data-ans='false' aria-label='Value returned on a mismatch'>;
+        }
+    }
+    <span class='kw'>return</span> <input class='blank short' data-ans='true' aria-label='Value returned after the loop'>;
+}</pre>
+      <div class='tcall warn'><b>Common traps:</b> do not compare Strings with <code>==</code> (it compares references). And do not <code>return true</code> inside the loop: one matching pair proves nothing about the rest.</div>
+      <div class='trow'><button class='tcheck pri'>Check</button><button class='thint'>Hint</button><button class='tshow'>Show me</button></div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='5' data-pt='c1' data-hint='There is one pass of the outer loop per row, and rows are numbered starting at 1. Row number rows is the last row, so it must be included.' data-win='Correct. The outer loop runs once for each row, from 1 through rows, so the test uses &lt;= .'>
+      <h4>Step 6 · Part (c), one pass per row · 1 point</h4>
+      <p><b>Say it in English first:</b> “Do the following once for each row, from row 1 up to and including row <code>rows</code>.”</p>
+      <div class='tcall'><b>Pattern:</b> the outer loop counts rows, and the inner loop will count the stars in one row. Nested loops often print grids and triangles.</div>
+<pre class='tcode'><span class='kw'>public static void</span> printTriangle(<span class='kw'>int</span> rows)
+{
+    <span class='kw'>for</span> (<span class='kw'>int</span> row = <input class='blank short' data-ans='1' aria-label='Starting row'>; row <input class='blank short' data-ans='&lt;=' aria-label='Comparison operator'> rows; row++)
+    {
+        <span class='cm'>// print one row of stars here</span>
+    }
+}</pre>
+      <div class='trow'><button class='tcheck pri'>Check</button><button class='thint'>Hint</button><button class='tshow'>Show me</button></div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='6' data-pt='c2' data-hint='Row number row has row stars, so the inner loop runs from 1 up to row. print stays on the same line; println ends the line, and it belongs after the inner loop.' data-win='Correct. The inner loop prints row stars with print, and one println after it ends the row. Part (c) is done: 6 points in all.'>
+      <h4>Step 7 · Part (c), stars and line breaks · 1 point</h4>
+      <p><b>Say it in English first:</b> “In each row, print as many stars as the row number, then move to the next line.”</p>
+<pre class='tcode'>    <span class='kw'>for</span> (<span class='kw'>int</span> row = <span class='num'>1</span>; row &lt;= rows; row++)
+    {
+        <span class='kw'>for</span> (<span class='kw'>int</span> col = <span class='num'>1</span>; col <input class='blank short' data-ans='&lt;=' aria-label='Comparison operator for the inner loop'> row; col++)
+        {
+            System.out.<input class='blank' data-ans='print' aria-label='Method that stays on the same line'>(<span class='str'>"*"</span>);
+        }
+        System.out.<input class='blank' data-ans='println' aria-label='Method that ends the line'>();
+    }</pre>
+      <div class='tcall warn'><b>Common trap:</b> without the <code>println</code>, every star lands on one line. <code>printTriangle(3)</code> would print <code>******</code>.</div>
+      <div class='trow'><button class='tcheck pri'>Check</button><button class='thint'>Hint</button><button class='tshow'>Show me</button></div>
+      <div class='tfb' aria-live='polite'></div>
+    </div>
+
+    <div class='tstep' data-step='7'>
+      <h4>Step 8 · Put it all together</h4>
+      <p>You have all 6 points when your answer has every piece below. Read this list against your own code:</p>
+      <ul>
+        <li>Every method header is unchanged, and each body is inside its braces.</li>
+        <li><code>digitSum</code> loops while <code>num &gt; 0</code>, adds <code>num % 10</code> to the total with <code>+=</code>, divides <code>num</code> by 10, and returns the total.</li>
+        <li><code>isPalindrome</code> compares mirror letters with <code>equals</code>, returns <code>false</code> inside the loop on a mismatch, and returns <code>true</code> after the loop.</li>
+        <li><code>printTriangle</code> has an outer loop for rows, an inner loop that prints <code>row</code> stars with <code>print</code>, and a <code>println</code> after the inner loop.</li>
+        <li>Every loop has a test that will eventually be false, and nothing extra is printed.</li>
+      </ul>
+      <div class='tcall'><b>Now do it again from memory.</b> Go to the Part (a) box, and write all three parts without looking at the steps. Then reveal each model solution and score yourself. If one part trips you up, come back to the step for that part.</div>
+      <p><button class='pri' id='tstart'>Go to the Part (a) box</button></p>
+    </div>
+
+    <div class='tnav'><button id='tback'>Back</button><span class='sub' id='tpos'></span><button class='pri' id='tnext'>Next</button></div>
+    <p style='margin:.6rem 0 0'><button id='treset'>Reset walkthrough</button></p>
+  </details>
+
+  <div class="frq">
+    <h3 style="margin-top:0">Part (a): digitSum</h3>
+    <p>Write the method <code>digitSum</code>. It returns the sum of the digits of <code>num</code>, which is a positive integer. For example, <code>digitSum(4072)</code> returns 13.</p>
+    <textarea id="txt_a" aria-label="Your answer for part (a)" spellcheck="false" placeholder="public static int digitSum(int num)&#10;{&#10;    ...&#10;}"></textarea>
+    <p><button class="frq-show" data-target="model_a">Show model solution</button></p>
+    <div class="frq-model" id="model_a">
+      <pre class="code"><span class="kw">public</span> <span class="kw">static</span> <span class="kw">int</span> digitSum(<span class="kw">int</span> num)
+{
+    <span class="kw">int</span> sum = <span class="num">0</span>;
+    <span class="kw">while</span> (num &gt; <span class="num">0</span>)
+    {
+        sum += num % <span class="num">10</span>;
+        num /= <span class="num">10</span>;
+    }
+    <span class="kw">return</span> sum;
+}</pre>
+      <p class="sub">Any correct loop that visits every digit works. Score yourself:</p>
+      <label class="chk"><input type="checkbox" class="frq-check" id="fa1"><span><b>1 pt</b> A loop continues while digits remain, and <code>num</code> is updated so the loop ends.</span></label>
+      <label class="chk"><input type="checkbox" class="frq-check" id="fa2"><span><b>1 pt</b> Each digit is taken with <code>num % 10</code>, added to a running total, and the total is returned.</span></label>
+    </div>
+  </div>
+
+  <div class="frq">
+    <h3 style="margin-top:0">Part (b): isPalindrome</h3>
+    <p>Write the method <code>isPalindrome</code>. It returns <code>true</code> if <code>word</code> reads the same forward and backward, and <code>false</code> otherwise. For example, <code>isPalindrome("level")</code> returns <code>true</code>, and <code>isPalindrome("lever")</code> returns <code>false</code>.</p>
+    <textarea id="txt_b" aria-label="Your answer for part (b)" spellcheck="false" placeholder="public static boolean isPalindrome(String word)&#10;{&#10;    ...&#10;}"></textarea>
+    <p><button class="frq-show" data-target="model_b">Show model solution</button></p>
+    <div class="frq-model" id="model_b">
+      <pre class="code"><span class="kw">public</span> <span class="kw">static</span> <span class="kw">boolean</span> isPalindrome(<span class="kw">String</span> word)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; word.length() / <span class="num">2</span>; i++)
+    {
+        <span class="kw">String</span> left = word.substring(i, i + <span class="num">1</span>);
+        <span class="kw">String</span> right = word.substring(word.length() - <span class="num">1</span> - i, word.length() - i);
+        <span class="kw">if</span> (!left.equals(right))
+        {
+            <span class="kw">return</span> <span class="kw">false</span>;
+        }
+    }
+    <span class="kw">return</span> <span class="kw">true</span>;
+}</pre>
+      <p class="sub">Looping over the whole word and comparing each letter with its mirror also works. Score yourself:</p>
+      <label class="chk"><input type="checkbox" class="frq-check" id="fb1"><span><b>1 pt</b> A loop visits the positions it needs (such as the first half) without going out of bounds.</span></label>
+      <label class="chk"><input type="checkbox" class="frq-check" id="fb2"><span><b>1 pt</b> Letters are compared with <code>equals</code>, <code>false</code> is returned on a mismatch, and <code>true</code> is returned only after the loop.</span></label>
+    </div>
+  </div>
+
+  <div class="frq">
+    <h3 style="margin-top:0">Part (c): printTriangle</h3>
+    <p>Write the method <code>printTriangle</code>. It prints a right triangle of stars with <code>rows</code> rows: row 1 has one star, row 2 has two stars, and so on. Each row ends with a new line.</p>
+    <textarea id="txt_c" aria-label="Your answer for part (c)" spellcheck="false" placeholder="public static void printTriangle(int rows)&#10;{&#10;    ...&#10;}"></textarea>
+    <p><button class="frq-show" data-target="model_c">Show model solution</button></p>
+    <div class="frq-model" id="model_c">
+      <pre class="code"><span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> printTriangle(<span class="kw">int</span> rows)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> row = <span class="num">1</span>; row &lt;= rows; row++)
+    {
+        <span class="kw">for</span> (<span class="kw">int</span> col = <span class="num">1</span>; col &lt;= row; col++)
+        {
+            System.out.print(<span class="str">"*"</span>);
+        }
+        System.out.println();
+    }
+}</pre>
+      <p class="sub">Score yourself:</p>
+      <label class="chk"><input type="checkbox" class="frq-check" id="fc1"><span><b>1 pt</b> An outer loop runs once per row, from 1 through <code>rows</code>.</span></label>
+      <label class="chk"><input type="checkbox" class="frq-check" id="fc2"><span><b>1 pt</b> An inner loop prints the correct number of stars for the row, and each row ends with <code>println</code>.</span></label>
+    </div>
+  </div>
+
+  <div class="score">
+    <b>Self-score: <span id="frqscore">0 / 6</span></b>
+    <div class="bar"><i id="frqbar"></i></div>
+    <p class="sub" style="margin:.3rem 0 0">This is a practice rubric written for this study guide, not an official College Board scoring guide.</p>
+  </div>
+
+  <div class="widget" id="fwidget">
+    <h3 style="margin-top:0">Try the model answers</h3>
+    <p class="sub" style="margin-top:0">Run the three model methods on your own inputs and compare with what you expect.</p>
+    <div class="row"><label>digitSum( <input type="number" id="fd" value="4072"> )</label></div>
+    <div class="result" id="fdres"></div>
+    <div class="row"><label>isPalindrome( <input type="text" id="fp" value="level" size="12" spellcheck="false" autocomplete="off"> )</label></div>
+    <div class="result" id="fpres"></div>
+    <div class="row"><label>printTriangle( <input type="number" id="ft" value="4" min="1" max="12"> )</label></div>
+    <pre class="code" id="ftres"></pre>
+  </div>
+
+  <h3>Spot the bug</h3>
+  <div class="tracer" data-id="t42" data-answer="4" data-topic="FRQ practice">
+  <div class="q">A student writes <code>sum = num % 10;</code> (with <code>=</code>, not <code>+=</code>) inside the digit loop. What does <code>digitSum(4072)</code> return?</div>
+<pre><span class="kw">int</span> num = <span class="num">4072</span>;
+<span class="kw">int</span> sum = <span class="num">0</span>;
+<span class="kw">while</span> (num &gt; <span class="num">0</span>)
+{
+    sum = num % <span class="num">10</span>;
+    num /= <span class="num">10</span>;
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>Each pass replaces sum instead of adding to it, so only the last assignment survives. The last digit processed is 4.</p></div>
+</div>
+  <div class="tracer" data-id="t43" data-answer="******" data-topic="FRQ practice">
+  <div class="q">A student forgets <code>System.out.println();</code> after the inner loop. What does <code>printTriangle(3)</code> print? (type it exactly)</div>
+<pre><span class="kw">for</span> (<span class="kw">int</span> row = <span class="num">1</span>; row &lt;= <span class="num">3</span>; row++)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> col = <span class="num">1</span>; col &lt;= row; col++)
+    {
+        System.out.print(<span class="str">"*"</span>);
+    }
+}</pre>
+  <div class="ans"><input type="text" aria-label="Your answer" autocomplete="off" spellcheck="false"><button class="pri check">Check</button><button class="reveal">Show me</button></div>
+  <div class="out"><div class="verdict"></div><p>Without the println, nothing ends a row. All 1 + 2 + 3 = 6 stars appear on one line.</p></div>
+</div>
+
+  <h3>Common FRQ mistakes</h3>
+  <div class="scroll"><table>
+    <tr><th>Students write</th><th>What really happens</th></tr>
+    <tr><td><code>while (num &gt;= 0)</code> in <code>digitSum</code></td><td>num reaches 0 and the test stays true: an infinite loop.</td></tr>
+    <tr><td><code>sum = num % 10;</code></td><td>Replaces the total on every pass. Use <code>+=</code>.</td></tr>
+    <tr><td>Forgetting <code>num /= 10;</code></td><td>The last digit never goes away, so the loop never ends.</td></tr>
+    <tr><td><code>left == right</code> for Strings</td><td>Compares references, not letters. Use <code>left.equals(right)</code>.</td></tr>
+    <tr><td><code>return true;</code> inside the palindrome loop</td><td>One matching pair does not prove the rest match. Return true only after the loop.</td></tr>
+    <tr><td>Looping to <code>i &lt;= word.length()</code></td><td>The last pass asks for a letter that does not exist and throws an exception.</td></tr>
+    <tr><td>No <code>println</code> after the inner loop</td><td>All the stars end up on a single line.</td></tr>
+  </table></div>
+</section>
+
+<section id="traps">
+  <h2>Common traps</h2>
+  <div class="scroll"><table>
+    <tr><th>Students think</th><th>What is true</th></tr>
+    <tr><td><code>=</code> compares two values</td><td><code>=</code> assigns. <code>==</code> compares. For an int, <code>if (x = 5)</code> does not compile.</td></tr>
+    <tr><td>A semicolon after the condition is harmless</td><td><code>if (x &gt; 3);</code> (or a loop header followed by a semicolon) is an empty body. The braces after it always run.</td></tr>
+    <tr><td>Without braces, an <code>if</code> controls the whole indented block</td><td>Only the single next statement belongs to it. Use braces every time.</td></tr>
+    <tr><td>Two separate <code>if</code>s behave like an <code>else if</code> chain</td><td>Separate ifs can all run. In an else-if chain, at most one body runs.</td></tr>
+    <tr><td>An <code>else</code> pairs with the <code>if</code> it lines up with</td><td>It pairs with the nearest unmatched if, whatever the indentation shows.</td></tr>
+    <tr><td><code>!(a &amp;&amp; b)</code> is <code>!a &amp;&amp; !b</code></td><td>De Morgan: negate each part <em>and</em> switch the operator. It is <code>!a || !b</code>.</td></tr>
+    <tr><td><code>!(x &lt; 5)</code> is <code>x &gt; 5</code></td><td>It is <code>x &gt;= 5</code>. The boundary value stays included.</td></tr>
+    <tr><td><code>||</code> is checked before <code>&amp;&amp;</code></td><td><code>&amp;&amp;</code> binds tighter: <code>a || b &amp;&amp; c</code> means <code>a || (b &amp;&amp; c)</code>.</td></tr>
+    <tr><td>Put the guard on the right: <code>x / y &gt; 2 &amp;&amp; y != 0</code></td><td>Short-circuiting only protects the right side. Put the guard first: <code>y != 0 &amp;&amp; x / y &gt; 2</code>.</td></tr>
+    <tr><td><code>==</code> compares Strings</td><td><code>==</code> compares references. Use <code>s1.equals(s2)</code> to compare the characters.</td></tr>
+    <tr><td>A <code>while</code> loop checks after each pass</td><td>It checks before every pass, including the first, so it may run zero times.</td></tr>
+    <tr><td>A loop with <code>!=</code> always ends</td><td><code>i != 0</code> with <code>i -= 3</code> from 10 skips 0 and never stops. Prefer <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>.</td></tr>
+    <tr><td><code>for (int i = 0; i &lt;= 4; i++)</code> runs 4 times</td><td>It runs 5 times (0, 1, 2, 3, 4).</td></tr>
+    <tr><td>A <code>for</code> loop variable still exists after the loop</td><td>Only if it was declared <em>before</em> the loop. <code>for (int i …)</code> limits i to the loop.</td></tr>
+    <tr><td><code>sum / 4</code> keeps the decimal</td><td>int ÷ int drops it. Use <code>sum / 4.0</code> or <code>(double) sum / 4</code>.</td></tr>
+    <tr><td>A 2-letter window can loop to <code>i &lt; s.length()</code></td><td><code>substring(i, i + 2)</code> needs i + 2 ≤ length, so the test is <code>i &lt; s.length() - 1</code>. Going further throws an exception.</td></tr>
+    <tr><td>The inner loop keeps its value between outer passes</td><td>It restarts every time. The body runs (outer passes) × (inner passes) times when the inner count is constant.</td></tr>
+    <tr><td><code>sum = num % 10</code> adds the digit</td><td>Plain <code>=</code> replaces the total. Use <code>sum += num % 10</code>.</td></tr>
+  </table></div>
+  <h3>Habits that catch most of them</h3>
+  <ul>
+    <li>Trace the first pass and the last pass of every loop. Most off-by-one errors show up there.</li>
+    <li>Ask “can this ever become false?” for every <code>while</code> test.</li>
+    <li>When a condition looks complicated, plug in one value from each side of every boundary.</li>
+  </ul>
+</section>
+
+<section id="vocab">
+  <h2>Flashcards</h2>
+  <p class="sub">Tap a card to flip it. <button id="shuffle">Shuffle</button></p>
+  <div class="deck" id="deck"></div>
+</section>
+
+<section id="quiz">
+  <h2>Unit quiz</h2>
+  <p class="sub" id="qintro">Twenty questions. Pick an answer to see why; your best score saves.</p>
+  <div id="quizbox"></div>
+  <div class="score" id="scorebox" style="display:none"></div>
+  <p><button class="pri" id="grade">Show my score</button> <button id="requiz">Start over</button></p>
+</section>
+</main>
+</div>
+
+<script>
+
+(function(){
+  'use strict';
+  var w=window;
+  // ---------- storage (guarded) ----------
+  var KEY='apcsa-u2-v1';
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; } }
+  function save(st){ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} }
+  var state=load(); state.solved=state.solved||{}; state.best=state.best||null;
+  function norm(s){ return s.replace(/\s+/g,' ').replace(/\s*\|\s*/g,'|').trim().toLowerCase(); }
+
+  // ---------- tracers ----------
+  var tracers=Array.prototype.slice.call(document.querySelectorAll('.tracer[data-id]'));
+  document.getElementById('ptn').textContent=tracers.length;
+  tracers.forEach(function(t){
+    var id=t.dataset.id, ans=t.dataset.answer, alts=ans.split('~~'), input=t.querySelector('input'), out=t.querySelector('.out'), v=t.querySelector('.verdict');
+    function show(ok,msg){ out.classList.add('show'); v.className='verdict '+(ok?'ok':'bad'); v.textContent=msg; }
+    if(state.solved[id]){ input.value=alts[0]; show(true,'Solved earlier'); }
+    t.querySelector('.check').addEventListener('click',function(){
+      if(alts.some(function(a){ return norm(input.value)===norm(a); })){ show(true,'Correct'); state.solved[id]=true; save(state); updateProg(); }
+      else show(false,'Not yet. Expected: '+alts[0]);
+    });
+    t.querySelector('.reveal').addEventListener('click',function(){ show(false,'Answer: '+alts[0]); });
+    input.addEventListener('keydown',function(e){ if(e.key==='Enter') t.querySelector('.check').click(); });
+  });
+  function updateProg(){
+    var n=Object.keys(state.solved).length;
+    document.getElementById('pt').textContent=n;
+    document.getElementById('pbar').style.width=(100*n/tracers.length)+'%';
+    document.getElementById('pq').textContent=state.best==null?'\u2014':state.best+'/'+(Q?Q.length:20);
+  }
+  updateProg();
+  document.getElementById('reset').addEventListener('click',function(){
+    if(confirm('Clear your saved progress on this device?')){ state={solved:{},best:null}; save(state); location.reload(); }
+  });
+  // ======================================================================
+  // Java-style expression evaluator (no eval): ints, doubles, booleans
+  // ======================================================================
+  function JErr(kind,msg){ this.kind=kind; this.msg=msg; }
+  function jTokenize(src){
+    var toks=[], pos=0, re=/\s*(?:(\d+\.\d+|\d+)|([A-Za-z_]\w*)|(\|\||&&|==|!=|<=|>=|[<>+\-*\/%!()]))/y, m;
+    while(pos<src.length){
+      re.lastIndex=pos; m=re.exec(src);
+      if(!m){
+        if(/^\s*$/.test(src.slice(pos))) break;
+        throw new JErr('compile','Unexpected character “'+src.slice(pos).trim().charAt(0)+'”. Java uses && and || (not and / or).');
+      }
+      if(m[1]!==undefined) toks.push({k:'num',v:m[1]});
+      else if(m[2]!==undefined) toks.push({k:'id',v:m[2]});
+      else toks.push({k:'op',v:m[3]});
+      pos=re.lastIndex;
+    }
+    return toks;
+  }
+  function jParse(src){
+    var toks=jTokenize(src), i=0;
+    function pk(){ return toks[i]; }
+    function isOp(v){ return toks[i] && toks[i].k==='op' && toks[i].v===v; }
+    function level(next,ops){
+      return function(){
+        var l=next();
+        while(toks[i] && toks[i].k==='op' && ops.indexOf(toks[i].v)>=0){
+          var op=toks[i++].v, r=next(); l={op:op,l:l,r:r};
+        }
+        return l;
+      };
+    }
+    function unary(){
+      if(isOp('!')){ i++; return {op:'!',e:unary()}; }
+      if(isOp('-')){ i++; return {op:'neg',e:unary()}; }
+      return prim();
+    }
+    function prim(){
+      var t=toks[i++];
+      if(!t) throw new JErr('compile','The expression ends too early.');
+      if(t.k==='num') return {num:parseFloat(t.v), dbl:t.v.indexOf('.')>=0};
+      if(t.k==='id'){ if(t.v==='true'||t.v==='false') return {bool:t.v==='true'}; return {id:t.v}; }
+      if(t.v==='('){
+        var e=orE();
+        if(!isOp(')')) throw new JErr('compile','Missing closing parenthesis.');
+        i++; return e;
+      }
+      throw new JErr('compile','Unexpected “'+t.v+'”.');
+    }
+    var mulE=level(unary,['*','/','%']), addE=level(mulE,['+','-']), relE=level(addE,['<','>','<=','>=']),
+        eqE=level(relE,['==','!=']), andE=level(eqE,['&&']), orE=level(andE,['||']);
+    var ast=orE();
+    if(i<toks.length) throw new JErr('compile','Unexpected “'+toks[i].v+'”.');
+    return ast;
+  }
+  function jIds(n,set){
+    if(!n||typeof n!=='object') return set;
+    if('id' in n) set[n.id]=true;
+    ['l','r','e'].forEach(function(k){ if(n[k]) jIds(n[k],set); });
+    return set;
+  }
+  function jNeed(v,k,op){ if(v.k!==k) throw new JErr('compile','Bad operand for '+op+': it needs a '+k+' value, but found '+v.k+'.'); }
+  function jNum(v,op){ if(v.k!=='int'&&v.k!=='double') throw new JErr('compile','Bad operand for '+op+': it needs a number, but found '+v.k+'.'); }
+  function jEval(n,env,notes){
+    if('num' in n) return {k:n.dbl?'double':'int', v:n.num};
+    if('bool' in n) return {k:'boolean', v:n.bool};
+    if('id' in n){ if(!Object.prototype.hasOwnProperty.call(env,n.id)) throw new JErr('compile','Cannot find symbol “'+n.id+'”.'); return env[n.id]; }
+    var a,b;
+    switch(n.op){
+      case '!': a=jEval(n.e,env,notes); jNeed(a,'boolean','!'); return {k:'boolean',v:!a.v};
+      case 'neg': a=jEval(n.e,env,notes); jNum(a,'-'); return {k:a.k,v:-a.v};
+      case '&&':
+        a=jEval(n.l,env,notes); jNeed(a,'boolean','&&');
+        if(!a.v){ notes.push('Short-circuit: the right side of && was not evaluated, because the left side was already false.'); return {k:'boolean',v:false}; }
+        b=jEval(n.r,env,notes); jNeed(b,'boolean','&&'); return {k:'boolean',v:b.v};
+      case '||':
+        a=jEval(n.l,env,notes); jNeed(a,'boolean','||');
+        if(a.v){ notes.push('Short-circuit: the right side of || was not evaluated, because the left side was already true.'); return {k:'boolean',v:true}; }
+        b=jEval(n.r,env,notes); jNeed(b,'boolean','||'); return {k:'boolean',v:b.v};
+    }
+    a=jEval(n.l,env,notes); b=jEval(n.r,env,notes);
+    var dbl=(a.k==='double'||b.k==='double');
+    switch(n.op){
+      case '+': jNum(a,'+'); jNum(b,'+'); return dbl?{k:'double',v:a.v+b.v}:{k:'int',v:(a.v+b.v)|0};
+      case '-': jNum(a,'-'); jNum(b,'-'); return dbl?{k:'double',v:a.v-b.v}:{k:'int',v:(a.v-b.v)|0};
+      case '*': jNum(a,'*'); jNum(b,'*'); return dbl?{k:'double',v:a.v*b.v}:{k:'int',v:Math.imul(a.v,b.v)};
+      case '/': jNum(a,'/'); jNum(b,'/');
+        if(dbl){ if(b.v===0) notes.push('Dividing a double by zero does not throw an exception (it gives Infinity or NaN), which is outside the AP course.'); return {k:'double',v:a.v/b.v}; }
+        if(b.v===0) throw new JErr('run','ArithmeticException: / by zero (dividing an int by the int zero)');
+        return {k:'int',v:Math.trunc(a.v/b.v)|0};
+      case '%': jNum(a,'%'); jNum(b,'%');
+        if(!dbl && b.v===0) throw new JErr('run','ArithmeticException: / by zero (remainder with the int zero)');
+        return {k:dbl?'double':'int',v:a.v%b.v};
+      case '<': case '>': case '<=': case '>=':
+        jNum(a,n.op); jNum(b,n.op);
+        return {k:'boolean',v:n.op==='<'?a.v<b.v:n.op==='>'?a.v>b.v:n.op==='<='?a.v<=b.v:a.v>=b.v};
+      case '==': case '!=':
+        var numeric=(a.k!=='boolean'&&b.k!=='boolean');
+        if(!numeric && a.k!==b.k) throw new JErr('compile','Incomparable types: '+a.k+' and '+b.k+'.');
+        return {k:'boolean',v:n.op==='=='?a.v===b.v:a.v!==b.v};
+    }
+    throw new JErr('compile','Unsupported operator.');
+  }
+  function jShow(v){
+    if(v.k==='boolean') return v.v?'true':'false';
+    if(v.k==='double') return Number.isInteger(v.v)?v.v.toFixed(1):String(v.v);
+    return String(v.v);
+  }
+  function jRun(src,env){
+    var notes=[];
+    try{
+      var ast=jParse(src), v=jEval(ast,env,notes);
+      return {ok:true,v:v,notes:notes};
+    }catch(e){
+      if(e instanceof JErr) return {ok:false,kind:e.kind,msg:e.msg,notes:notes};
+      throw e;
+    }
+  }
+  w.__jRun=jRun; // exposed for testing
+
+  // ---------- Boolean expression lab ----------
+  var bx=document.getElementById('bx'), by=document.getElementById('by'), bexp=document.getElementById('bexp'), bres=document.getElementById('bres'), bnote=document.getElementById('bnote');
+  function numVal(el){ var s=el.value.trim(); if(s===''||isNaN(Number(s))) return null; var n=Number(s); if(Number.isInteger(n)){ if(n>2147483647||n<-2147483648) return {err:true}; return {k:'int',v:n}; } return {k:'double',v:n}; }
+  function drawLab(){
+    var x=numVal(bx), y=numVal(by);
+    if(!x||!y){ bres.textContent='Enter a number for x and for y.'; bnote.textContent=''; return; }
+    if(x.err||y.err){ bres.textContent='x and y must fit in an int (about -2.1 billion to 2.1 billion).'; bnote.textContent=''; return; }
+    var r=jRun(bexp.value,{x:x,y:y});
+    if(r.ok){
+      bres.textContent=bexp.value.trim()+'   ->   '+jShow(r.v)+'   ('+r.v.k+')';
+      bnote.textContent=r.notes.join(' ');
+    } else {
+      bres.textContent=(r.kind==='run'?'Run-time error: ':'Compile-time error: ')+r.msg;
+      bnote.textContent=r.notes.join(' ');
+    }
+  }
+  [bx,by,bexp].forEach(function(el){ el.addEventListener('input',drawLab); });
+  var bpre=document.getElementById('bpre');
+  [['x > y',7,3],['x % 2 == 0',7,3],['x > 5 && y < 3',7,3],['!(x > 5 || y == 3)',7,3],['y != 0 && x / y > 2',7,0],['x / y > 2 && y != 0',7,0],['x / y == 2',7,3],['x == 7.0',7,3]].forEach(function(p){
+    var b=document.createElement('button'); b.textContent=p[0]+(p[2]===0?'  (y = 0)':'');
+    b.addEventListener('click',function(){ bx.value=p[1]; by.value=p[2]; bexp.value=p[0]; drawLab(); });
+    bpre.appendChild(b);
+  });
+  drawLab();
+
+  // ---------- Equivalence checker (truth tables) ----------
+  var tt1=document.getElementById('tt1'), tt2=document.getElementById('tt2'), ttab=document.getElementById('ttab'), ttres=document.getElementById('ttres');
+  function drawTT(){
+    ttab.innerHTML=''; ttres.className='result'; 
+    var a1,a2;
+    try{ a1=jParse(tt1.value); a2=jParse(tt2.value); }
+    catch(e){ if(e instanceof JErr){ ttres.textContent='Compile-time error: '+e.msg; return; } throw e; }
+    var used=jIds(a2,jIds(a1,{})), names=['a','b','c'].filter(function(n){ return used[n]; });
+    var bad=Object.keys(used).filter(function(n){ return ['a','b','c'].indexOf(n)<0; });
+    if(bad.length){ ttres.textContent='Use only the Boolean variables a, b, and c (found “'+bad[0]+'”).'; return; }
+    if(!names.length){ ttres.textContent='Use at least one of the variables a, b, or c.'; return; }
+    var head='<tr>'+names.map(function(n){ return '<th>'+n+'</th>'; }).join('')+'<th>Expression 1</th><th>Expression 2</th></tr>';
+    var rows='', diff=0, total=1<<names.length;
+    try{
+      for(var m=0;m<total;m++){
+        var env={}, cells='';
+        names.forEach(function(n,idx){ var val=!!(m & (1<<(names.length-1-idx))); env[n]={k:'boolean',v:val}; cells+='<td class="'+(val?'t':'f')+'">'+(val?'true':'false')+'</td>'; });
+        var v1=jEval(a1,env,[]), v2=jEval(a2,env,[]);
+        jNeed(v1,'boolean','Expression 1'); jNeed(v2,'boolean','Expression 2');
+        var d=(v1.v!==v2.v); if(d) diff++;
+        rows+='<tr class="'+(d?'diff':'')+'">'+cells+'<td class="'+(v1.v?'t':'f')+'">'+v1.v+'</td><td class="'+(v2.v?'t':'f')+'">'+v2.v+'</td></tr>';
+      }
+    }catch(e){ if(e instanceof JErr){ ttres.textContent='Compile-time error: '+e.msg; return; } throw e; }
+    ttab.innerHTML=head+rows;
+    ttres.textContent=diff===0?'Equivalent: the two expressions agree in all '+total+' cases.':'Not equivalent: they disagree in '+diff+' of '+total+' cases (highlighted).';
+  }
+  [tt1,tt2].forEach(function(el){ el.addEventListener('input',drawTT); });
+  var ttpre=document.getElementById('ttpre');
+  [['!(a && b)','!a || !b'],['!(a || b)','!a && !b'],['!(a && b)','!a && !b'],['a || b','!(!a && !b)'],['a && (b || c)','a && b || c'],['a || b && c','(a || b) && c']].forEach(function(p){
+    var b=document.createElement('button'); b.textContent=p[0]+'  vs  '+p[1];
+    b.addEventListener('click',function(){ tt1.value=p[0]; tt2.value=p[1]; drawTT(); });
+    ttpre.appendChild(b);
+  });
+  drawTT();
+
+  // ---------- Branch finder (if / else-if chain) ----------
+  var bfs=document.getElementById('bfs'), bfcode=document.getElementById('bfcode'), bfres=document.getElementById('bfres');
+  var bfLines=[
+    {t:'if (score >= 90)', test:function(s){ return s>=90; }, body:'grade = "A";'},
+    {t:'else if (score >= 80)', test:function(s){ return s>=80; }, body:'grade = "B";'},
+    {t:'else if (score >= 70)', test:function(s){ return s>=70; }, body:'grade = "C";'},
+    {t:'else', test:null, body:'grade = "F";'}
+  ];
+  function drawBF(){
+    var s=parseInt(bfs.value,10);
+    if(isNaN(s)){ bfres.textContent='Enter a whole number for score.'; bfcode.innerHTML=''; return; }
+    var html='', hit=-1, tested=[];
+    bfLines.forEach(function(L,i){
+      var state='skip', mark='';
+      if(hit<0){
+        if(L.test===null){ hit=i; state='run'; mark='  <-- runs (no test was true)'; }
+        else { var r=L.test(s); tested.push(L.t); if(r){ hit=i; state='run'; mark='  <-- true: this branch runs'; } else { state='no'; mark='  false'; } }
+      }
+      html+='<span class="cl '+(state==='run'?'on':state==='skip'?'dim':'')+'">'+L.t+(L.test===null?'':'')+'   { '+L.body+' }'+mark+'</span>';
+    });
+    bfcode.innerHTML=html;
+    bfres.textContent='grade = "'+['A','B','C','F'][hit]+'". '+(tested.length)+' condition'+(tested.length===1?'':'s')+' tested; every branch after the first true one is skipped, even if its condition would also be true.';
+  }
+  bfs.addEventListener('input',drawBF); drawBF();
+
+  // ---------- for-loop explorer ----------
+  var lxs=document.getElementById('lxs'), lxo=document.getElementById('lxo'), lxl=document.getElementById('lxl'), lxu=document.getElementById('lxu'), lxk=document.getElementById('lxk');
+  var lxres=document.getElementById('lxres'), lxtab=document.getElementById('lxtab'), lxwhile=document.getElementById('lxwhile');
+  function drawLX(){
+    var st=parseInt(lxs.value,10), lim=parseInt(lxl.value,10), k=parseInt(lxk.value,10), op=lxo.value, up=lxu.value;
+    var needK=!(up==='i++'||up==='i--');
+    document.getElementById('lxkwrap').style.display=needK?'inline':'none';
+    function inInt(v){ return v>=-2147483648 && v<=2147483647; }
+    if(isNaN(st)||isNaN(lim)||(needK&&isNaN(k))){ lxres.textContent='Enter whole numbers in every box.'; lxtab.innerHTML=''; lxwhile.textContent=''; return; }
+    if(!inInt(st)||!inInt(lim)||(needK&&!inInt(k))){ lxres.textContent='Every value must fit in an int (about -2.1 billion to 2.1 billion).'; lxtab.innerHTML=''; lxwhile.textContent=''; return; }
+    function test(i){ return op==='<'?i<lim:op==='<='?i<=lim:op==='>'?i>lim:op==='>='?i>=lim:i!==lim; }
+    function upd(i){ return up==='i++'?(i+1)|0:up==='i--'?(i-1)|0:up==='i += k'?(i+k)|0:up==='i -= k'?(i-k)|0:Math.imul(i,k); }
+    var updTxt=up.replace('k',String(k));
+    var i=st, rows='', body=0, SHOW=30, CAP=100000, inf=false;
+    for(var pass=1;pass<=CAP+1;pass++){
+      var t=test(i);
+      if(!t){ rows+='<tr><td>'+pass+'</td><td>'+i+'</td><td class="f">false</td><td>no: loop ends</td><td>—</td></tr>'; break; }
+      if(pass>CAP){ inf=true; break; }
+      var nx=upd(i); body++;
+      if(body<=SHOW) rows+='<tr><td>'+pass+'</td><td>'+i+'</td><td class="t">true</td><td>yes</td><td>'+nx+'</td></tr>';
+      else if(body===SHOW+1) rows+='<tr><td colspan="5">… more passes are not shown …</td></tr>';
+      i=nx;
+    }
+    if(inf) rows+='<tr><td colspan="5">… the test is still true after '+CAP.toLocaleString('en-US')+' passes</td></tr>';
+    lxtab.innerHTML='<tr><th>Test #</th><th>i at the test</th><th>Test</th><th>Body runs?</th><th>i after update</th></tr>'+rows;
+    lxres.textContent=inf?'Infinite loop (or an extremely long one): the test is still true after '+CAP.toLocaleString('en-US')+' passes.':'The body runs '+body+' time'+(body===1?'':'s')+(body===0?' (the test is false the first time).':'.');
+    lxwhile.textContent='int i = '+st+';\nwhile (i '+op+' '+lim+')\n{\n    // body\n    '+updTxt+';\n}';
+  }
+  [lxs,lxo,lxl,lxu,lxk].forEach(function(el){ el.addEventListener('input',drawLX); el.addEventListener('change',drawLX); });
+  drawLX();
+
+  // ---------- trace table stepper ----------
+  var PROGS=[
+    {name:'while: halving n', lines:['int n = 20;','int steps = 0;','while (n > 1)','{','    n = n / 2;','    steps++;','}'], cols:['n','steps'],
+     trace:function(){ var R=[],n,steps; function s(l,no){ R.push({line:l,v:{n:n,steps:steps},note:no}); }
+       n=20; s(0,'n = 20'); steps=0; s(1,'steps = 0');
+       for(;;){ var t=n>1; s(2,'n > 1 is '+t); if(!t) break; n=Math.trunc(n/2); s(4,'n = n / 2'); steps++; s(5,'steps++'); }
+       return R; }},
+    {name:'for with if: sum of evens', lines:['int sum = 0;','for (int i = 1; i <= 6; i++)','{','    if (i % 2 == 0)','    {','        sum += i;','    }','}'], cols:['sum','i'],
+     trace:function(){ var R=[],sum,i; function s(l,no){ R.push({line:l,v:{sum:sum,i:i},note:no}); }
+       sum=0; s(0,'sum = 0'); i=1; s(1,'initialization: i = 1 (runs once)');
+       for(;;){ var t=i<=6; s(1,'test: i <= 6 is '+t); if(!t) break; var e=(i%2===0); s(3,'i % 2 == 0 is '+e); if(e){ sum+=i; s(5,'sum += i'); } i++; s(1,'update: i++'); }
+       i=undefined; return R; }},
+    {name:'while: sum the digits', param:{label:'num',def:'4072',kind:'int'}, lines:function(p){ return ['int num = '+p+';','int sum = 0;','while (num > 0)','{','    sum += num % 10;','    num /= 10;','}']; }, cols:['num','sum'],
+     trace:function(p){ var R=[],num,sum; function s(l,no){ R.push({line:l,v:{num:num,sum:sum},note:no}); }
+       num=parseInt(p,10); s(0,'num = '+num); sum=0; s(1,'sum = 0');
+       for(var guard=0;guard<60;guard++){ var t=num>0; s(2,'num > 0 is '+t); if(!t) break; var d=num%10; sum+=d; s(4,'sum += '+d+'  (last digit)'); num=Math.trunc(num/10); s(5,'num /= 10  (drops the last digit)'); }
+       return R; }},
+    {name:'nested loops: count', lines:['int count = 0;','for (int r = 1; r <= 3; r++)','{','    for (int c = 1; c <= r; c++)','    {','        count++;','    }','}'], cols:['r','c','count'],
+     trace:function(){ var R=[],r,c,count; function s(l,no){ R.push({line:l,v:{r:r,c:c,count:count},note:no}); }
+       count=0; s(0,'count = 0'); r=1; s(1,'outer init: r = 1');
+       for(;;){ var t=r<=3; s(1,'outer test: r <= 3 is '+t); if(!t) break; c=1; s(3,'inner init: c = 1');
+         for(;;){ var t2=c<=r; s(3,'inner test: c <= r is '+t2); if(!t2) break; count++; s(5,'count++'); c++; s(3,'inner update: c++'); }
+         c=undefined; r++; s(1,'outer update: r++  (c is out of scope)'); }
+       r=undefined; return R; }},
+    {name:'string: reverse a word', param:{label:'word',def:'java',kind:'word'}, lines:function(p){ return ['String w = "'+p+'";','String r = "";','for (int i = 0; i < w.length(); i++)','{','    r = w.substring(i, i + 1) + r;','}']; }, cols:['i','r'],
+     trace:function(p){ var R=[],i,r; function q(x){ return x===undefined?undefined:'"'+x+'"'; } function s(l,no){ R.push({line:l,v:{i:i,r:q(r)},note:no}); }
+       s(0,'w = "'+p+'"'); r=''; s(1,'r = ""'); i=0; s(2,'initialization: i = 0');
+       for(;;){ var t=i<p.length; s(2,'test: i < '+p.length+' is '+t); if(!t) break; var ch=p.substring(i,i+1); r=ch+r; s(4,'r = "'+ch+'" + r'); i++; s(2,'update: i++'); }
+       return R; }}
+  ];
+  var stp=document.getElementById('stp'), stin=document.getElementById('stin'), stinw=document.getElementById('stinw'), stcode=document.getElementById('stcode'), sttab=document.getElementById('sttab'), stout=document.getElementById('stout');
+  var stRows=[], stIdx=0, stProg=null;
+  PROGS.forEach(function(p,i){ var o=document.createElement('option'); o.value=i; o.textContent=p.name; stp.appendChild(o); });
+  function stParam(){
+    var p=PROGS[parseInt(stp.value,10)]; if(!p.param) return null;
+    var v=stin.value.trim();
+    if(p.param.kind==='int'){ if(!/^\d{1,9}$/.test(v)||parseInt(v,10)<1) return {err:'Enter a whole number from 1 to 999999999.'}; return {v:String(parseInt(v,10))}; }
+    if(!/^[a-z]{1,10}$/i.test(v)) return {err:'Enter 1 to 10 letters.'};
+    return {v:v.toLowerCase()};
+  }
+  function stBuild(keep){
+    stProg=PROGS[parseInt(stp.value,10)];
+    stinw.style.display=stProg.param?'inline':'none';
+    if(stProg.param){ if(!keep){ stin.value=stProg.param.def; } document.getElementById('stinlab').textContent=stProg.param.label; }
+    var pr=stParam(); if(pr&&pr.err){ stout.textContent=pr.err; return; }
+    var lines=(typeof stProg.lines==='function')?stProg.lines(pr?pr.v:null):stProg.lines;
+    stcode.innerHTML=lines.map(function(l,i){ return '<span class="cl" data-l="'+i+'">'+l.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</span>'; }).join('');
+    stRows=stProg.trace(pr?pr.v:null); stIdx=0; stDraw();
+  }
+  function stDraw(){
+    stcode.querySelectorAll('.cl').forEach(function(el){ el.classList.toggle('on',parseInt(el.dataset.l,10)===stRows[stIdx].line); });
+    var head='<tr><th>Step</th><th>Line</th>'+stProg.cols.map(function(c){ return '<th>'+c+'</th>'; }).join('')+'<th>What happened</th></tr>', body='';
+    for(var i=0;i<=stIdx;i++){
+      var R=stRows[i];
+      body+='<tr class="'+(i===stIdx?'cur':'')+'"><td>'+(i+1)+'</td><td>'+(R.line+1)+'</td>'+stProg.cols.map(function(c){ var v=R.v[c]; return '<td class="vv">'+(v===undefined?'—':v)+'</td>'; }).join('')+'<td>'+R.note.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</td></tr>';
+    }
+    sttab.innerHTML=head+body;
+    var last=(stIdx===stRows.length-1);
+    stout.textContent=last?'Done. Final values: '+stProg.cols.map(function(c){ var v=stRows[stIdx].v[c]; return c+' = '+(v===undefined?'(out of scope)':v); }).join(', ')+'.':'Step '+(stIdx+1)+' of '+stRows.length+'.';
+    document.getElementById('stnext').disabled=last; document.getElementById('stback').disabled=(stIdx===0);
+  }
+  stp.addEventListener('change',function(){ stBuild(false); });
+  stin.addEventListener('input',function(){ stBuild(true); });
+  document.getElementById('stnext').addEventListener('click',function(){ if(stIdx<stRows.length-1){ stIdx++; stDraw(); } });
+  document.getElementById('stback').addEventListener('click',function(){ if(stIdx>0){ stIdx--; stDraw(); } });
+  document.getElementById('strun').addEventListener('click',function(){ stIdx=stRows.length-1; stDraw(); });
+  document.getElementById('streset').addEventListener('click',function(){ stIdx=0; stDraw(); });
+  stBuild(false);
+  w.__stRows=function(i,p){ return PROGS[i].trace(p); }; // exposed for testing
+
+  // ---------- nested-loop grid ----------
+  var NP=[
+    {inner:'int j = 0; j < n; j++', first:function(i,n){ return 0; }, ok:function(j,i,n){ return j<n; }, f:'n × n'},
+    {inner:'int j = 0; j <= i; j++', first:function(i,n){ return 0; }, ok:function(j,i,n){ return j<=i; }, f:'n(n + 1) / 2'},
+    {inner:'int j = 0; j < i; j++', first:function(i,n){ return 0; }, ok:function(j,i,n){ return j<i; }, f:'n(n - 1) / 2'},
+    {inner:'int j = i; j < n; j++', first:function(i,n){ return i; }, ok:function(j,i,n){ return j<n; }, f:'n(n + 1) / 2'},
+    {inner:'int j = 0; j < n - i; j++', first:function(i,n){ return 0; }, ok:function(j,i,n){ return j<n-i; }, f:'n(n + 1) / 2'}
+  ];
+  var nlp=document.getElementById('nlp'), nln=document.getElementById('nln'), nlcode=document.getElementById('nlcode'), nlgrid=document.getElementById('nlgrid'), nlres=document.getElementById('nlres'), nltimer=null;
+  NP.forEach(function(p,i){ var o=document.createElement('option'); o.value=i; o.textContent='for (… '+p.inner+')'; nlp.appendChild(o); });
+  function nlCells(){
+    var p=NP[parseInt(nlp.value,10)], n=parseInt(nln.value,10); if(isNaN(n)||n<1||n>8) return null;
+    var order={}, k=0;
+    for(var i=0;i<n;i++) for(var j=p.first(i,n); p.ok(j,i,n); j++){ k++; order[i+','+j]=k; }
+    return {p:p,n:n,order:order,total:k};
+  }
+  function drawNL(limit){
+    var c=nlCells();
+    if(!c){ nlres.textContent='Choose n from 1 to 8.'; nlgrid.innerHTML=''; return; }
+    nlcode.textContent='for (int i = 0; i < n; i++)\n{\n    for ('+c.p.inner+')\n    {\n        // body runs here\n    }\n}';
+    nlgrid.style.gridTemplateColumns='repeat('+c.n+', minmax(0,1fr))';
+    var show=(limit===undefined)?c.total:limit, h='';
+    for(var i=0;i<c.n;i++) for(var j=0;j<c.n;j++){
+      var o=c.order[i+','+j];
+      h+='<div class="ncell'+(o&&o<=show?' on':'')+(o&&o===show&&show<c.total?' now':'')+'" title="i='+i+', j='+j+'">'+(o&&o<=show?o:'')+'</div>';
+    }
+    nlgrid.innerHTML=h;
+    nlres.textContent='The body runs '+c.total+' times when n = '+c.n+'  (formula: '+c.p.f+'). Rows are i, columns are j; each number is the order the body ran.';
+  }
+  function playNL(){
+    var c=nlCells(); if(!c) return; clearInterval(nltimer);
+    var reduce=w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce){ drawNL(); return; }
+    var k=0; drawNL(0);
+    nltimer=setInterval(function(){ k++; drawNL(k); if(k>=c.total) clearInterval(nltimer); },220);
+  }
+  nlp.addEventListener('change',function(){ clearInterval(nltimer); drawNL(); });
+  nln.addEventListener('input',function(){ clearInterval(nltimer); drawNL(); });
+  document.getElementById('nlplay').addEventListener('click',playNL);
+  drawNL();
+  w.__nlCount=function(pi,n){ var p=NP[pi],k=0; for(var i=0;i<n;i++) for(var j=p.first(i,n); p.ok(j,i,n); j++) k++; return k; };
+
+  // ---------- execution counts ----------
+  var rtn=document.getElementById('rtn'), rtab=document.getElementById('rtab');
+  var RT=[
+    {code:'for (int i = 0; i < n; i++)\n{ count++; }', f:function(n){ var k=0; for(var i=0;i<n;i++) k++; return k; }, note:'n'},
+    {code:'for (int i = 0; i < n; i++) { count++; }\nfor (int j = 0; j < n; j++) { count++; }', f:function(n){ var k=0; for(var i=0;i<n;i++) k++; for(var j=0;j<n;j++) k++; return k; }, note:'2n'},
+    {code:'for (int i = 0; i < n; i += 2)\n{ count++; }', f:function(n){ var k=0; for(var i=0;i<n;i+=2) k++; return k; }, note:'about n / 2'},
+    {code:'for (int i = 0; i < n; i++)\n  for (int j = 0; j < n; j++)\n  { count++; }', f:function(n){ var k=0; for(var i=0;i<n;i++) for(var j=0;j<n;j++) k++; return k; }, note:'n × n'},
+    {code:'for (int i = 0; i < n; i++)\n  for (int j = 0; j <= i; j++)\n  { count++; }', f:function(n){ var k=0; for(var i=0;i<n;i++) for(var j=0;j<=i;j++) k++; return k; }, note:'n(n + 1) / 2'},
+    {code:'for (int i = 1; i < n; i *= 2)\n{ count++; }', f:function(n){ var k=0; for(var i=1;i<n;i*=2) k++; return k; }, note:'about log₂ n'}
+  ];
+  function drawRT(){
+    var n=parseInt(rtn.value,10);
+    if(isNaN(n)||n<1||n>300){ rtab.innerHTML='<tr><td>Enter n from 1 to 300.</td></tr>'; return; }
+    var h='<tr><th>Code</th><th>Count when n = '+n+'</th><th>Count when n = '+(2*n)+'</th><th>Growth</th><th>Pattern</th></tr>';
+    RT.forEach(function(r){
+      var a=r.f(n), b=r.f(2*n), ratio=a>0?(b/a):NaN;
+      h+='<tr><td><pre class="code">'+r.code.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</pre></td><td class="vv">'+a+'</td><td class="vv">'+b+'</td><td class="vv">'+(isNaN(ratio)?'—':'× '+(Math.round(ratio*100)/100))+'</td><td>'+r.note+'</td></tr>';
+    });
+    rtab.innerHTML=h;
+  }
+  rtn.addEventListener('input',drawRT); drawRT();
+  w.__rtCount=function(i,n){ return RT[i].f(n); };
+
+  // ---------- FRQ model methods (try your own inputs) ----------
+  function digitSum(num){ var sum=0; while(num>0){ sum+=num%10; num=Math.trunc(num/10); } return sum; }
+  function isPalin(word){ for(var i=0;i<Math.floor(word.length/2);i++){ if(word.substring(i,i+1)!==word.substring(word.length-1-i,word.length-i)) return false; } return true; }
+  function triangle(rows){ var out=''; for(var r=1;r<=rows;r++){ for(var c=1;c<=r;c++) out+='*'; out+='\n'; } return out; }
+  w.__frq={digitSum:digitSum,isPalin:isPalin,triangle:triangle};
+  var fd=document.getElementById('fd'), fp=document.getElementById('fp'), ft=document.getElementById('ft');
+  function drawFT(){
+    var a=fd.value.trim(), b=fp.value.trim(), c=parseInt(ft.value,10);
+    document.getElementById('fdres').textContent=(/^\d{1,9}$/.test(a)&&parseInt(a,10)>0)?'digitSum('+parseInt(a,10)+') returns '+digitSum(parseInt(a,10)):'Enter a positive whole number (up to 9 digits).';
+    document.getElementById('fpres').textContent=(/^[a-z]{1,20}$/i.test(b))?'isPalindrome("'+b.toLowerCase()+'") returns '+isPalin(b.toLowerCase()):'Enter 1 to 20 letters.';
+    document.getElementById('ftres').textContent=(!isNaN(c)&&c>=1&&c<=12)?triangle(c):'Enter a number of rows from 1 to 12.';
+  }
+  [fd,fp,ft].forEach(function(el){ el.addEventListener('input',drawFT); }); drawFT();
+
+  // ---------- flashcards ----------
+  var vocab=[["sequencing", "Steps run in order, one at a time."], ["selection", "A true-or-false decision chooses which path an algorithm follows."], ["repetition", "A process repeats until a desired outcome is reached; written with a loop in Java."], ["Boolean expression", "An expression that evaluates to true or false."], ["relational operator", "==, !=, <, >, <=, >=. Compares two values and gives a boolean."], ["logical operator", "!, &&, ||. Combines or flips Boolean values. Precedence: ! first, then &&, then ||."], ["short-circuit evaluation", "&& and || skip the right side when the left side already decides the result."], ["if statement (one-way)", "Runs its body only when the condition is true."], ["if-else (two-way)", "Exactly one of two bodies runs."], ["else if (multi-way)", "A chain of conditions; only the first true one runs, and a trailing else catches the rest."], ["nested if", "An if inside another if. The inner condition is tested only when the outer one is true."], ["dangling else", "An else always pairs with the nearest unmatched if, regardless of indentation."], ["truth table", "Lists every combination of true/false inputs and the result of an expression."], ["equivalent expressions", "Two Boolean expressions that give the same value in every case."], ["De Morgan's laws", "!(a && b) is !a || !b, and !(a || b) is !a && !b."], ["reference comparison", "== and != on objects compare references (the same object), not contents."], ["equals", "A method that compares the contents of two objects, such as two Strings."], ["null", "A reference to no object. Calling a method on it throws NullPointerException."], ["iteration", "Repeating a segment of code using a loop."], ["while loop", "Tests its condition before every pass, including the first. Runs zero or more times."], ["for loop", "Header has three parts: initialization (once), a test, and an update (after each pass)."], ["loop control variable", "The variable a loop tests and updates, such as i."], ["loop body", "The statements that run on each pass of a loop."], ["infinite loop", "A loop whose test never becomes false."], ["off-by-one error", "A loop that runs one time too many or one time too few."], ["counter / accumulator", "A variable that counts passes (count++) or builds a total (sum += value)."], ["standard algorithms", "Divisibility (n % d == 0), digits (n % 10 and n / 10), counting, min/max, sum and average."], ["string traversal", "Visiting each character with s.substring(i, i + 1) inside a loop."], ["nested iteration", "A loop inside another loop. The inner loop finishes all its passes before the outer loop continues."], ["statement execution count", "How many times a statement runs, found by tracing the loops."], ["trace table", "A table of variable values after each step of a program."], ["ArithmeticException", "Thrown when an int is divided by the int zero."]];
+  var deck=document.getElementById('deck');
+  function buildDeck(list){
+    deck.innerHTML='';
+    list.forEach(function(pair){
+      var c=document.createElement('div'); c.className='card'; c.tabIndex=0; c.textContent=pair[0];
+      function flip(){ c.classList.toggle('flip'); c.textContent=c.classList.contains('flip')?pair[1]:pair[0]; }
+      c.addEventListener('click',flip);
+      c.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); flip(); } });
+      deck.appendChild(c);
+    });
+  }
+  buildDeck(vocab);
+  document.getElementById('shuffle').addEventListener('click',function(){
+    var a=vocab.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var tmp=a[i]; a[i]=a[j]; a[j]=tmp; } buildDeck(a);
+  });
+
+  // ---------- quiz ----------
+  var Q=[{"t": "Boolean", "s": "What does this print?", "o": ["true", "false", "3", "a compile-time error"], "a": 0, "w": "Integer division gives 7 / 2 = 3, and 7 % 2 = 1. Both comparisons are true, so the && is true.", "c": "int a = 7;\nint b = 2;\nSystem.out.println(a / b == 3 && a % b == 1);"}, {"t": "Boolean", "s": "Which expression is true exactly when the non-negative int n is a multiple of 5?", "o": ["n % 5 == 5", "n / 5 == 0", "n * 5 == 0", "n % 5 == 0"], "a": 3, "w": "A multiple of 5 leaves remainder 0 when divided by 5. A remainder can never equal 5, and n / 5 == 0 is true only for n from 0 to 4.", "m": 1}, {"t": "if", "s": "What is printed?", "o": ["15", "8", "10", "17"], "a": 2, "w": "x > 5 is true, so x becomes 10 and the else-if is skipped, even though x > 7 would also have been true.", "c": "int x = 8;\nif (x > 5)\n{\n    x += 2;\n}\nelse if (x > 7)\n{\n    x += 5;\n}\nSystem.out.println(x);"}, {"t": "if", "s": "What is printed?", "o": ["0", "1", "2", "3"], "a": 2, "w": "These are three separate if statements, so each condition is tested. 7 > 0 and 7 > 5 are true, and 7 > 10 is false: s is 2.", "c": "int n = 7;\nint s = 0;\nif (n > 0)\n{\n    s++;\n}\nif (n > 5)\n{\n    s++;\n}\nif (n > 10)\n{\n    s++;\n}\nSystem.out.println(s);"}, {"t": "Compound", "s": "What does this print?", "o": ["true", "false", "p", "an error"], "a": 1, "w": "! is first, then &&, then ||. !p is false, and q && !q is false, so false || false is false.", "c": "boolean p = true;\nboolean q = false;\nSystem.out.println(!p || q && !q);"}, {"t": "Compound", "s": "What is printed?", "o": ["0", "1", "2", "3"], "a": 1, "w": "Short-circuit evaluation: the first && stops because false is already known, and the || stops because true is already known. Only the third test runs test().", "c": "public static int calls = 0;\n\npublic static boolean test()\n{\n    calls++;\n    return true;\n}\n\n// in main:\nif (false && test()) { }\nif (true || test()) { }\nif (true && test()) { }\nSystem.out.println(calls);"}, {"t": "Equivalence", "s": "Which expression is equivalent to `!(x >= 3 || y < 7)`?", "o": ["x >= 3 && y < 7", "x <= 3 && y > 7", "x < 3 || y >= 7", "x < 3 && y >= 7"], "a": 3, "w": "Apply De Morgan’s law: negate each part (x >= 3 becomes x < 3, y < 7 becomes y >= 7) and change || to &&.", "m": 1}, {"t": "Equivalence", "s": "What does this print?", "o": ["true true", "true false", "false true", "false false"], "a": 2, "w": "== compares references, and these are two different objects. equals compares the characters, which match.", "c": "String s = new String(\"ab\");\nString t = new String(\"ab\");\nSystem.out.println((s == t) + \" \" + s.equals(t));"}, {"t": "while", "s": "What is printed?", "o": ["0", "1", "2", "3"], "a": 3, "w": "i goes 2, 4, 16, 256. The body runs for 2, 4, and 16, which is 3 passes. At 256 the test fails.", "c": "int i = 2;\nint c = 0;\nwhile (i < 100)\n{\n    i = i * i;\n    c++;\n}\nSystem.out.println(c);"}, {"t": "for", "s": "What is printed?", "o": ["5 3 1", "5 4 3 2 1", "5 3", "1 3 5"], "a": 0, "w": "i starts at 5 and drops by 2 while it is at least 1: 5, 3, 1. Next would be -1.", "c": "for (int i = 5; i >= 1; i -= 2)\n{\n    System.out.print(i + \" \");\n}"}, {"t": "for", "s": "How many times does `count++` run?", "o": ["6", "7", "8", "20"], "a": 1, "w": "i takes 0, 3, 6, 9, 12, 15, 18. Next would be 21, which fails the test. That is 7 values.", "c": "int count = 0;\nfor (int i = 0; i < 20; i += 3)\n{\n    count++;\n}"}, {"t": "Algorithms", "s": "What is printed?", "o": ["1", "2", "3", "4"], "a": 1, "w": "The loop looks at the digits 5, 3, 0, 9. The digits greater than 4 are 5 and 9, so count is 2.", "c": "int n = 9035;\nint count = 0;\nwhile (n > 0)\n{\n    if (n % 10 > 4)\n    {\n        count++;\n    }\n    n /= 10;\n}\nSystem.out.println(count);"}, {"t": "Algorithms", "s": "The ints `sum` and `count` hold 10 and 4. Which expression evaluates to 2.5?", "o": ["sum / count", "(double) (sum / count)", "sum / (double) count", "(int) (sum / 4.0)"], "a": 2, "w": "Only sum / (double) count divides with a double operand. The first divides two ints (2), the second converts that 2 to 2.0, and the fourth casts 2.5 to 2.", "m": 1}, {"t": "Strings", "s": "What is printed?", "o": ["2", "3", "4", "5"], "a": 0, "w": "The pair ss appears at indexes 2 and 5, so c is 2.", "c": "String s = \"mississippi\";\nint c = 0;\nfor (int i = 0; i < s.length() - 1; i++)\n{\n    if (s.substring(i, i + 2).equals(\"ss\"))\n    {\n        c++;\n    }\n}\nSystem.out.println(c);"}, {"t": "Strings", "s": "Which line, placed in the loop body, makes `r` the reverse of `w`?", "o": ["r = r + w.substring(i);", "r += w.substring(i, i + 1);", "r = w.substring(i) + r;", "r = w.substring(i, i + 1) + r;"], "a": 3, "w": "Putting each new letter in front of the result builds the string backward: c, then oc, then doc, then edoc. Adding single letters to the end copies the string forward, and the options that use substring(i) add whole endings.", "c": "String w = \"code\";\nString r = \"\";\nfor (int i = 0; i < w.length(); i++)\n{\n    /* missing line */\n}", "m": 1}, {"t": "Strings", "s": "What happens when this code runs?", "o": ["It prints abc and then throws an exception.", "It prints abc.", "It throws an exception before printing anything.", "It does not compile."], "a": 0, "w": "The test uses <=, so i reaches 3. substring(3, 4) is out of range for a 3-letter string, but the first three passes already printed abc.", "c": "String s = \"abc\";\nfor (int i = 0; i <= s.length(); i++)\n{\n    System.out.print(s.substring(i, i + 1));\n}"}, {"t": "Nested", "s": "What is printed?", "o": ["4", "10", "16", "20"], "a": 1, "w": "The inner loop runs 1, 2, 3, then 4 times: 1 + 2 + 3 + 4 = 10.", "c": "int count = 0;\nfor (int i = 1; i <= 4; i++)\n{\n    for (int j = 1; j <= i; j++)\n    {\n        count++;\n    }\n}\nSystem.out.println(count);"}, {"t": "Nested", "s": "What is printed? (A slash marks the end of each line.)", "o": ["XXX / --- / ---", "X-- / X-- / X--", "--X / -X- / X--", "X-- / -X- / --X"], "a": 3, "w": "An X prints only when the row number equals the column number, which is the diagonal from the top left.", "c": "for (int i = 0; i < 3; i++)\n{\n    for (int j = 0; j < 3; j++)\n    {\n        if (i == j)\n        {\n            System.out.print(\"X\");\n        }\n        else\n        {\n            System.out.print(\"-\");\n        }\n    }\n    System.out.println();\n}"}, {"t": "Run-time", "s": "With n equal to 10, which code segment runs `count++` the most times?", "o": ["for (int i = 0; i < n; i++) { count++; }", "for (int i = 0; i < n; i++) { count++; } followed by for (int j = 0; j < n; j++) { count++; }", "for (int i = 0; i < n; i++) { for (int j = 0; j < n; j++) { count++; } }", "for (int i = 0; i < n; i += 2) { count++; }"], "a": 2, "w": "The counts are 10, 20, 100, and 5. Nesting multiplies the work of the loops (10 × 10), while sequential loops only add.", "m": 1}, {"t": "Run-time", "s": "How many times does the loop body run?", "o": ["6", "7", "8", "100"], "a": 1, "w": "i takes 1, 2, 4, 8, 16, 32, 64. Next is 128, which fails the test. That is 7 passes.", "c": "int n = 100;\nint count = 0;\nfor (int i = 1; i < n; i *= 2)\n{\n    count++;\n}\nSystem.out.println(count);"}];
+  var box=document.getElementById('quizbox'), picks={};
+  document.getElementById('qintro').textContent=Q.length+' questions in AP style. Pick an answer to see why; your best score saves.';
+  function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function fmt(s){ return esc(s).replace(/`([^`]+)`/g,'<code>$1</code>'); }
+  function buildQuiz(){
+    box.innerHTML=''; picks={};
+    Q.forEach(function(q,i){
+      var d=document.createElement('div'); d.className='qz'+(q.m?' mono':'');
+      var h='<div class="stem">'+(i+1)+'. '+fmt(q.s)+'</div>';
+      if(q.c) h+='<pre>'+esc(q.c)+'</pre>';
+      q.o.forEach(function(o,j){ h+='<label class="opt"><input type="radio" name="q'+i+'" value="'+j+'"><span><b>'+'ABCD'.charAt(j)+'.</b> '+fmt(o)+'</span></label>'; });
+      h+='<div class="why">'+fmt(q.w)+'</div>';
+      d.innerHTML=h;
+      d.querySelectorAll('input').forEach(function(r){
+        r.addEventListener('change',function(){
+          var j=parseInt(r.value,10); picks[i]=j;
+          d.querySelectorAll('.opt').forEach(function(o,k){ o.classList.remove('right','wrong'); if(k===q.a) o.classList.add('right'); else if(k===j) o.classList.add('wrong'); });
+          d.querySelector('.why').classList.add('show');
+          d.querySelectorAll('input').forEach(function(x){ x.disabled=true; });
+        });
+      });
+      box.appendChild(d);
+    });
+    document.getElementById('scorebox').style.display='none';
+  }
+  buildQuiz();
+  document.getElementById('grade').addEventListener('click',function(){
+    var n=0, byTopic={};
+    Q.forEach(function(q,i){ byTopic[q.t]=byTopic[q.t]||{n:0,c:0}; byTopic[q.t].n++; if(picks[i]===q.a){ n++; byTopic[q.t].c++; } });
+    var sb=document.getElementById('scorebox'), answered=Object.keys(picks).length;
+    var h='<b>'+n+' of '+Q.length+' correct</b>'+(answered<Q.length?' <span class="sub">('+(Q.length-answered)+' unanswered)</span>':'');
+    Object.keys(byTopic).forEach(function(t){ var b=byTopic[t]; h+='<div class="topicbar"><span>'+t+'</span><div class="bar"><i style="width:'+(100*b.c/b.n)+'%"></i></div><span style="width:40px">'+b.c+'/'+b.n+'</span></div>'; });
+    sb.innerHTML=h; sb.style.display='block';
+    if(state.best==null||n>state.best){ state.best=n; save(state); }
+    document.getElementById('pq').textContent=state.best+'/'+Q.length;
+  });
+  document.getElementById('requiz').addEventListener('click',buildQuiz);
+  document.getElementById('pq').textContent=state.best==null?'\u2014':state.best+'/'+Q.length;
+
+  // ---------- FRQ practice ----------
+  state.frq=state.frq||{}; state.frqText=state.frqText||{};
+  var frqBoxes=document.querySelectorAll('.frq-check');
+  function frqScore(){
+    var n=0; frqBoxes.forEach(function(b){ if(b.checked) n++; });
+    document.getElementById('frqscore').textContent=n+' / '+frqBoxes.length;
+    document.getElementById('frqbar').style.width=(100*n/frqBoxes.length)+'%';
+  }
+  frqBoxes.forEach(function(b){
+    b.checked=!!state.frq[b.id];
+    b.addEventListener('change',function(){ state.frq[b.id]=b.checked; save(state); frqScore(); });
+  });
+  frqScore();
+  document.querySelectorAll('.frq-show').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var open=document.getElementById(btn.dataset.target).classList.toggle('show');
+      btn.textContent=open?'Hide model solution':'Show model solution';
+    });
+  });
+  document.querySelectorAll('.frq textarea').forEach(function(t){
+    if(state.frqText[t.id]) t.value=state.frqText[t.id];
+    t.addEventListener('input',function(){ state.frqText[t.id]=t.value; save(state); });
+  });
+
+  // ---------- guided walkthrough ----------
+  state.tut=state.tut||{cur:0,done:{}}; state.tut.done=state.tut.done||{};
+  var tut=document.getElementById('tut'), tsteps=tut.querySelectorAll('.tstep'), tpips=tut.querySelectorAll('.pip'), tdots=document.getElementById('tdots');
+  function tDrawPips(){
+    var n=0;
+    tpips.forEach(function(p){ var on=!!state.tut.done[p.dataset.pt]; p.classList.toggle('on',on); if(on) n++; });
+    document.getElementById('tptxt').textContent=n+' of 6 points built';
+    var sm=document.getElementById('tsum'); if(sm) sm.textContent=n?(n+' of 6 points built'):'Stuck? Open this';
+  }
+  function tShow(i){
+    i=Math.max(0,Math.min(tsteps.length-1,i)); state.tut.cur=i; save(state);
+    tsteps.forEach(function(s,k){ s.classList.toggle('on',k===i); });
+    tdots.querySelectorAll('button').forEach(function(b,k){ b.classList.toggle('cur',k===i); b.setAttribute('aria-current',k===i?'step':'false'); });
+    document.getElementById('tpos').textContent='Step '+(i+1)+' of '+tsteps.length;
+    document.getElementById('tback').disabled=(i===0);
+    document.getElementById('tnext').disabled=(i===tsteps.length-1);
+  }
+  tsteps.forEach(function(s,k){
+    var b=document.createElement('button'); b.textContent=String(k+1); b.setAttribute('aria-label','Go to step '+(k+1));
+    b.addEventListener('click',function(){ tShow(k); }); tdots.appendChild(b);
+  });
+  function tSay(fb,msg,kind){ fb.textContent=msg; fb.className='tfb show '+kind; }
+  function tNorm(s){ return s.replace(/\s+/g,''); }
+  function tBlankOK(inp){
+    var v=inp.value.trim(), ans=inp.dataset.ans;
+    if(ans==='@str') return /^"[^"]+"$/.test(v);
+    return ans.split('|').some(function(a){ return tNorm(a)===tNorm(v); });
+  }
+  function tPoint(step){ if(step.dataset.pt){ state.tut.done[step.dataset.pt]=true; save(state); tDrawPips(); } }
+  tsteps.forEach(function(step){
+    var fb=step.querySelector('.tfb'), blanks=step.querySelectorAll('input.blank');
+    var chk=step.querySelector('.tcheck'), hint=step.querySelector('.thint'), show=step.querySelector('.tshow');
+    if(!chk) return;
+    chk.addEventListener('click',function(){
+      var good=0;
+      blanks.forEach(function(b){ var ok=tBlankOK(b); b.classList.toggle('ok',ok); b.classList.toggle('bad',!ok); if(ok) good++; });
+      if(good===blanks.length){ tSay(fb,step.dataset.win,'ok'); tPoint(step); }
+      else tSay(fb,good+' of '+blanks.length+' blanks are right. Fix the red ones, or press Hint.','bad');
+    });
+    hint.addEventListener('click',function(){ tSay(fb,step.dataset.hint,'info'); });
+    show.addEventListener('click',function(){
+      blanks.forEach(function(b){ var a=b.dataset.ans; b.value=(a==='@str')?'"Jordan"':a.split('|')[0]; b.classList.remove('bad'); b.classList.add('ok'); });
+      tSay(fb,'Here is the answer. '+step.dataset.win,'info');
+    });
+    blanks.forEach(function(b){ b.addEventListener('keydown',function(e){ if(e.key==='Enter') chk.click(); }); });
+  });
+  tut.querySelectorAll('.tchoices').forEach(function(box){
+    var step=box.closest('.tstep'), fb=step.querySelector('.tfb');
+    box.querySelectorAll('button').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var ok=btn.dataset.ok==='1';
+        box.querySelectorAll('button').forEach(function(x){ x.classList.remove('ok','bad'); });
+        btn.classList.add(ok?'ok':'bad');
+        tSay(fb,btn.dataset.why,ok?'ok':'bad');
+        if(ok) tPoint(step);
+      });
+    });
+  });
+  document.getElementById('tback').addEventListener('click',function(){ tShow(state.tut.cur-1); });
+  document.getElementById('tnext').addEventListener('click',function(){ tShow(state.tut.cur+1); });
+  document.getElementById('tstart').addEventListener('click',function(){ var t=document.getElementById('txt_a'); t.scrollIntoView({block:'center'}); t.focus(); });
+  document.getElementById('treset').addEventListener('click',function(){
+    state.tut={cur:0,done:{},open:true}; save(state);
+    tut.querySelectorAll('input.blank').forEach(function(b){ b.value=''; b.classList.remove('ok','bad'); });
+    tut.querySelectorAll('.tfb').forEach(function(f){ f.textContent=''; f.className='tfb'; });
+    tut.querySelectorAll('.tchoices button').forEach(function(x){ x.classList.remove('ok','bad'); });
+    tDrawPips(); tShow(0);
+  });
+  if(state.tut.open) tut.open=true;
+  tut.addEventListener('toggle',function(){ state.tut.open=tut.open; save(state); });
+  tDrawPips(); tShow(state.tut.cur||0);
+
+  // ---------- nav highlight ----------
+  var links=document.querySelectorAll('#nav a'), secs=document.querySelectorAll('main>section');
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ links.forEach(function(l){ l.classList.toggle('on', l.getAttribute('href')==='#'+e.target.id); }); } });
+    },{rootMargin:'-20% 0px -70% 0px'});
+    secs.forEach(function(s){ io.observe(s); });
+  }
+  if(location.hash){ var el=document.getElementById(location.hash.slice(1)); if(el) el.scrollIntoView(); }
+})();
+
+</script>
+</body>
+</html>
